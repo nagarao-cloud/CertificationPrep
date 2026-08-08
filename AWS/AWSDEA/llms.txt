@@ -1,0 +1,40 @@
+# AWS Certified Data Engineer – Associate (DEA-C01)
+
+> Self-contained study material for one exam: AWS DEA-C01, structured as
+> a 10-day intensive sprint (~50 hours). Dense long-form markdown
+> reference: keyword-to-service mapping, decision trees, exam traps, and
+> practice questions with full option-by-option explanations.
+>
+> Scope note: this index covers `AWS/AWSDEA/` only. Other exam folders in
+> this repository are independent and have their own `llms.txt`.
+
+Agents: read `CLAUDE.md` in this folder (identical to `GEMINI.md` and
+`AGENTS.md`) before making changes. It documents the 8-step teaching
+structure, the just-in-time file generation rule, and the AWS service
+renames that must be maintained.
+
+## Core reference (written in full)
+
+- [Decision trees](00-START-HERE/DECISION-TREES.md): 16 service-selection trees plus 17 worked exam questions with every option dissected
+- [Service selection matrix](00-START-HERE/SERVICE-SELECTION-MATRIX.md): ~110 keyword-to-service triggers and 16 comparison matrices
+- [Exam guide](00-START-HERE/EXAM-GUIDE.md): all 17 DEA-C01 task statements, in-scope service list with depth ratings, self-assessment checklist
+- [Exam traps](00-START-HERE/EXAM-TRAPS.md): 60 recurring distractors in setup-wrong-right-principle format
+- [10-day plan](00-START-HERE/10-DAY-PLAN.md): daily schedule with spaced repetition on days 2, 4, 5, 8, 10
+- [Mnemonics](00-START-HERE/MNEMONICS.md): memory hooks for services, pipelines, and IAM evaluation order
+- [Exam strategy](00-START-HERE/EXAM-STRATEGY.md): time management across 130 minutes, elimination heuristics
+- [50 tips](00-START-HERE/50-TIPS.md): original tip list audited and re-weighted for the 2026 exam
+
+## Index
+
+- [Folder index](README.md): master mental map and reading order
+
+## Optional (placeholders, generated just-in-time)
+
+- [Domains](01-domains/): per-domain deep dives, weighted 34/26/22/18
+- [Services](02-services/): 24 per-service reference files
+- [Comparisons](03-comparisons/): head-to-head service comparisons
+- [Architectures](04-architectures/): production architecture patterns
+- [Labs](05-labs/): hands-on console and CLI walkthroughs
+- [Practice](06-practice/): question banks and two full mock exams
+- [Revision](07-revision/): spaced-repetition review sheets
+- [Interview](08-interview/): interview-level questions, post-exam
