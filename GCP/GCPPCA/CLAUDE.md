@@ -23,20 +23,28 @@ files outside this folder, and nothing here should be written outside it.
 ## 2. Who the user is
 
 - **Name:** Naga (GitHub: `nagarao-cloud`)
-- **Level:** _(fill in: beginner / intermediate / experienced)_
+- **Level:** intermediate — no confirmed timeline; treat as comfortable
+  with core cloud concepts (compute/storage/networking/IAM fundamentals)
+  but not assumed to already know GCP-specific service names or the
+  Well-Architected Framework terminology. Fill in with a firmer signal
+  once known.
 - **Goal:** Pass PCA
-- **Timeline:** _(fill in: e.g. 10-day sprint at ~5 h/day)_
+- **Timeline:** intermediate, no confirmed timeline — fill in when known
 
 ## 3. How the user wants to be taught
 
-_(Fill this in for THIS exam. Do not assume it matches another exam's
-folder — formats and difficulty differ.)_
+Same defaults as the rest of this repository (see root `CLAUDE.md`) —
+nothing PCA-specific overrides them:
 
-Default preferences carried across all exams:
 - **Depth over brevity.** Reference documents run 500–1,000+ lines.
 - Comparison matrices, decision trees, ASCII diagrams with every arrow
   explained, mnemonics, and practice questions where **every option** is
   explained — including why the wrong ones are wrong.
+- PCA is scenario-heavy (case studies are 20–30% of the exam) — decision
+  matrices and stated tradeoffs matter more here than in a services-list
+  exam, since the exam tests architectural judgment under constraints,
+  not recall. Every "use X" claim should carry a paired "don't use X when
+  Y, use Z instead."
 
 ## 4. The just-in-time generation rule ⚠️
 
@@ -53,23 +61,65 @@ placeholders unprompted — doing so produces shallow filler.
 ## 6. Exam facts
 
 - **Code:** PCA
-- **Questions:** _(fill in)_
-- **Time:** _(fill in)_
-- **Pass score:** _(fill in)_
-- **Domain weights:** _(fill in)_
-- **Cost:** _(fill in)_
+- **Questions:** 50–60 (multiple choice and multiple select)
+- **Time:** 2 hours
+- **Pass score:** not publicly disclosed by Google (scaled/adaptive
+  scoring, no fixed percentage published)
+- **Cost:** $200 USD + applicable tax (renewal-by-exam option: $100,
+  1 hour, 25 questions)
+- **Languages:** English, Japanese
+- **Validity:** 2 years
+- **Case studies:** 2 shown per exam, drawn from a pool of 4 — EHR
+  Healthcare, Helicopter Racing League, Mountkirk Games, TerramEarth —
+  worth 20–30% of the exam
+- **Domain weights** (6 domains — see
+  `00-START-HERE/RUNBOOK.md` §3 for full task breakdown and sourcing
+  notes; weights are best-available from a secondary source, not
+  independently confirmed against the primary PDF — see the runbook's
+  §1 access note):
+
+  | # | Domain | Weight |
+  |---|---|---|
+  | 1 | Designing and planning a cloud solution architecture | ~24% |
+  | 2 | Managing and provisioning a solution infrastructure | ~15% |
+  | 3 | Designing for security and compliance | ~20% |
+  | 4 | Analyzing and optimizing technical and business processes | ~18% |
+  | 5 | Managing implementation | ~11% |
+  | 6 | Ensuring solution and operations reliability | ~12% |
 
 ## 7. Currency — do not teach outdated material
 
-_(List renamed/retired services and any gaps in older study material.)_
+Full sourcing and rationale for each row: `00-START-HERE/RUNBOOK.md` §7.
 
 | Do not say | Say instead |
 |---|---|
-| | |
+| "The PCA exam has 4 case studies including Dress4Win" | "2 of 4 case studies per sitting, drawn from: EHR Healthcare, Helicopter Racing League, Mountkirk Games, TerramEarth" — Dress4Win is a retired pre-2021 case study still floating around in stale dumps sites |
+| "Security domain is just IAM and encryption" | "Domain 3 (~20%) explicitly includes Securing AI workload patterns — private Vertex AI endpoints, prompt/output governance, third-party AI partner access" (2026/v6.1 addition) |
+| "Cost/optimization domain is only about billing" | "Domain 4 (~18%) also covers Vertex AI/Dataflow workload cost-performance tuning and sustainability (Carbon Footprint tool, region selection for lower emissions)" |
+| "App Engine Flexible is a mainstream exam answer" | "App Engine Standard is the actively-tested variant; Flexible is de-emphasized for 2026" |
+| "The exam guide hasn't changed in years" | "Current revision is v6.1 (October 2025) — always re-check the live guide page before teaching from a cached copy" |
+| "Hybrid/on-prem connectivity is a minor topic" | "Hybrid connectivity (Interconnect, VPN, Network Connectivity Center, Anthos) is a recurring, stable theme — both EHR Healthcare and TerramEarth case studies assume a hybrid footprint" |
 
 ## 8. Domain vocabulary in active use
 
-_(List terms the user already knows so they aren't re-explained.)_
+Terms below are assumed known (general cloud/architecture vocabulary)
+and are used without re-explanation; **GCP-specific service names and
+Well-Architected Framework terminology are treated as new** per §2 and
+are explained in full on first use in each file:
+
+- General cloud/architecture: region, availability zone, load balancer,
+  autoscaling, VPC/subnet, IAM (role/policy concept, not GCP's specific
+  role catalog), object/block/file storage, relational vs. NoSQL,
+  CI/CD, Infrastructure as Code, blue/green and canary deployment, SLA
+  vs. SLO vs. SLI, RTO/RPO, horizontal vs. vertical scaling.
+- PCA-specific shorthand used throughout this folder once introduced:
+  **WAF** = Well-Architected Framework (Google's, not a web-app
+  firewall, in this exam's context — flagged explicitly on first use per
+  file to avoid the collision with Cloud Armor's WAF capability), **the
+  6 R's** = migration strategies (rehost/replatform/repurchase/refactor/
+  retain/retire), **MIG** = Managed Instance Group, **CMEK/CSEK** =
+  customer-managed/customer-supplied encryption keys, **HRL** =
+  Helicopter Racing League case study.
 
 ## 9. Typical requests and what they mean
 

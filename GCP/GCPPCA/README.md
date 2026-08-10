@@ -42,7 +42,20 @@ shallow filler.
 ## Exam facts
 
 - **Code:** PCA
-- **Questions:** _(fill in)_
-- **Time:** _(fill in)_
-- **Pass score:** _(fill in)_
-- **Domain weights:** _(fill in)_
+- **Questions:** 50–60 (multiple choice and multiple select)
+- **Time:** 2 hours
+- **Pass score:** not publicly disclosed (scaled scoring)
+- **Cost:** $200 USD + tax
+- **Case studies:** 2 of 4 per exam — EHR Healthcare, Helicopter Racing
+  League, Mountkirk Games, TerramEarth (20–30% of the exam)
+- **Domain weights** (6 domains — see `00-START-HERE/RUNBOOK.md` for the
+  full task breakdown and sourcing notes):
+
+  | # | Domain | Weight |
+  |---|---|---|
+  | 1 | Designing and planning a cloud solution architecture | ~24% |
+  | 2 | Managing and provisioning a solution infrastructure | ~15% |
+  | 3 | Designing for security and compliance | ~20% |
+  | 4 | Analyzing and optimizing technical and business processes | ~18% |
+  | 5 | Managing implementation | ~11% |
+  | 6 | Ensuring solution and operations reliability | ~12% |
