@@ -39,14 +39,20 @@ because all of that already lives in the folder from Step 1):
 
 > This is exam folder `AWS/AWSSAA/`. Read its `CLAUDE.md` in full,
 > including §12 (bulk content-generation playbook). Then:
-> 1. Verify currency — find and check the vendor's official exam-guide
->    revisions/changelog page before generating anything, and fold any
->    findings into §7 of `CLAUDE.md`.
-> 2. Run the §12 playbook to fill every placeholder file in this folder
+> 1. Discover this exam's actual structure — read the vendor's real,
+>    current exam guide and write `00-START-HERE/RUNBOOK.md` per §12
+>    Step 0: the real domain/task/sub-skill hierarchy (however many
+>    domains it actually has — don't assume it matches any other exam
+>    folder in this repo), a coverage map, and the currency-corrections
+>    findings (services added/removed from scope since the guide's
+>    original version, tools renamed or deprecated).
+> 2. Fold the runbook's currency findings into `CLAUDE.md` §7.
+> 3. Run the §12 playbook to fill every placeholder file in this folder
 >    to full depth, batching parallel background agents as it describes.
-> 3. When done, update `CLAUDE.md` §5 with a per-folder summary of what
->    got written, and propagate that + the §7 currency findings to
->    `GEMINI.md` and `AGENTS.md` so all three stay identical.
+> 4. When done, update `CLAUDE.md` §5 and the runbook's own §5 checklist
+>    with a per-folder summary of what got written, and propagate the
+>    §5/§7 updates to `GEMINI.md` and `AGENTS.md` so all three stay
+>    identical.
 
 That's the whole prompt. No pasted source material, no restating of
 "how I want to be taught," no re-explaining what a comparison matrix
@@ -61,34 +67,54 @@ This is documented in detail in `_TEMPLATE/CLAUDE.md` §12 (so it ships
 with every new exam folder), summarized here:
 
 ```
- CLAUDE.md §7 (currency)     ← agent fetches the vendor's official
-        ^                       exam-guide revisions page and corrects
-        |                       this section BEFORE generating anything
+ discover this exam's real       ← NOT assumed from another exam
+ structure (§12 Step 0)             folder. Read the vendor's actual
+        |                           guide: how many domains, what
+        |                           they're called, how deep the
+        |                           task/sub-skill hierarchy goes.
+        v
+ 00-START-HERE/RUNBOOK.md    ────► the concrete output of that step:
+        ^                           source URL + version, the full
+        |                           hierarchy verbatim, a coverage map
+        |                           (which file answers which guide
+        |                           leaf), and the currency-corrections
+        |                           table. Every step below reads THIS
+        |                           file, not the guide again.
         |
- CLAUDE.md §12 playbook  ────► batches placeholders into groups of
-        |                       4-8 files by folder/topic, launches
-        |                       one background agent per batch, in
-        |                       parallel
+ CLAUDE.md §7 (currency)     ←──── populated FROM the runbook's
+        ^                           currency section, not derived
+        |                           independently
+        |
+ CLAUDE.md §12 playbook  ────────► batches placeholders into groups of
+        |                           4-8 files by folder/topic (sized to
+        |                           THIS exam's discovered domain
+        |                           count, not a fixed number), launches
+        |                           one background agent per batch, in
+        |                           parallel
         v
- N parallel agents  ─────────► each agent reads CLAUDE.md itself,
-        |                       writes its batch, self-verifies
-        |                       (no placeholder markers left, no
-        |                       stale terminology, Q&A numbering
-        |                       matches its own answer key)
+ N parallel agents  ─────────────► each agent reads CLAUDE.md AND the
+        |                           runbook, writes its batch against
+        |                           the runbook's coverage map,
+        |                           self-verifies (no placeholder
+        |                           markers left, no stale terminology,
+        |                           Q&A numbering matches its own
+        |                           answer key)
         v
- completion notifications  ──► if any batch fails mid-stream (this
-        |                       happens — transient infra issues,
-        |                       not a content problem), check which
-        |                       files in that batch actually finished
-        |                       before relaunching, and relaunch a
-        |                       small cleanup agent for only what's
-        |                       still missing — never restart a whole
-        |                       batch from scratch
+ completion notifications  ──────► if any batch fails mid-stream (this
+        |                           happens — transient infra issues,
+        |                           not a content problem), check which
+        |                           files in that batch actually finished
+        |                           before relaunching, and relaunch a
+        |                           small cleanup agent for only what's
+        |                           still missing — never restart a whole
+        |                           batch from scratch
         v
- final sweep  ────────────────► one pass confirming zero files remain
-                                 under ~20 lines (the placeholder size),
-                                 then CLAUDE.md §5 gets updated with
-                                 the real per-folder totals
+ final sweep  ────────────────────► one pass confirming zero files remain
+                                     under ~20 lines (the placeholder size)
+                                     and every leaf in the runbook's
+                                     coverage map has content, then
+                                     CLAUDE.md §5 and the runbook's own
+                                     §5 checklist get updated
 ```
 
 **Every arrow above matters for a reason learned the hard way on the

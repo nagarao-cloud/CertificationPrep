@@ -34,16 +34,17 @@ not the recipe.
 
 ### 1. Core reference — [`00-START-HERE/`](00-START-HERE/)
 
-1. **[EXAM-GUIDE.md](00-START-HERE/EXAM-GUIDE.md)** — format, all 17 task statements, service depth ratings, self-assessment checklist
-2. **[10-DAY-PLAN.md](00-START-HERE/10-DAY-PLAN.md)** — your daily schedule. Print this.
-3. **[SERVICE-SELECTION-MATRIX.md](00-START-HERE/SERVICE-SELECTION-MATRIX.md)** ⭐ — the highest-value file. ~110 keyword→service triggers and 16 comparison matrices.
-4. **[DECISION-TREES.md](00-START-HERE/DECISION-TREES.md)** — 16 trees plus 17 worked questions with every option dissected
-5. **[EXAM-TRAPS.md](00-START-HERE/EXAM-TRAPS.md)** — 60 distractors AWS reuses
-6. **[MNEMONICS.md](00-START-HERE/MNEMONICS.md)** — memory hooks
-7. **[EXAM-STRATEGY.md](00-START-HERE/EXAM-STRATEGY.md)** — working the 130 minutes
-8. **[50-TIPS.md](00-START-HERE/50-TIPS.md)** — the original tip list, audited and re-weighted
+1. **[RUNBOOK.md](00-START-HERE/RUNBOOK.md)** — the official exam-guide structure this whole folder was generated against, and the coverage map showing which file answers which domain/task/sub-skill
+2. **[EXAM-GUIDE.md](00-START-HERE/EXAM-GUIDE.md)** — format, all 17 task statements, service depth ratings, self-assessment checklist
+3. **[10-DAY-PLAN.md](00-START-HERE/10-DAY-PLAN.md)** — your daily schedule. Print this.
+4. **[SERVICE-SELECTION-MATRIX.md](00-START-HERE/SERVICE-SELECTION-MATRIX.md)** ⭐ — the highest-value file. ~110 keyword→service triggers and 16 comparison matrices.
+5. **[DECISION-TREES.md](00-START-HERE/DECISION-TREES.md)** — 16 trees plus 17 worked questions with every option dissected
+6. **[EXAM-TRAPS.md](00-START-HERE/EXAM-TRAPS.md)** — 60 distractors AWS reuses
+7. **[MNEMONICS.md](00-START-HERE/MNEMONICS.md)** — memory hooks
+8. **[EXAM-STRATEGY.md](00-START-HERE/EXAM-STRATEGY.md)** — working the 130 minutes
+9. **[50-TIPS.md](00-START-HERE/50-TIPS.md)** — the original tip list, audited and re-weighted
 
-Also in `00-START-HERE/` as placeholders: `TROUBLESHOOTING.md`,
+`00-START-HERE/` also has, all now written in full: `TROUBLESHOOTING.md`,
 `COST-OPTIMIZATION.md`, `SECURITY.md`, `WELL-ARCHITECTED.md`,
 `CHEAT-SHEETS.md`, `FLASHCARDS.md`, `GLOSSARY.md`, `STUDY-ROADMAP.md`.
 
