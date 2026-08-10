@@ -54,23 +54,37 @@ placeholders unprompted — doing so produces shallow filler.
 
 ## 5. Files written in full
 
-Full bulk-generation pass completed 2026-08-10 (§12 playbook). Per-folder
+Full bulk-generation pass completed 2026-08-10 (§12 playbook), followed
+by a **depth-remediation pass the same day** after the user flagged
+several folders as too thin / missing current-topic coverage. Per-folder
 summary (content files only, excluding per-folder `README.md` stubs and
 this file):
 
 | Folder | Files | Lines | Contents |
 |---|---|---|---|
-| `00-START-HERE/` | 5 | ~1,010 | RUNBOOK.md, STUDY-PLAN.md, SERVICE-MATRIX.md, DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md |
-| `01-domains/` | 6 | ~1,410 | One deep-dive per exam domain |
-| `02-services/` | 7 | ~1,170 | Per-service reference, grouped by category |
-| `03-comparisons/` | 6 | ~380 | Head-to-head decision matrices |
-| `04-architectures/` | 6 | ~725 | 4 case-study architectures + 2 generic patterns |
-| `05-labs/` | 5 | ~755 | Sequenced hands-on walkthroughs |
-| `06-practice/` | 8 | ~3,360 | 6 per-domain question banks (20 Q each) + 2 mock exams (40 Q each) |
-| `07-revision/` | 7 | ~500 | 6 per-domain cheat sheets + master flashcards (compressed by design) |
-| `08-interview/` | 2 | ~280 | Architect-level scenario + behavioral/tradeoff questions |
-| `09-assets/` | 3 | ~245 | Consolidated diagrams, mind maps, decision-flowchart index |
-| **Total** | **55** | **~10,190** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` (~330 each) and `README.md`/`llms.txt` |
+| `00-START-HERE/` | 5 | ~1,075 | RUNBOOK.md, STUDY-PLAN.md, SERVICE-MATRIX.md, DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md |
+| `01-domains/` | 6 | ~3,390 | One deep-dive per exam domain (was ~1,410; 2.4x growth in remediation pass) |
+| `02-services/` | 7 | ~4,980 | Per-service reference, grouped by category (was ~1,170; 4.3x growth) |
+| `03-comparisons/` | 6 | ~1,530 | Head-to-head decision matrices (was ~380; 4.0x growth) |
+| `04-architectures/` | 6 | ~2,060 | 4 case-study architectures + 2 generic patterns (was ~725; 2.8x growth) |
+| `05-labs/` | 5 | ~2,040 | Sequenced hands-on walkthroughs (was ~755; 2.7x growth) |
+| `06-practice/` | 8 | ~3,360 | 6 per-domain question banks (20 Q each) + 2 mock exams (40 Q each) — untouched by remediation pass |
+| `07-revision/` | 7 | ~500 | 6 per-domain cheat sheets + master flashcards (compressed by design) — untouched |
+| `08-interview/` | 2 | ~280 | Architect-level scenario + behavioral/tradeoff questions — untouched |
+| `09-assets/` | 3 | ~245 | Consolidated diagrams, mind maps, decision-flowchart index — untouched |
+| **Total** | **55** | **~20,460** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` (~360 each) and `README.md`/`llms.txt` |
+
+**Depth-remediation pass (2026-08-10) fixed two problems:** (1) five
+folders were well under the 500–1,000+ line reference-file standard
+this section states; (2) a gap-scan found **AlloyDB for PostgreSQL,
+Security Command Center, and Binary Authorization entirely missing**,
+and the folder still said "Anthos" where Google's current name is "GKE
+Enterprise." All four are now integrated across `01-domains/`,
+`02-services/`, and `03-comparisons/` — see `00-START-HERE/RUNBOOK.md`
+§6/§7 for exactly where and with what confidence framing.
+`06-practice/`, `07-revision/`, `08-interview/`, and `09-assets/` were
+judged adequate for their content type (dense Q&A, compressed-by-design
+reference, or index material) and were not touched in this pass.
 
 Full detail and provenance: `00-START-HERE/RUNBOOK.md` §4 (coverage
 map) and §8 (checklist status).

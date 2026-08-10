@@ -407,3 +407,46 @@ so Step 1's "parallel background agents" batching was not literally
 possible — all 55 files were instead written directly and sequentially
 by this session, in the same folder-grouped batches the playbook
 specifies, with a commit checkpoint after each folder.
+
+**Update (2026-08-10, depth-remediation pass, same day):** the user
+(Naga) directly flagged the first pass's output as "either fully not
+populated or incomplete or not covering latest topics." Investigation
+confirmed both halves of that complaint:
+
+1. **Depth gap** — `01-domains/`, `02-services/`, `03-comparisons/`,
+   `04-architectures/`, and `05-labs/` were well under `CLAUDE.md` §3's
+   500–1,000+ line reference-file standard (domain files as low as 180
+   lines, comparison matrices as low as 55). Fixed via 5 parallel
+   background agents (this session, unlike the first pass, *did* have
+   the `Agent` tool available), one per folder, each reading this
+   RUNBOOK and `CLAUDE.md` first and writing only within its own
+   folder. Results — `01-domains/` 1,411→3,389 lines (2.4x),
+   `02-services/` 1,168→4,976 (4.3x), `03-comparisons/` ~380→1,527
+   (4.0x), `04-architectures/` ~725→2,058 (2.8x), `05-labs/` ~755→2,044
+   (2.7x). `06-practice/`, `07-revision/`, `08-interview/`, and
+   `09-assets/` were judged adequate for their content type and left
+   untouched.
+2. **Currency gap** — re-attempted the official exam-guide PDF fetch
+   directly (`services.google.com`, both redirect paths); still
+   `EGRESS_BLOCKED`, confirming rather than overturning the original
+   access-constraint finding in §1. A gap-scan (grepping the whole
+   folder for current GCP service names) found **AlloyDB for
+   PostgreSQL, Security Command Center, and Binary Authorization
+   entirely absent**, and confirmed the folder still said "Anthos"
+   where Google's current branding is "GKE Enterprise." All four are
+   now integrated — see §6/§7 above for exactly where and with what
+   confidence framing (each addition explicitly flags whether it's
+   primary-sourced, secondary-sourced, or recall-level, consistent with
+   this file's existing confidence-tier convention — nothing was
+   asserted with more certainty than its actual sourcing supports).
+
+**Post-remediation verification:** grepped the full folder for stale
+terms (`Dress4Win` outside correction-table context: none found;
+unqualified `Anthos` not paired with a `GKE Enterprise` mention nearby:
+none found — every occurrence checked and confirmed paired) and for
+leftover placeholder markers (`🕐`, `(fill in)`, `TODO`, `FIXME`): none
+found outside this file's own legend/status text. Spot-checked AlloyDB
+claims across `01-domains/`, `02-services/`, and `03-comparisons/` for
+cross-file consistency (positioning vs. Cloud SQL/Spanner, confidence
+framing) — consistent. New total: 55 content files, ~20,460 lines (see
+`CLAUDE.md` §5 for the full per-folder table).
