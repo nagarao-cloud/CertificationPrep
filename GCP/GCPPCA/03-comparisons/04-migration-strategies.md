@@ -144,3 +144,97 @@
   (new managed services becoming available, cost trends, AI/ML
   integration opportunities) — don't answer a forward-looking-evolution
   question with a migration-strategy-selection answer.
+
+## A single application often needs different R's per layer
+
+A recurring exam trap is treating "which R applies" as one answer for
+an entire application, when a realistic scenario often needs a
+*different* R per architectural layer:
+
+```
+Example: a legacy 3-tier app migrating to GCP
+
+  Web/app tier   → Replatform  (containerize, run on Cloud Run/GKE,
+                                 code mostly unchanged)
+  Database tier  → Replatform  (self-managed MySQL → Cloud SQL,
+                                 or → AlloyDB if HTAP need emerges)
+  Batch reporting
+  subsystem      → Refactor    (rebuild as a Dataflow/BigQuery
+                                 pipeline — the old batch-report
+                                 script was always the bottleneck)
+  Internal ticketing
+  tool bundled
+  with the app   → Repurchase  (replace with a SaaS helpdesk tool
+                                 instead of migrating the legacy
+                                 module at all)
+  Old audit-log
+  archiver        → Retire     (superseded by Cloud Audit Logs
+                                 natively, once migrated)
+```
+
+A scenario listing several components of one system, each with its own
+constraints, is testing whether you'll apply one R uniformly (the
+trap) or reason about each component against its own stated
+requirement (the correct approach).
+
+## Organizational/change-management dimension (Domain 4.2 tie-in)
+
+Migration strategy selection isn't purely technical — Domain 4.2
+("analyzing and defining business processes") expects you to recognize
+that the *organizational* cost of a migration strategy scales with how
+much changes, echoing the technical risk/cost pattern above:
+
+| Strategy | Team retraining need | Change-management overhead | Conway's Law consideration |
+|---|---|---|---|
+| Rehost | Minimal — same app, same skills | Low | None — team structure doesn't need to change |
+| Replatform | Moderate — new managed-service operational model | Low–medium | Minor — the team owning the swapped component needs new operational runbooks |
+| Refactor | High — cloud-native architecture, new patterns, possibly new languages/frameworks | High | Significant — a monolith-to-microservices Refactor often needs a *team* restructuring to match the new service boundaries (Conway's Law in reverse: architecture drives org design as much as the other way around) |
+| Repurchase | Low technical, but end-user retraining on new SaaS UI/workflow | Medium — user adoption/training program | Minimal on the engineering org, but real on the business-process side |
+| Retain | None | None | None |
+| Retire | Minimal — communication/deprecation notice to any remaining users | Low, but requires a defined sunset communication plan | None |
+
+## Worked scenario walkthroughs
+
+**Scenario A — EHR Healthcare, phased hybrid migration.** "EHR
+Healthcare's data center contract renews in 18 months; leadership wants
+out of the data center business but the core clinical records system
+has deep HIPAA-relevant custom logic nobody wants to touch under time
+pressure; a separate, less critical internal reporting tool is a
+strong candidate to be replaced by an off-the-shelf BI SaaS product."
+Reasoning: three different R's in one scenario — the data-center-exit
+deadline without appetite to touch the risky clinical system's logic
+under pressure is **Rehost** for the core system (preserve behavior,
+move fast, revisit architecture later once safely off the lease); the
+reporting tool with a mature SaaS alternative is **Repurchase**. A
+common trap is proposing Refactor for the clinical system because
+"healthcare compliance sounds like it deserves the most careful
+approach" — compliance rigor and migration *strategy* are different
+axes; a rushed Refactor under a hard deadline is a worse compliance
+risk than a careful Rehost followed by a later, unhurried
+modernization phase.
+
+**Scenario B — Mountkirk Games, new title vs. legacy title.**
+"Mountkirk is launching a new game built cloud-native from day one,
+while an older, still-profitable title runs on a self-managed database
+cluster that occasionally has performance issues under peak load but
+otherwise works." Reasoning: the new title isn't a migration question
+at all (greenfield, not one of the 6 R's); the older title's
+self-managed database with occasional performance issues, still
+otherwise functional, is a **Replatform** signal (swap the self-managed
+cluster for Cloud SQL, AlloyDB, or Spanner depending on the specific
+performance/scale driver — see `02-storage-database-options.md`) rather
+than a full Refactor, since the scenario doesn't describe the
+*application* itself as the problem, only the database layer.
+
+**Scenario C — TerramEarth, legacy dealer portal.** "A 15-year-old
+dealer-facing portal handles parts ordering; usage has been declining
+as dealers move to a newer TerramEarth mobile app, and the team
+suspects — but hasn't confirmed — that a few dealers in specific
+regions still rely on it exclusively." Reasoning: declining usage plus
+an *unconfirmed* suspicion about remaining dependents is explicitly not
+enough to jump to Retire — the correct next step is a dependency-
+verification/usage-audit step before a Retire decision, illustrating
+the "common failure mode" flagged in the tradeoff call-outs above.
+Only once dependency-free is confirmed does Retire become the
+justified answer; until then, Retain (with a defined re-evaluation
+date) is the more defensible interim position.

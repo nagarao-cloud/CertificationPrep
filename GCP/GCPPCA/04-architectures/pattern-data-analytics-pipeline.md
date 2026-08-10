@@ -255,6 +255,102 @@ cross-domain question: "where in the pipeline should PII be
 handled" — the answer is *before* it reaches the ML training path, not
 as an afterthought on the trained model's output.
 
+## Worked example: matching a scenario to the right variant
+
+> "A retail chain wants a dashboard showing current in-store foot
+> traffic within a few seconds of it happening, plus a nightly report
+> reconciling foot traffic against point-of-sale transactions for
+> finance. The existing on-prem analytics team already has a large
+> Spark codebase for the reconciliation job."
+
+Walking this against the pattern:
+
+1. **"Within a few seconds"** → a speed layer is required; this rules
+   out pure batch.
+2. **"Nightly report... reconciling... for finance"** → a batch layer
+   producing an authoritative, corrected result is required; this
+   rules out Kappa-only, since finance-facing reconciliation is exactly
+   the class of requirement that needs a guaranteed-complete pass, not
+   a replay-based approximation.
+3. **"Existing... large Spark codebase"** → the batch layer should be
+   **Dataproc**, not a Dataflow rewrite — minimizing migration
+   risk/effort for an existing, working codebase (Tree 4's
+   Rehost/Replatform judgment, applied to the batch layer specifically)
+   rather than a ground-up Dataflow batch pipeline that re-implements
+   logic that already works.
+4. **Net answer:** Lambda architecture — Dataflow streaming for the
+   speed layer feeding the real-time foot-traffic dashboard (Bigtable
+   or a BigQuery streaming-insert table), Dataproc running the existing
+   Spark reconciliation job as the batch layer feeding BigQuery for
+   finance. Two different engines in the batch vs. speed layer is a
+   legitimate, common real-world shape this pattern should accommodate
+   — the diagram's "Dataflow (batch) or Dataproc" label exists
+   specifically for this scenario shape.
+
+## Data-loading mechanics into BigQuery — a frequently-tested detail
+
+The pattern's arrows into BigQuery hide a real decision: how data
+actually lands there, which has direct cost and latency consequences.
+
+| Method | Latency | Cost profile | When it's the right answer |
+|---|---|---|---|
+| **Batch load jobs** (from Cloud Storage, via Dataflow/Dataproc batch output) | Minutes to hours, whatever the batch schedule is | Load jobs themselves are free; you pay for storage and subsequent queries | The default for the batch layer in this pattern — cheapest, matches the batch layer's already-loose latency budget |
+| **Streaming inserts** (`insertAll`/Storage Write API, from the speed layer) | Seconds | Priced per volume of data streamed, a real and sometimes underestimated cost line at high event volume | When the speed layer specifically needs its output queryable via SQL/BigQuery immediately, not just written to Bigtable/Firestore — e.g. a scenario asking for both a low-latency operational read path AND ad hoc SQL analysis on the same fresh data |
+| **BigQuery Data Transfer Service** | Scheduled (hours typically) | No streaming premium; billed like any scheduled load | SaaS-source data (ad platforms, external partner feeds) that has its own scheduled export cadence — this is what Cloud Composer's "external system loads" arrow in the reference diagram refers to |
+
+**Exam trap embedded here:** a scenario emphasizing "minimize BigQuery
+cost" while also describing a high-volume speed layer is testing
+whether you'll default to streaming inserts for everything reaching
+BigQuery — the batch layer's load-job path is dramatically cheaper at
+volume, and not every downstream consumer actually needs
+second-level freshness in BigQuery specifically (versus just in the
+Bigtable/Firestore serving layer, which doesn't carry the same
+per-row streaming cost).
+
+## Exactly-once vs. at-least-once processing
+
+Pub/Sub's default delivery guarantee is at-least-once — a message can
+be redelivered (e.g. after an ack timeout) and arrive at Dataflow more
+than once. Two ways this pattern handles that, and when each applies:
+
+- **Dataflow's built-in deduplication** (enabled by using message IDs
+  or a windowed, keyed deduplication transform) handles most cases
+  without extra design — sufficient when occasional processing
+  overhead from a duplicate is acceptable and the aggregation itself
+  is naturally idempotent (e.g. a `SUM` recomputed from a dedup'd set).
+- **Explicit idempotency keys in the sink** (e.g. a BigQuery MERGE
+  keyed on an event ID, or a Bigtable row keyed so a duplicate write is
+  a no-op overwrite rather than a double-count) is needed when the
+  sink itself isn't naturally idempotent — this is the detail a
+  scenario about, say, billing or inventory counts is testing: "exactly
+  once delivery" is a Pub/Sub-level red herring (Pub/Sub doesn't offer
+  it natively) and the real answer lives in how the pipeline/sink
+  handles a possible duplicate, not in a Pub/Sub configuration switch.
+
+## Schema evolution — handling sources that change shape over time
+
+A recurring, easy-to-miss requirement: source event schemas change
+(new fields added, an old field deprecated) without every producer
+upgrading simultaneously — this shows up directly in TerramEarth's
+heterogeneous-device-fleet framing and is worth generalizing here:
+
+- **Bronze layer tolerance:** land data in its as-ingested shape
+  (including whatever fields happen to be present) rather than forcing
+  a strict schema at ingest time — a strict-schema-at-ingest design
+  breaks the moment a source's shape changes, exactly where this
+  pattern should be most resilient.
+- **Schema enforcement moves to Silver:** validation, required-field
+  checks, and type coercion happen when promoting Bronze to Silver, not
+  at ingest — giving a single, well-understood place to update
+  transformation logic when a source's schema legitimately changes,
+  instead of a fragile ingest-time contract every producer must honor
+  simultaneously.
+- **BigQuery-specific mechanic:** schema auto-detection and explicit
+  `ALLOW_FIELD_ADDITION`/relaxation options let Bronze tables absorb
+  new fields without a load-job failure — a scenario describing
+  intermittent load-job failures after a source team ships a new field
+  is pointing at this exact mechanic.
+
 ## Common mistakes when applying this generic pattern to a scenario
 
 1. Building a full Lambda architecture (two code paths) when the

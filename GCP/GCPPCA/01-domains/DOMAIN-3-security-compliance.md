@@ -131,6 +131,16 @@ permission to create them. Common exam-relevant constraints:
   the fix is *tightening toward least privilege using data*, not
   guessing at a smaller role.
 
+### Predefined roles by persona (least-privilege starting points)
+
+| Persona | Predefined role pattern | Not this |
+|---|---|---|
+| Read-only auditor/security reviewer | `roles/viewer` scoped to the audited project, or `roles/iam.securityReviewer` for IAM-specific review | `roles/editor`/`roles/owner` — auditors don't need write access, ever |
+| CI/CD deployer | A custom or predefined role scoped to exactly the resources the pipeline touches (e.g. `roles/run.developer` for a Cloud Run-only pipeline) bound to a dedicated service account | A broad `roles/editor` service account shared across every pipeline |
+| Data analyst (BigQuery) | `roles/bigquery.dataViewer` + `roles/bigquery.jobUser` | `roles/bigquery.admin` for someone who only runs queries |
+| Application service account (runtime) | The narrowest predefined role covering exactly what the app calls (e.g. `roles/storage.objectViewer` for a read-only app) | `roles/editor` "to be safe" — the single most common IAM anti-pattern the exam tests against |
+| Break-glass emergency responder | Time-bound elevated role via IAM Conditions, expires automatically | A standing, permanently-granted admin role "just in case" |
+
 ### Data protection and encryption
 
 | Requirement signal | Mechanism | Detail |
@@ -306,6 +316,40 @@ framing:
 | Data residency/sovereignty (general) | Data must not leave a specified jurisdiction | Org Policy resource-location constraints, regional (not multi-region) storage/compute, Assured Workloads for the strictest regimes |
 | FedRAMP / government-aligned regimes | Personnel access restrictions, control-plane data-sovereignty, specific certified regions | Assured Workloads (pre-mapped control package), restricted support-personnel access controls |
 
+### Assured Workloads — control packages and what they actually change
+
+- **What it is structurally**: a folder wrapper that bundles Org
+  Policy constraints, personnel-access restrictions, and data-residency
+  controls into one pre-validated package mapped to a named compliance
+  regime (e.g. FedRAMP Moderate/High, IL4, HIPAA-aligned, EU data
+  boundary) — you select the package, Assured Workloads applies the
+  corresponding technical controls rather than you assembling each
+  constraint by hand.
+- **What it does NOT do**: it doesn't automatically make your
+  *application* compliant — business logic, data handling practices,
+  and organizational processes (staff training, incident response
+  runbooks) are still your responsibility. Assured Workloads sets the
+  *infrastructure* floor a regime requires; a scenario implying "just
+  turn on Assured Workloads and we're compliant" is testing whether you
+  know the boundary of what it covers.
+- **Correct usage pattern**: create a dedicated folder for the
+  in-scope workload, apply the Assured Workloads control package to
+  that folder specifically (not the whole org, unless the whole org is
+  in scope) — this keeps unrelated workloads free of the compliance
+  package's operational restrictions (e.g. restricted support access)
+  that aren't necessary for them.
+
+### Access Transparency vs. Access Approval vs. Cloud Audit Logs
+
+A frequently confused trio — each answers a different "who did what"
+question:
+
+| Mechanism | Tracks | Answers |
+|---|---|---|
+| Cloud Audit Logs | Actions by *your own* users/service accounts | "What did our people/systems do in our GCP environment?" |
+| Access Transparency | Actions by *Google support/engineering staff* accessing your content | "Did Google touch our data, and why?" (logged after the fact) |
+| Access Approval | Same Google-side access as above, but requires *your explicit approval before* it happens | "Can we require sign-off before Google support even looks at our data?" — the strictest tier, correct when a scenario says access must be pre-approved, not just logged |
+
 ### Audit and compliance automation
 
 - **Cloud Audit Logs** (Admin Activity, Data Access, System Event,
@@ -341,6 +385,25 @@ framing:
 | EU personal data (GDPR) | Standard least-privilege | DLP for discovery/classification, retention policies for erasure requests | Regional (EU) resource pinning via Org Policy | Access Transparency for Google-side visibility |
 | Government/regulated workloads | Personnel-access-restricted (Assured Workloads) | CMEK, region-pinned | VPC-SC, restricted support | Assured Workloads' built-in compliance reporting |
 
+### Data classification and handling tiers
+
+A design pattern that recurs across compliance-heavy scenarios:
+classify data into tiers up front, and let the tier — not a one-off
+judgment call per dataset — determine the controls applied:
+
+| Tier | Example | Encryption | Access | Retention |
+|---|---|---|---|---|
+| Public | Marketing site content | Default (Google-managed) | Broad/public read | Standard lifecycle rules |
+| Internal | Internal wikis, non-sensitive operational data | Default | Org-wide authenticated | Standard |
+| Confidential | Business financials, internal strategy docs | CMEK | Named groups only, least privilege | Defined retention, access-logged |
+| Restricted (PHI/PCI/PII) | Patient records, cardholder data | CMEK (often required by regime), DLP-scanned | VPC-SC perimeter, break-glass only for exceptions | Bucket Lock retention, Data Access audit logs on, Access Transparency where applicable |
+
+Design consistency payoff: once a dataset is tagged with its tier
+(via labels/DLP classification), the surrounding controls (IAM,
+encryption, network perimeter, retention) can be applied programmatically
+by tier rather than re-decided per dataset — the same "policy over
+per-resource judgment" principle used throughout Domain 2/3.
+
 ### Tradeoffs — legal compliance
 
 | When the scenario says… | Prefer | Don't reach for | Why |
@@ -349,6 +412,8 @@ framing:
 | "We need to prove even Google support engineers didn't access our data without cause" | Access Transparency | Cloud Audit Logs alone | Audit Logs cover *your* users' actions; Access Transparency specifically covers Google-side access |
 | "Data must never leave the EU" | Regional (EU) resources + Org Policy resource-location constraint | Multi-region or global default resources | Multi-region/global resources can place data outside the required jurisdiction unless explicitly pinned |
 | "Auditors want continuous evidence our controls are working, not a once-a-year manual review" | Security Command Center findings mapped to compliance benchmarks + policy-as-code drift prevention | A manual annual compliance review | Continuous, automated evidence is stronger in audit and catches drift immediately instead of a year later |
+| "We must approve every instance of Google support staff accessing our data before it happens, not just review it afterward" | Access Approval | Access Transparency alone | Access Transparency is a log after the fact; Access Approval is a pre-access gate — the scenario's "before it happens" language is the specific signal |
+| "We turned on Assured Workloads and assumed we were now fully compliant" | Still design application-level controls (DLP, access review, staff process) on top of it | Treating Assured Workloads as sufficient by itself | Assured Workloads sets the infrastructure floor; application/process compliance is still the architecture team's responsibility |
 
 ---
 
@@ -460,6 +525,55 @@ scenario question in Domain 3: identify which layer the described gap
 sits in, then pick the control purpose-built for that layer rather than
 reaching for whichever service was mentioned most recently in the
 question.
+
+---
+
+## Worked scenario walkthrough: EHR Healthcare-style compliance design
+
+**Scenario fragment:** *"A healthcare SaaS company processes protected
+health information (PHI) for multiple hospital clients across several
+US states. A recent audit finding noted that several service accounts
+have broader permissions than they use, and that data scientists
+training a new readmission-risk model have been copying patient
+records into personal Cloud Storage buckets for convenience. Legal
+requires a defensible answer for 'how do we know this can't happen
+again.' The security team wants a single dashboard showing
+misconfigurations across all 40 projects."*
+
+Applying the framework:
+
+1. **Identify the threats named**: (a) over-privileged service
+   accounts, (b) data exfiltration via legitimate credentials to
+   unauthorized destinations, (c) need for org-wide posture visibility.
+2. **(a) → least privilege remediation**: run Policy Analyzer /
+   Recommender findings against the flagged service accounts, replace
+   broad roles with predefined roles scoped to actual usage; if no
+   predefined role fits, design a custom org-level role from the
+   observed permission set (§3.1 custom role design) rather than
+   guessing.
+3. **(b) → VPC Service Controls**, not IAM alone: the data scientists
+   had *valid* IAM permission to read the data — the problem is the
+   *destination* (a personal bucket outside the compliance boundary),
+   which is precisely the threat VPC-SC is built to stop. Wrap the
+   PHI-handling project(s) in a service perimeter; even a
+   fully-authorized identity can no longer move that data to a bucket
+   outside the perimeter.
+4. **(c) → Security Command Center**, org-level, aggregating Security
+   Health Analytics findings across all 40 projects into one dashboard
+   — directly answers "single place to see misconfigurations," which
+   neither IAM nor VPC-SC alone provides.
+5. **Audit trail for the defensible answer**: enable Data Access audit
+   logs on the PHI-handling project(s) (not on by default, due to
+   volume), and document the remediation via policy-as-code (the VPC-SC
+   perimeter and the tightened IAM roles both provisioned via Terraform,
+   giving Legal a reviewable change history — Domain 2 §2.1's
+   provisioning discipline applied to a compliance fix).
+
+**Result**: a combined answer using at least three distinct Domain 3
+mechanisms (least-privilege remediation, VPC-SC, SCC) — this is the
+shape scenario questions in this domain usually take: one narrative
+description mapping to several controls, each addressing a distinct
+named threat, not one silver-bullet service.
 
 ---
 

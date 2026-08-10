@@ -241,6 +241,87 @@ downgraded in lockstep with the data layer.
 | Multi-region Cloud Storage | Modest, scales with stored data volume | Low — largely hands-off once lifecycle rules are set |
 | Terraform/CI/CD provisioning layer | Engineering time upfront, near-zero marginal cost per additional region once built | Lower long-run burden than manual per-region builds — the whole point of the IaC layer in this pattern |
 
+## CI/CD across regions — deploying this pattern without an outage
+
+A multi-region web app's deployment pipeline is itself a place the
+exam tests this pattern's depth, not just the runtime architecture:
+
+```
+  Cloud Build ──► Artifact Registry ──► Cloud Deploy
+                                              │
+                       Rollout sequence (never all regions at once):
+                       Region A (canary, small traffic %) ──►
+                       automated health/SLO check ──►
+                       Region B ──► health/SLO check ──►
+                       Region C
+```
+
+- **Why sequential, not parallel, regional rollout:** a bad release
+  deployed to all three regions simultaneously turns what should be a
+  contained, single-region incident into a global outage — the global
+  LB can't route around a bug that's identical in every region. This is
+  the same lesson EHR Healthcare's CI/CD path teaches, generalized: a
+  multi-region *runtime* topology only delivers its availability
+  benefit if the *deployment* process respects region boundaries too.
+- **Canary region choice:** pick the lowest-traffic region as the
+  canary target when the scenario doesn't specify, to limit blast
+  radius if the release is bad — a detail candidates often skip.
+- **Blue/green per region vs. rolling per region:** blue/green (stand
+  up a fully new revision, cut traffic over, keep the old one as
+  instant rollback) suits Cloud Run's native revision/traffic-split
+  model well; rolling updates suit GKE Standard's MIG-style update
+  policies. The choice tracks back to whichever compute tier Tree 1
+  selected for the app tier, not an independent decision.
+
+## Session affinity and statefulness — a frequently-missed detail
+
+This pattern's app tier is drawn stateless (any request can go to any
+regional instance) — that's a design *choice*, not a given, and the
+exam sometimes tests what breaks if it's violated:
+
+- If the app tier holds any in-memory session state (shopping cart,
+  WebSocket connection, in-progress upload), a request rerouted to a
+  different region mid-session by the LB's latency-based routing loses
+  that state unless it's externalized to the shared cache/data layer.
+- The correct fix is **not** LB session affinity/stickiness pinning a
+  user to one region — that reintroduces a single point of regional
+  failure for that user and defeats the purpose of global routing.
+  The correct fix is moving session state into Memorystore or the data
+  layer so any regional instance can serve any request statelessly.
+- **Exam tell:** a scenario mentioning "users report their shopping
+  cart is sometimes empty after a network hiccup" is describing exactly
+  this failure mode — the answer is externalizing session state, not
+  sticky sessions.
+
+## Worked example: matching a scenario to the right variant
+
+> "An online retailer serves customers in North America, Europe, and
+> Asia. Checkout must never process a duplicate charge, even during a
+> regional outage. The business can tolerate the storefront being
+> briefly read-only during a failover, but not double-billing a
+> customer."
+
+Walking this against the pattern:
+
+1. **Global user base, explicit** → this pattern applies, not a
+   single-region design.
+2. **"Never process a duplicate charge"** → this is a strong-consistency
+   requirement on the payment/order-write path specifically — Cloud
+   Spanner (multi-region) for that slice of the data layer, per Tree 2.
+3. **"Briefly read-only during failover is acceptable"** → this is
+   explicitly telling you the *storefront browsing* path (product
+   catalog, inventory display) does NOT need the same strong-consistency
+   tier as checkout — a read-optimized regional cache (Memorystore) or
+   even an eventually-consistent regional replica is fine there. Using
+   Spanner for the entire app, not just the checkout-critical slice, is
+   the over-engineering trap this worked example is built to expose —
+   the same "split by actual requirement, not by company" lesson
+   Mountkirk Games teaches with its account-vs-gameplay split.
+4. **Net answer:** this pattern's full diagram, with a *split* data
+   layer — Spanner scoped narrowly to checkout/order state, a lighter
+   regional+cache layer for catalog/browsing — rather than one uniform
+   data-layer choice applied everywhere.
+
 ## Common mistakes when applying this generic pattern to a scenario
 
 1. Using it when the scenario is actually single-region — check for an
@@ -263,3 +344,14 @@ downgraded in lockstep with the data layer.
    a scenario asks for fast, automatic regional failover — DNS TTLs
    and client-side caching make DNS-based failover slower and less
    reliable than the LB's health-check-driven routing.
+7. Deploying a new release to every region simultaneously instead of a
+   sequenced, health-checked regional rollout — collapses this
+   pattern's regional isolation benefit exactly when it matters most
+   (a bad release), rather than during infrastructure failure alone.
+8. Using LB session affinity to solve a statefulness problem instead of
+   externalizing session state — reintroduces a regional single point
+   of failure for the affected user and defeats the pattern's
+   any-region-serves-any-request design goal.
+9. Applying one uniform data-layer tier to an entire application when
+   only a narrow slice of it (e.g. checkout/payment) actually needs the
+   strongest consistency guarantee — see the worked example above.
