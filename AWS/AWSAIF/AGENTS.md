@@ -48,7 +48,8 @@ placeholders unprompted — doing so produces shallow filler.
 
 | File | Lines | Purpose |
 |---|---|---|
-| _(none yet)_ | | |
+| `00-START-HERE/STUDY-PLAN.md` | 43 | Day-by-day roadmap (10-day default, adjustable) |
+| `01-domains/DOMAIN-1-fundamentals-of-ai-and-ml.md` | 634 | Day 1 — full task-statement coverage (1.1–1.3), comparison tables, ASCII diagrams, 15 practice Qs |
 
 ## 6. Exam facts
 
@@ -96,8 +97,18 @@ substitute for that check.
 
 ## 8. Domain vocabulary in active use
 
-_(List terms the user already knows so they aren't re-explained. Leave
-blank until the candidate's background is established — see section 2.)_
+Established in Day 1 (Domain 1) — do not re-explain from scratch, build
+on these: AI/ML/DL/GenAI/agentic AI hierarchy, supervised/unsupervised/
+reinforcement/self-supervised learning, RLHF, training vs. inference,
+overfitting vs. underfitting, bias/fairness, model performance metrics
+(accuracy, precision, recall, F1, AUC, RMSE/MAE) vs. business metrics
+(cost per user, dev cost, customer feedback, ROI), the 6-stage ML
+lifecycle (frame → collect → prepare → train/evaluate → deploy →
+monitor/retrain), data drift vs. concept drift, MLOps concepts
+(experimentation, repeatable processes, technical debt, production
+readiness), and the AWS managed-AI-service map (Rekognition, Textract,
+Transcribe, Polly, Translate, Comprehend, Lex, Personalize, Fraud
+Detector, Kendra) vs. build-your-own on Amazon SageMaker AI.
 
 ## 9. Typical requests and what they mean
 
