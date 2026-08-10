@@ -13,6 +13,7 @@ directory. Nothing crosses between exams.
 | Vendor | Code | Certification | Status | Folder |
 |---|---|---|---|---|
 | AWS | **DEA-C01** | Certified Data Engineer – Associate | 🟡 Active | [`AWS/AWSDEA/`](AWS/AWSDEA/) |
+| AWS | **AIF-C01** | Certified AI Practitioner | 🟡 Active | [`AWS/AWSAIF/`](AWS/AWSAIF/) |
 
 ---
 
@@ -30,22 +31,25 @@ CertificationPrep/
 │   └── new-exam.sh          creates a new isolated exam folder
 │
 └── AWS/
-    └── AWSDEA/                          ← everything DEA-C01 lives here
-        ├── CLAUDE.md                    ⭐ real instructions for this exam
-        ├── GEMINI.md                    identical copy
-        ├── AGENTS.md                    identical copy
-        ├── llms.txt                     machine-readable index
-        ├── README.md                    index + master mental map
-        ├── 00-START-HERE/               core reference, written in full
-        ├── 01-domains/
-        ├── 02-services/
-        ├── 03-comparisons/
-        ├── 04-architectures/
-        ├── 05-labs/
-        ├── 06-practice/
-        ├── 07-revision/
-        ├── 08-interview/
-        └── 09-assets/
+    ├── AWSDEA/                          ← everything DEA-C01 lives here
+    │   ├── CLAUDE.md                    ⭐ real instructions for this exam
+    │   ├── GEMINI.md                    identical copy
+    │   ├── AGENTS.md                    identical copy
+    │   ├── llms.txt                     machine-readable index
+    │   ├── README.md                    index + master mental map
+    │   ├── 00-START-HERE/               core reference, written in full
+    │   ├── 01-domains/
+    │   ├── 02-services/
+    │   ├── 03-comparisons/
+    │   ├── 04-architectures/
+    │   ├── 05-labs/
+    │   ├── 06-practice/
+    │   ├── 07-revision/
+    │   ├── 08-interview/
+    │   └── 09-assets/
+    │
+    └── AWSAIF/                          ← everything AIF-C01 lives here
+        └── (same ten-subfolder layout)
 ```
 
 Every exam folder gets the same ten numbered subfolders, so once you

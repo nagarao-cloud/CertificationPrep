@@ -45,13 +45,15 @@ CertificationPrep/
 ├── _scripts/            ← new-exam.sh
 │
 └── AWS/
-    └── AWSDEA/          ← AWS Data Engineer Associate (DEA-C01)
-        ├── CLAUDE.md    ← ⭐ the real instructions for this exam
-        ├── GEMINI.md
-        ├── AGENTS.md
-        ├── llms.txt
-        ├── README.md
-        └── 00-START-HERE/ … 09-assets/
+    ├── AWSDEA/          ← AWS Data Engineer Associate (DEA-C01)
+    │   ├── CLAUDE.md    ← ⭐ the real instructions for this exam
+    │   ├── GEMINI.md
+    │   ├── AGENTS.md
+    │   ├── llms.txt
+    │   ├── README.md
+    │   └── 00-START-HERE/ … 09-assets/
+    └── AWSAIF/          ← AWS Certified AI Practitioner (AIF-C01)
+        └── (same layout)
 ```
 
 ---
@@ -61,6 +63,7 @@ CertificationPrep/
 | Vendor | Code | Certification | Status | Folder |
 |---|---|---|---|---|
 | AWS | **DEA-C01** | Certified Data Engineer – Associate | 🟡 Active | [`AWS/AWSDEA/`](AWS/AWSDEA/) |
+| AWS | **AIF-C01** | Certified AI Practitioner | 🟡 Active | [`AWS/AWSAIF/`](AWS/AWSAIF/) |
 
 Add a row here when a new exam folder is created.
 
