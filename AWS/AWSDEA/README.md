@@ -5,25 +5,28 @@
 
 ## Read this first
 
-This folder has ~95 files. **You do not have time to read 95 files in
-10 days.**
+This folder has **93 files, ~63,800 lines, all written in full** — see
+[`CLAUDE.md`](CLAUDE.md) §5 for the per-folder breakdown and
+[`00-START-HERE/RUNBOOK.md`](00-START-HERE/RUNBOOK.md) for exactly which
+official exam-guide domain/task/sub-skill each file covers.
 
-At 5 hours/day you have ~50 hours. Roughly 60% of that must go to
-*scenario practice questions*, not reading. Reading feels like
-progress. Answering 30 scenario questions and dissecting every wrong
-option **is** progress.
+**You still do not have time to read 93 files in 10 days.** Completeness
+of the material isn't a license to read all of it — at 5 hours/day you
+have ~50 hours, and roughly 60% of that must still go to *scenario
+practice questions*, not reading. Reading feels like progress. Answering
+30 scenario questions and dissecting every wrong option **is** progress.
+Use [`00-START-HERE/RUNBOOK.md`](00-START-HERE/RUNBOOK.md) and the
+[`10-DAY-PLAN.md`](00-START-HERE/10-DAY-PLAN.md) to navigate to what a
+given day actually needs, rather than reading top to bottom.
 
-So the folder is built in two tiers:
-
-| Tier | Files | Status |
-|---|---|---|
-| **Core** | The 8 in `00-START-HERE/` | ✅ Written in full |
-| **Just-in-time** | Everything else | 🕐 Generated on the day the plan calls for it |
-
-Files marked 🕐 are placeholders **on purpose**. Ask for them on the day
-you need them and they'll be written at full depth using the 8-step
-structure. Generating all 95 now would produce shallow filler — the
-opposite of what this repo is for.
+This folder reached 100% completion on 2026-08-09 via one explicit,
+user-requested bulk-generation pass (normally exam folders in this repo
+fill placeholders **just-in-time**, one file at a time, as the study
+plan reaches them — see `CLAUDE.md` §4). If you're looking at this
+folder as a reference for how to bootstrap a *new* exam folder, the
+reusable process lives in the repo root's `_scripts/README.md` and
+`_TEMPLATE/CLAUDE.md` §12, not here — this file is the finished result,
+not the recipe.
 
 ---
 

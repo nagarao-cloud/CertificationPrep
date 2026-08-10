@@ -105,7 +105,7 @@ one deliberate exception.
 
 | Folder | Files | Total lines | Notes |
 |---|---|---|---|
-| `00-START-HERE/` | 17 | ~6,100 | Core reference — exam guide, plan, matrices, cheat sheets, glossary, flashcards |
+| `00-START-HERE/` | 18 | ~6,500 | Core reference — exam guide, plan, matrices, cheat sheets, glossary, flashcards, [`RUNBOOK.md`](00-START-HERE/RUNBOOK.md) |
 | `01-domains/` | 5 | ~10,600 | 4 domain deep-dives (2,300–3,000 lines each, 40 Q&A each) + summaries |
 | `02-services/` | 24 | ~14,900 | One file per in-scope service, ~450–900 lines each, 15 Q&A each |
 | `03-comparisons/` | 10 | ~2,500 | Head-to-head decision guides |
@@ -115,10 +115,14 @@ one deliberate exception.
 | `07-revision/` | 6 | ~1,500 | Spaced-repetition sheets, compressed by design |
 | `08-interview/` | 4 | ~4,000 | Post-exam interview prep |
 
-Total: **~63,400 lines across 92 files.** Generated via a batched
+Total: **~63,800 lines across 93 files.** Generated via a batched
 parallel-agent pass — see the repo root's [`_scripts/README.md`](../../_scripts/README.md)
 for the reusable playbook, which is now also baked into
-`_TEMPLATE/CLAUDE.md` §12 for future exam folders.
+`_TEMPLATE/CLAUDE.md` §12 for future exam folders. The discovered
+domain/task/sub-skill structure this pass was generated against is
+recorded in [`00-START-HERE/RUNBOOK.md`](00-START-HERE/RUNBOOK.md) — the
+concrete, exam-specific artifact §12's "Step 0" produces, and the
+worked example that future exam folders' own runbooks are modeled on.
 
 **Currency note:** this pass also corrected the folder against the
 official DEA-C01 exam guide **v1.1 (2025-12-12)**, verified live against
