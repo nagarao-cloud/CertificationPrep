@@ -165,6 +165,55 @@ this early in the launch, and rather than Backup & Restore alone, which
 doesn't satisfy "documented plan for outage during critical weeks" as
 strongly as a standing (if minimal) standby does.
 
+## Backup and DR service vs. hand-rolled backup scripts
+
+Google Cloud's managed **Backup and DR service** is the named product
+this exam expects you to recognize for centralized backup/DR management
+across Compute Engine, Cloud SQL, and other supported workloads — worth
+distinguishing from simply "we wrote a cron job that snapshots things."
+
+| Dimension | Backup and DR service | Hand-rolled backup scripts/cron jobs |
+|---|---|---|
+| Centralized policy management | Yes — one place to define retention/schedule across workload types | No — each script has its own logic, drifts independently |
+| Application-consistent backups | Supported for compatible workloads | Depends entirely on what the script author implemented |
+| Monitoring/alerting on backup health | Built-in | Must be custom-built, and is the piece most often skipped (see the "typical failure mode" row above) |
+| Restore testing/orchestration | Built-in workflows | Manual, ad hoc, rarely exercised |
+| Best for | A scenario naming multiple workload types needing consistent, auditable backup/DR governance | Rarely the exam-correct answer for a new design — recognize it as the legacy/anti-pattern a scenario may describe as the *current* state needing improvement |
+
+**Tradeoff:** a scenario describing "each team manages its own backup
+scripts, inconsistently, and leadership has no visibility into backup
+health across the fleet" is describing the hand-rolled anti-pattern and
+signaling the Backup and DR service as the fix — this is a Domain 6.2
+"deployment and release management" pattern as much as a pure DR one,
+since it's fundamentally an operational-governance gap.
+
+## SLO burn-rate monitoring and error budgets (Domain 6.1 tie-in)
+
+HA/DR tier selection and **error-budget-driven operations** are related
+but distinct: the HA/DR tier determines what happens during an actual
+regional/zonal failure, while SLO burn-rate monitoring determines how
+quickly you *notice and respond* to degradation before or short of a
+full failover event.
+
+- **Fast burn-rate alerting** (consuming the error budget quickly, e.g.
+  a spike of 5xx errors) should page immediately — relevant regardless
+  of HA/DR tier, since even an Active-Active design can have a
+  region-local degradation that burns the budget without triggering a
+  full failover.
+- **Slow burn-rate alerting** (a steady, low-level elevated error rate)
+  is a signal to investigate before it becomes an incident, not
+  necessarily to fail over — a scenario testing burn-rate reasoning
+  wants you to distinguish "page now" from "file a ticket," which maps
+  to fast vs. slow burn rate respectively, not to the HA/DR tier
+  question at all.
+- **A generous HA/DR tier does not substitute for SLO monitoring** — a
+  scenario proposing Active-Active with no monitoring/alerting strategy
+  is still an incomplete design per Domain 6.1; the tier limits how bad
+  an outage *can* get, monitoring determines how fast you find out
+  something is wrong in the first place.
+
+## Worked scenario walkthroughs (continued)
+
 **Scenario C — TerramEarth, internal analytics reporting.** "A monthly
 internal report summarizing fleet telemetry trends is generated from a
 data warehouse; if the warehouse were unavailable for a day, report
@@ -175,3 +224,18 @@ Reasoning: explicitly stated tolerance for a day of unavailability with
 frames as low-stakes and cost-driven would be over-engineering relative
 to the stated requirement, the same trap pattern flagged throughout
 this file's tradeoff call-outs.
+
+## Case-study alignment at a glance
+
+A quick sanity-check table — not a substitute for reading each
+scenario's actual stated RTO/RPO, but a reminder that the "obvious"
+tier per case study isn't always uniform across every subsystem within
+it (see the RTO/RPO-by-layer table above for why a single case study
+can legitimately mix tiers across its own components):
+
+| Case study | Component most likely to need Active-Active/Active-Passive | Component more likely to fit Warm Standby/Backup & Restore |
+|---|---|---|
+| EHR Healthcare | Patient-record access during clinical hours | Historical/archival compliance reporting |
+| Helicopter Racing League | Live broadcast ingest/streaming during race windows | Post-race analytics/highlight-generation pipeline |
+| Mountkirk Games | Live matchmaking/gameplay during and after launch | Internal analytics dashboards, non-live leaderboards |
+| TerramEarth | Real-time telemetry ingestion (fleet safety-relevant alerts) | Monthly/quarterly aggregate reporting |
