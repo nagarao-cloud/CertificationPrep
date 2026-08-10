@@ -115,7 +115,9 @@ Full sourcing and rationale for each row: `00-START-HERE/RUNBOOK.md` §7.
 | "Cost/optimization domain is only about billing" | "Domain 4 (~18%) also covers Vertex AI/Dataflow workload cost-performance tuning and sustainability (Carbon Footprint tool, region selection for lower emissions)" |
 | "App Engine Flexible is a mainstream exam answer" | "App Engine Standard is the actively-tested variant; Flexible is de-emphasized for 2026" |
 | "The exam guide hasn't changed in years" | "Current revision is v6.1 (October 2025) — always re-check the live guide page before teaching from a cached copy" |
-| "Hybrid/on-prem connectivity is a minor topic" | "Hybrid connectivity (Interconnect, VPN, Network Connectivity Center, Anthos) is a recurring, stable theme — both EHR Healthcare and TerramEarth case studies assume a hybrid footprint" |
+| "Hybrid/on-prem connectivity is a minor topic" | "Hybrid connectivity (Interconnect, VPN, Network Connectivity Center, GKE Enterprise) is a recurring, stable theme — both EHR Healthcare and TerramEarth case studies assume a hybrid footprint" |
+| "Anthos is the current product name" | "Rebranded to **GKE Enterprise**; Anthos is now the legacy/synonym name (MEDIUM confidence, not independently re-verified this session — spot-check before treating as exam-certain)" |
+| "AlloyDB doesn't exist / isn't PCA-relevant" | "AlloyDB for PostgreSQL is current and architect-relevant — a routine Cloud SQL/Spanner/AlloyDB decision-matrix candidate. Was missing from the folder's first generation pass; closed 2026-08-10." |
 
 ## 8. Domain vocabulary in active use
 

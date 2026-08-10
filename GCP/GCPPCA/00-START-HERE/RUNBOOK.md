@@ -52,6 +52,19 @@
   actual PDF later should treat task-level wording as the first thing to
   verify, not the domain names or weights.
 
+- **Re-verification attempt, 2026-08-10 (later session):** re-tried
+  `services.google.com` directly and via the `cloud.google.com/learn/…`
+  and `cloud.google.com/certification/guides/…` redirect paths — both
+  still hit `EGRESS_BLOCKED`. Web search surfaced a second corroborating
+  source independent of `nilanjanbs/gcp-pca-2026-study-guide`'s weight
+  table: the same repo's README also publishes a **per-domain "Focus
+  Areas" list**, folded into §3 below as additional (still
+  secondary-source, not verbatim-PDF) corroboration of which topics sit
+  under each domain. This raised confidence on *topic coverage* for
+  Domains 2, 4, 5, and 6 specifically, but does not change the
+  LOW/reconstructed confidence rating on exact task-numbering wording
+  above — treat it as "which topics," not "exact guide sentence."
+
 ## 2. Exam facts (confirmed from `cloud.google.com`, primary source)
 
 | Fact | Value |
@@ -130,6 +143,20 @@ verbatim bullets above.
 | 4 | Analyzing and optimizing technical and business processes | ~18% |
 | 5 | Managing implementation | ~11% |
 | 6 | Ensuring solution and operations reliability | ~12% |
+
+**Secondary corroboration — per-domain "Focus Areas"** (from the same
+`nilanjanbs/gcp-pca-2026-study-guide` README, re-fetched 2026-08-10;
+still secondary-source, useful for topic emphasis, not verbatim guide
+wording):
+
+| # | Domain | Focus Areas cited |
+|---|---|---|
+| 1 | Designing & Planning | Requirements mapping, service selection, multi-region patterns, Vertex AI design |
+| 2 | Managing & Provisioning | Terraform patterns, GKE provisioning, CI/CD integration, observability-as-code |
+| 3 | Security & Compliance | IAM deep dive, CMEK/VPC-SC, Securing AI patterns, audit & compliance automation |
+| 4 | Analyzing & Optimizing | Cost/performance tuning, Recommender API, Dataflow triggers, sustainability |
+| 5 | Managing Implementation | Traffic splitting, Config Connector, tool selection rules, governance automation |
+| 6 | Reliability & WAF | HA vs DR, RPO/RTO mapping, probes, SLO burn rates, Backup & DR service |
 
 Task-level breakdown below (marked **[reconstructed]**) mirrors the
 historically stable PCA task structure (unchanged in shape across guide
@@ -307,17 +334,30 @@ studies) rather than gaps.
 Compute Engine, GKE (Autopilot + Standard), Cloud Run, Cloud Functions,
 App Engine (Standard — see §7 for Flexible), Vertex AI (incl. Model
 Garden, Feature Store, Model Monitoring), Cloud Storage, Cloud SQL,
-Cloud Spanner, Bigtable, Firestore, BigQuery, Memorystore, VPC (incl.
-Shared VPC, VPC Peering, VPC Service Controls, Private Service Connect),
-Cloud Load Balancing (all tiers), Cloud Interconnect/VPN, Network
-Connectivity Center, Cloud DNS, Cloud NAT, Cloud Armor, IAM (incl.
-Workload Identity Federation), Resource Manager hierarchy, Cloud KMS,
-Secret Manager, Cloud DLP, Org Policy, Cloud Audit Logs, Assured
-Workloads, Cloud Monitoring/Logging/Trace/Profiler, Cloud Build, Cloud
-Deploy, Artifact Registry, Terraform (as the expected IaC tool), Config
-Connector, Cloud Composer, Dataflow, Dataproc, Pub/Sub, Data Fusion,
-Backup and DR service, Storage Transfer Service, Transfer Appliance,
-Carbon Footprint tool, Recommender API.
+**AlloyDB for PostgreSQL**, Cloud Spanner, Bigtable, Firestore, BigQuery,
+Memorystore, VPC (incl. Shared VPC, VPC Peering, VPC Service Controls,
+Private Service Connect), Cloud Load Balancing (all tiers), Cloud
+Interconnect/VPN, Network Connectivity Center, Cloud DNS, Cloud NAT,
+Cloud Armor, IAM (incl. Workload Identity Federation), Resource Manager
+hierarchy, Cloud KMS, Secret Manager, Cloud DLP, Org Policy, Cloud Audit
+Logs, Assured Workloads, **Security Command Center**, **Binary
+Authorization**, Cloud Monitoring/Logging/Trace/Profiler, Cloud Build,
+Cloud Deploy, Artifact Registry, Terraform (as the expected IaC tool),
+Config Connector, Cloud Composer, Dataflow, Dataproc, Pub/Sub, Data
+Fusion, Backup and DR service, Storage Transfer Service, Transfer
+Appliance, Carbon Footprint tool, Recommender API, **GKE Enterprise**
+(Google's current name for the platform that was branded Anthos —
+Anthos is now a component/legacy name under the GKE Enterprise
+umbrella; recognize both terms, GKE Enterprise is the one to lead with).
+
+**Gap found and closed in the 2026-08-10 depth-remediation pass:**
+AlloyDB, Security Command Center, Binary Authorization, and the GKE
+Enterprise rename were entirely absent from the folder's first
+generation pass despite being current, architect-relevant GCP surface
+area (AlloyDB in particular is a routine "vs. Cloud SQL vs. Spanner"
+decision-matrix candidate for Domain 1.3/2.2). Added to `02-services/`,
+`03-comparisons/`, and the relevant `01-domains/` files in that pass —
+see `CLAUDE.md` §5 for the updated per-folder summary.
 
 **Explicitly de-emphasized / stale for 2026 (per secondary-source
 "de-emphasized topics" notes, consistent across domain files):**
@@ -335,7 +375,9 @@ troubleshooting minutiae. Treat these as low-yield, not zero-yield.
 | "Cost/optimization domain is only about billing" | "Domain 4 (~18%) also covers Vertex AI/Dataflow workload cost-performance tuning and sustainability (Carbon Footprint tool, region selection)" | Same 2026 revision pattern — AI workload optimization and sustainability both called out as newly weighted material. |
 | "App Engine Flexible is a mainstream exam answer" | "App Engine Standard is the actively-tested App Engine variant; Flexible is de-emphasized" | Consistent de-emphasis flag across multiple secondary sources for the 2025/2026 guide cycle. |
 | "The exam guide hasn't changed in years" | "Current revision is v6.1 (October 2025); always re-check `cloud.google.com/learn/certification/guides/professional-cloud-architect` before teaching from an older cached guide" | A versioned filename (`v6.1_pca_...pdf`) confirms Google does revise and re-publish this guide; do not assume a locally cached copy of the guide is current. |
-| "Google Cloud VMware Engine / Anthos are unlikely exam topics" | "Hybrid/multi-cloud patterns (Anthos, GKE on-prem/Bare Metal, Network Connectivity Center) remain in scope for Domain 1.3/2.1 hybrid-connectivity tasks" | Hybrid connectivity has been a stable, recurring PCA theme (TerramEarth and EHR Healthcare case studies both assume hybrid footprints) and nothing in current sourcing suggests it was dropped. |
+| "Google Cloud VMware Engine / Anthos are unlikely exam topics" | "Hybrid/multi-cloud patterns (GKE Enterprise, GKE on-prem/Bare Metal, Network Connectivity Center) remain in scope for Domain 1.3/2.1 hybrid-connectivity tasks" | Hybrid connectivity has been a stable, recurring PCA theme (TerramEarth and EHR Healthcare case studies both assume hybrid footprints) and nothing in current sourcing suggests it was dropped. |
+| "Anthos is the current product name for GCP's hybrid/multi-cloud Kubernetes platform" | "Anthos was rebranded to **GKE Enterprise**; Anthos now refers to the legacy name / a subset of that umbrella. Lead with GKE Enterprise, recognize Anthos as an older synonym a question might still use" | Google's rebrand of Anthos → GKE Enterprise; recall-level fact (not independently re-verified against a live source this session — flag as MEDIUM confidence, worth a quick manual check before treating as exam-certain). |
+| "AlloyDB doesn't exist / isn't a PCA-relevant service" | "AlloyDB for PostgreSQL is a current, architect-relevant managed database — PostgreSQL-compatible, positioned as higher-performance than Cloud SQL for demanding transactional/analytical-hybrid workloads, a routine decision-matrix candidate alongside Cloud SQL and Spanner" | Missing entirely from this folder's first generation pass; closed in the 2026-08-10 depth-remediation pass. See `02-services/02-storage-databases.md` and `03-comparisons/02-storage-database-options.md`. |
 
 ## 8. §5 checklist status
 
