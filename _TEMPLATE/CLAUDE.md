@@ -97,3 +97,94 @@ of inflating existing ones. Never pad to hit a line count.
 - Numbered folder prefixes (`00-` through `09-`) enforce reading order
 - Commit messages prefixed with the exam code: `{{FOLDER}} Day 3: ...`
 - No secrets, no account IDs, no credentials
+
+## 12. Bulk content-generation playbook (only when explicitly requested)
+
+Rule 4 is the default: placeholders get filled just-in-time, one at a
+time. **Do not run this playbook unprompted.** Run it only when the user
+explicitly asks to fill some or all placeholders in one pass (e.g. "fill
+every file to 100%," "generate everything now"). This section exists so
+that request can be honored correctly on the first try, without the user
+having to re-explain the process or re-supply source material — this is
+the reusable part of what made the first exam folder in this repo
+(AWS DEA-C01) go from ~4,000 to ~63,000 lines in one session without the
+result being shallow filler.
+
+**Step 0 — verify currency before writing anything.** Source material
+(pasted by the user, or in this repo already) can predate the vendor's
+most recent exam-guide revision. Before generating content, find and
+fetch the vendor's official exam-guide changelog/revisions page (most
+certification vendors publish one — AWS does, at
+`docs.aws.amazon.com/aws-certification/.../<exam>-revisions.html`). Read
+what actually changed: services added/removed from scope, skills
+renamed or renumbered, tools deprecated. Fold every finding into section
+7 (currency corrections) *before* the bulk pass, not after — an agent
+regenerating 24 service files with a deprecated tool name baked in is a
+worse outcome than a placeholder.
+
+**Step 1 — batch by folder, not by file and not all-at-once.** One
+agent per file is too slow (dozens of round-trips for a `02-services/`
+folder with 24 files). One giant agent for the whole exam risks losing
+the thread over such a large output and makes a mid-run failure costly
+to recover from. The sweet spot demonstrated here: **4-8 files per
+background agent**, grouped by folder or by clear topical adjacency
+(e.g. streaming services together, security services together). Launch
+the batches in parallel (multiple `Agent` calls in one turn) since
+they're writing disjoint files with no dependencies between them.
+
+**Step 2 — each agent reads this file, not a re-explanation of it.**
+Tell every agent to start by reading this folder's own `CLAUDE.md` in
+full for the audience, structure, and currency corrections, instead of
+re-pasting all of that into every prompt. Only spell out what's specific
+to that agent's batch: which files, what each must cover, and any
+cross-file facts it must stay consistent with (see Step 4).
+
+**Step 3 — match depth to file type, not one target for everything.**
+Reference/teaching files (domains, services, comparisons, architectures)
+want real depth — hundreds to low thousands of lines, per section 3's
+"depth over brevity" default. Compressed-by-design files (revision
+sheets, flashcards, glossaries, a study roadmap) want the *opposite* —
+section 10 already says compression is a feature there; padding them to
+hit a line-count target makes them worse, not better. Tell each agent
+explicitly which kind of file it's writing.
+
+**Step 4 — prevent cross-file contradictions.** When two files in this
+folder will both cover the same cross-cutting fact (a policy evaluation
+order, a deprecated-service call, a security model), have the later
+agent read the earlier file and match its conclusion rather than
+re-deriving it independently. Two reference files quietly disagreeing
+with each other is worse than either being incomplete.
+
+**Step 5 — recover from a failed batch by diffing, not restarting.**
+Background agents can fail mid-stream from transient infrastructure
+issues unrelated to the content itself. When one reports failed, don't
+assume nothing happened — check actual file states first (line counts,
+or grep for the placeholder marker) to see what that agent completed
+before it stalled. Relaunch a smaller, consolidated agent covering only
+the files that are still actually missing. Several small failures can
+be swept into one cleanup batch rather than re-running the original
+large batches from scratch.
+
+**Step 6 — self-verify before reporting done.** Each agent should, at
+the end of its own run: confirm no placeholder marker remains in any
+file it touched; grep for terms that should have been corrected in Step
+0 (e.g. a deprecated service name) to confirm none slipped through; and
+for any file containing numbered questions with a separate answer key,
+confirm the numbering and correct answers actually match between them.
+
+**Step 7 — isolation still applies, especially now.** Never let an
+agent working on this exam folder read another exam folder's files as
+style or content reference, even mid-bulk-generation. If this exam's
+folder is far along and another exam folder is just starting, that's
+not a reason to shortcut — each exam's material is different enough
+that borrowing conclusions across them produces exactly the kind of
+folder this repo's structure exists to prevent.
+
+After a bulk pass, update section 5 (files written in full) to reflect
+the new state — a per-folder line-count summary, not a line-by-line
+list of every file, matches this doc's own "compression is a feature"
+principle for anything that isn't teaching content.
+
+See the repo root's `_scripts/README.md` for the end-to-end version of
+this workflow, including the exact kickoff prompt to use in a fresh
+conversation.
