@@ -77,6 +77,12 @@ in. Then edit the new folder's `CLAUDE.md` to describe *that* exam's
 domain weights, teaching preferences, and conventions — do not assume
 they match DEA-C01's.
 
+To then have an agent fill that folder's content, see
+[`_scripts/README.md`](_scripts/README.md) — the scaffold's `CLAUDE.md`
+already carries a reusable bulk-generation playbook (§12), so a fresh
+conversation needs only a short kickoff prompt, not re-explained context
+or pasted source material.
+
 ---
 
 ## About the user

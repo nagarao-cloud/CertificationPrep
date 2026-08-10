@@ -110,17 +110,85 @@ the reusable part of what made the first exam folder in this repo
 (AWS DEA-C01) go from ~4,000 to ~63,000 lines in one session without the
 result being shallow filler.
 
-**Step 0 — verify currency before writing anything.** Source material
-(pasted by the user, or in this repo already) can predate the vendor's
-most recent exam-guide revision. Before generating content, find and
-fetch the vendor's official exam-guide changelog/revisions page (most
-certification vendors publish one — AWS does, at
-`docs.aws.amazon.com/aws-certification/.../<exam>-revisions.html`). Read
-what actually changed: services added/removed from scope, skills
-renamed or renumbered, tools deprecated. Fold every finding into section
-7 (currency corrections) *before* the bulk pass, not after — an agent
-regenerating 24 service files with a deprecated tool name baked in is a
-worse outcome than a placeholder.
+**Step 0 — discover THIS exam's actual structure. Never assume it
+matches AWS DEA-C01's.** The first exam folder built this way (AWS
+DEA-C01) has 4 domains, each broken into ~4-5 "tasks," each task broken
+into numbered sub-skills like `2.4.6`. That shape is specific to that
+one exam guide — it is not a template to impose on the next exam. A
+different vendor or a different exam within the same vendor can have:
+a different number of domains (2, 3, 6, whatever it actually is);
+domains called something else entirely ("objectives," "competencies,"
+"knowledge areas," "topics"); no numbered sub-skill hierarchy at all,
+or one that's 2 levels deep instead of 3, or 4; different weighting per
+domain; a completely different question format or scoring model. Before
+generating a single file:
+
+1. Find and read this exam's official, current exam guide (not a
+   summary, not the user's pasted notes, not what a general-purpose
+   model already "knows" about the exam — the vendor's own current PDF
+   or docs page).
+2. Extract the *real* hierarchy exactly as that vendor defines it: how
+   many top-level groupings, what they're called, how many
+   tasks/objectives under each, how many sub-skills under those (if the
+   guide even goes that deep), and the exact weighting/percentage per
+   top-level grouping.
+3. Fill section 6 (Exam facts) and section 8 (vocabulary) of this
+   `CLAUDE.md` with that real structure — don't leave it as a rough
+   approximation "close enough" to a prior exam's shape.
+4. Size `01-domains/` to match: one file per top-level grouping as
+   *this exam* defines it, not four because DEA-C01 had four. If this
+   exam has six domains, that's six domain files; if it has two, that's
+   two, each proportionally deeper given fewer other domains to split
+   study time across.
+5. Every per-domain file's internal structure (how many task sections,
+   how many sub-skill sections within each task) should mirror what
+   that domain's section of the *real* exam guide actually contains —
+   generated from the discovered hierarchy, not copied from another
+   exam folder's file as a shape to fill in.
+6. **Write the discovered structure down as `00-START-HERE/RUNBOOK.md`
+   before generating anything else.** This is the deliverable of Step 0
+   — a concrete, this-exam-specific document, not a restatement of the
+   generic playbook you're reading right now. It's what turns "an agent
+   figured out the structure in its head" into something checkable,
+   reusable across the whole bulk-generation pass, and auditable later
+   if the exam guide revises again. It must contain:
+   - The exact source: guide URL, version/revision date, and the date
+     you fetched it.
+   - The full hierarchy exactly as that vendor defines it — every
+     top-level grouping with its real name and weight, every
+     task/objective under each, every numbered sub-skill under those if
+     the guide goes that deep (verbatim wording from the guide, not
+     paraphrased, so nothing gets silently reinterpreted downstream).
+   - A coverage map: which repo file (or files) is responsible for each
+     leaf of that hierarchy — e.g. "objective 3.2 → covered by
+     `01-domains/DOMAIN-3-....md` §3.2 and `02-services/X.md`." Every
+     leaf in the guide needs at least one entry; a leaf with no entry is
+     a gap, not an oversight to discover later.
+   - The in-scope and out-of-scope service/tool lists straight from the
+     guide, and a currency-corrections table (this becomes section 7).
+   - A generation checklist mirroring the folder layout (`00-` through
+     `09-`), each row checked off as that batch completes, so a
+     mid-pass failure (see Step 5) can be resumed by reading this file
+     instead of re-deriving what's left from scratch.
+
+   Every later step in this playbook — batching, depth targets, cross-
+   file consistency, the final sweep — operates against this runbook,
+   not against assumptions carried over from another exam.
+
+**Step 0b — verify currency before writing anything.** Source material
+(pasted by the user, or already in this repo) can predate the vendor's
+most recent exam-guide revision even after Step 0's discovery pass —
+guides get revised after their initial publication. Find and fetch the
+vendor's official exam-guide changelog/revisions page if one exists
+(most certification vendors publish one — AWS does, at
+`docs.aws.amazon.com/aws-certification/.../<exam>-revisions.html`; other
+vendors' equivalents will be named differently, find theirs). Read what
+actually changed since the guide's original version: services/tools
+added or removed from scope, skills renamed, renumbered, or
+consolidated, features deprecated. Fold every finding into section 7
+(currency corrections) *before* the bulk pass, not after — an agent
+regenerating two dozen reference files with a deprecated tool name baked
+in is a worse outcome than a placeholder.
 
 **Step 1 — batch by folder, not by file and not all-at-once.** One
 agent per file is too slow (dozens of round-trips for a `02-services/`

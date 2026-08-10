@@ -92,6 +92,24 @@ Then:
 
 Works for any vendor: `./_scripts/new-exam.sh Azure AZ104 "Microsoft Azure Administrator" AZ-104`
 
+### Generating that folder's content
+
+The scaffold's `CLAUDE.md` (and its copies) ship with a **bulk
+content-generation playbook** (§12) — a proven, reusable process for
+having an agent fill every placeholder in a new exam folder to full
+depth in one pass, batching parallel background agents, verifying
+currency against the vendor's official exam guide first, and recovering
+cleanly if a batch fails partway through. It doesn't need to be
+re-explained per exam; it travels with the template.
+
+See [`_scripts/README.md`](_scripts/README.md) for the exact two-step
+workflow and the kickoff prompt to use in a fresh conversation — no
+source material or process explanation needs to be pasted in, since it
+all already lives in the folder once it's scaffolded.
+
+This is opt-in, not the default: day-to-day, exam folders are still
+filled **just-in-time**, one placeholder at a time, as noted below.
+
 ---
 
 ## Working with AI assistants
