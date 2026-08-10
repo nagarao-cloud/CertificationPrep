@@ -957,6 +957,24 @@ search and pre-built dashboards** (a security operations center
 watching failed-login patterns in near-real-time, for example) rather
 than occasional SQL.
 
+**Tradeoff — the three "logging" services aren't interchangeable, and
+picking the wrong one is the actual trap on this sub-skill:**
+
+| | CloudTrail | CloudWatch Logs | CloudTrail Lake |
+|---|---|---|---|
+| What it captures | AWS API calls (who did what, to what resource) | Whatever your application/service explicitly writes | Same data as CloudTrail, in a queryable store |
+| Wrong tool when... | You need application-level detail ("what did my Lambda print") — CloudTrail has no idea your code exists | You need to know *who called an API*, not what a running process logged — app logs won't have IAM principal/source IP | You need real-time streaming alerts — Lake is built for retrospective SQL, not sub-second alarms |
+| Cost driver | Free for management events; data events (S3 object-level, Lambda invoke-level) cost extra and must be explicitly turned on | Per-GB ingestion + per-GB-month storage — the most expensive of the three at high volume if retention isn't tuned | Per-GB ingested into the event data store, separate from CloudTrail's own delivery cost |
+| Picks it over the other two when the stem says... | "audit trail," "who deleted this bucket," "compliance evidence of API activity" | "debug my pipeline," "the application logged an error," "Lambda/Glue job output" | "run SQL across 6 months of activity from 40 accounts," "centralized audit query capability" |
+
+The trap AWS actually writes: a question describes wanting to
+**investigate what an application did internally** (a stack trace, a
+custom log line) and offers CloudTrail as a tempting "sounds like
+logging" wrong answer — CloudTrail only ever sees *AWS API calls*, never
+your code's own output. The fix for that gap is always CloudWatch Logs
+(via the language SDK/agent), never CloudTrail, no matter how the
+question dresses up "logging" as the keyword.
+
 ### 4.4.5 Integrate various AWS services to perform logging
 
 **Enterprise centralized-logging pattern:**

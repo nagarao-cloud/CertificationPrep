@@ -98,7 +98,7 @@ a leaf's name attached to it.
 | 1.3 Orchestrate data pipelines | `DOMAIN-1...md` §1.3 | E | E | ✅ | `02-services/{StepFunctions,EventBridge,MWAA}.md` — no standalone StepFunctions-vs-MWAA/EventBridge comparison file; matrix lives in the domain file and is repeated in each service file |
 | 1.4 Apply programming concepts | `DOMAIN-1...md` §1.4 | E | E | ✅ | `00-START-HERE/{CHEAT-SHEETS,GLOSSARY}.md` — CDK vs CloudFormation vs Terraform matrix is domain-file-embedded only |
 | 2.1 Choose a data store | `DOMAIN-2...md` §2.1 | D | D | ✅ | `04-architectures/{Data-Lake,Lakehouse}.md`, `03-comparisons/{S3-vs-EFS-vs-FSx,DynamoDB-vs-Aurora,Serverless-vs-Cluster}.md`, `02-services/{S3,Redshift,DynamoDB,Aurora}.md`, `05-labs/{LAB-01,LAB-04}.md` |
-| 2.2 Understand data cataloging systems | `DOMAIN-2...md` §2.2 | E | E | ⚠️ | `02-services/Glue.md` (Catalog + crawler) — Glue Catalog vs Hive Metastore vs SageMaker Catalog is a short matrix, not a full tradeoff writeup; weakest tradeoff coverage in the folder |
+| 2.2 Understand data cataloging systems | `DOMAIN-2...md` §2.2 | E | E | ✅ | `02-services/Glue.md` (Catalog + crawler); tradeoff pass added 2026-08-09 covering when Hive Metastore and SageMaker Catalog beat the Glue Catalog default |
 | 2.3 Manage the lifecycle of data | `DOMAIN-2...md` §2.3 | E | D | ✅ | `02-services/S3.md` (lifecycle/versioning); storage-class decision matrix in `00-START-HERE/COST-OPTIMIZATION.md` |
 | 2.4 Design data models and schema evolution | `DOMAIN-2...md` §2.4 | E | D | ✅ | `03-comparisons/{Iceberg-vs-Hive,ZeroETL-vs-DMS-vs-Glue}.md`, `02-services/DMS.md` (DMS Schema Conversion) |
 | 3.1 Automate data processing | `DOMAIN-3...md` §3.1 | E | E | ✅ | `02-services/{StepFunctions,MWAA,Lambda,DataBrew,Athena}.md` |
@@ -108,19 +108,20 @@ a leaf's name attached to it.
 | 4.1 Apply authentication mechanisms | `DOMAIN-4...md` §4.1 | E | E | ✅ | `02-services/IAM.md` (IAM Role vs IAM User) |
 | 4.2 Apply authorization mechanisms | `DOMAIN-4...md` §4.2 | E | D | ✅ | `00-START-HERE/SECURITY.md`, `02-services/Lake-Formation.md` (RBAC vs ABAC, Secrets Manager vs Parameter Store) |
 | 4.3 Ensure data encryption and masking | `DOMAIN-4...md` §4.3 | E | D | ✅ | `02-services/KMS.md` (SSE-S3 vs SSE-KMS vs DSSE-KMS vs SSE-C matrix) |
-| 4.4 Prepare logs for audit | `DOMAIN-4...md` §4.4 | E | E | ⚠️ | `02-services/{CloudTrail,CloudWatch}.md` — CloudTrail vs CloudTrail Lake vs CloudWatch Logs Insights is listed, tradeoff reasoning thinner than 4.2/4.3 |
+| 4.4 Prepare logs for audit | `DOMAIN-4...md` §4.4 | E | D | ✅ | `02-services/{CloudTrail,CloudWatch}.md`; CloudTrail vs CloudWatch Logs vs CloudTrail Lake comparison table + the "application logging isn't CloudTrail" trap added 2026-08-09 |
 | 4.5 Understand data privacy and governance | `DOMAIN-4...md` §4.5 | D | E | ✅ | `04-architectures/{Banking,Healthcare}.md`, `02-services/{Macie,Lake-Formation}.md` (Macie vs Lake Formation) |
 
 Cross-cutting (not tied to one domain): `03-comparisons/Batch-vs-Streaming.md`,
 `04-architectures/{Retail,Media,IoT,Batch-Pipeline,End-to-End-Architectures}.md`,
 all of `06-practice/`, `07-revision/`, `08-interview/`.
 
-**Two flagged gaps, honestly:** 2.2 (cataloging) and 4.4 (audit logs)
-have real content but thinner tradeoff reasoning than the rest of the
-folder — both are more "here's what each option does" than "here's
-exactly when each one loses." If this folder gets revisited, those two
-are the highest-value places to add a proper tradeoff pass before
-adding anything else.
+**Status: no open gaps.** 2.2 (cataloging) and 4.4 (audit logs) were
+flagged during this audit as having thinner tradeoff reasoning than the
+rest of the folder — both closed same-day with a dedicated tradeoff
+pass (see the Tradeoff column above). All 17 leaves now carry ✅ on
+tradeoff coverage. If a future exam-guide revision adds a new leaf,
+run this same audit against it before marking the folder complete
+again — a file existing was never the bar.
 
 ## 4. Currency corrections (feeds `CLAUDE.md` §7)
 
