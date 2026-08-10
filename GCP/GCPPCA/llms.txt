@@ -18,13 +18,14 @@ AGENTS.md) before making changes.
 
 - [Start here](00-START-HERE/): core reference material, written in full
 
-## Optional (placeholders, generated just-in-time)
+## Study material (written in full as of the 2026-08-10 bulk-generation pass)
 
-- [Domains](01-domains/)
-- [Services](02-services/)
-- [Comparisons](03-comparisons/)
-- [Architectures](04-architectures/)
-- [Labs](05-labs/)
-- [Practice](06-practice/)
-- [Revision](07-revision/)
-- [Interview](08-interview/)
+- [Domains](01-domains/): per-domain deep dives (6 files)
+- [Services](02-services/): per-service reference (7 files)
+- [Comparisons](03-comparisons/): head-to-head decision matrices (6 files)
+- [Architectures](04-architectures/): 4 case studies + 2 generic patterns
+- [Labs](05-labs/): 5 sequenced hands-on walkthroughs
+- [Practice](06-practice/): 6 per-domain question banks + 2 mock exams
+- [Revision](07-revision/): 6 cheat sheets + master flashcards
+- [Interview](08-interview/): architect-level and behavioral questions
+- [Assets](09-assets/): diagrams, mind maps, decision-flowchart index
