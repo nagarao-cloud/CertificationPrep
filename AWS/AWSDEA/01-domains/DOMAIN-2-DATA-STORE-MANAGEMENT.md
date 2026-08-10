@@ -1156,6 +1156,32 @@ engines**, no duplicated schema definitions to keep in sync.
 | **Hive Metastore (self-managed)** | You (on EMR or EC2) | Hadoop/Spark ecosystem tools | "Migrating an existing Hadoop cluster's metastore," legacy Hadoop-ecosystem compatibility |
 | **SageMaker Catalog / Amazon DataZone** | AWS, serverless | Business users, data mesh | Business metadata, ownership, discovery — see 2.2.6 |
 
+**Tradeoff — why "Glue Catalog almost always wins" isn't the whole
+story:**
+
+- **Glue Data Catalog loses to a self-managed Hive metastore** when the
+  workload is a **lift-and-shift of an existing on-prem Hadoop cluster**
+  whose jobs are hard-coded against Hive metastore internals (custom
+  SerDes, non-standard table properties) that the Glue-Catalog
+  Hive-compatible endpoint doesn't fully replicate. In that specific
+  case, "least operational overhead" loses to "don't break 200 existing
+  Spark jobs on day one" — you migrate the metastore as-is first, and
+  plan the Glue Catalog cutover as a second, separate project. The exam
+  reward for spotting this: it's the rare case where the "obviously
+  more managed" option is the wrong first move.
+- **Glue Data Catalog loses to SageMaker Catalog / DataZone** whenever
+  the question is actually about *business* metadata — ownership,
+  approval workflows, who's allowed to discover a dataset exists — not
+  *technical* metadata (schema, partitions, location). Glue Catalog has
+  no concept of a data owner or an access request; it's a schema
+  registry, not a governance layer. Picking Glue Catalog for a "business
+  users need to discover and request access to datasets" scenario is
+  the single most common trap in this sub-skill.
+- **Net rule:** Glue Catalog is the default answer only when the
+  question is about *engines finding schema*. The moment the scenario
+  mentions humans discovering datasets, or an existing non-AWS
+  metastore that already works, the default flips.
+
 ⚠️ **Exam trap:** the Glue Data Catalog can act as a **Hive-metastore-
 compatible** endpoint, meaning EMR/Spark jobs written against Hive
 metastore APIs can point at the Glue Catalog instead of running their

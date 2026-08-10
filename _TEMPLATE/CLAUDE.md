@@ -164,6 +164,27 @@ generating a single file:
      `01-domains/DOMAIN-3-....md` §3.2 and `02-services/X.md`." Every
      leaf in the guide needs at least one entry; a leaf with no entry is
      a gap, not an oversight to discover later.
+   - **The coverage map must track three content types per leaf, not
+     just "a file exists":**
+     - **Design/architecture** — does a production pattern exist
+       showing how this leaf's services fit into a real system (an
+       ASCII diagram with every arrow explained, in `04-architectures/`
+       or the relevant domain file's production-architecture section)?
+     - **Decision matrix** — when this leaf involves choosing between
+       services or approaches, is there an actual comparison table
+       (the 14-column format from section 3) in `03-comparisons/` or
+       the domain file, not just prose describing the options?
+     - **Tradeoffs** — for every "when to use X" claim, is there a
+       paired "when NOT to use X, and why the alternative wins instead"
+       right next to it? A leaf that only explains what a service does,
+       with no decision matrix and no stated tradeoff against its
+       nearest alternative, is not fully covered — it's a services list
+       with a leaf's name attached to it. This is what actually answers
+       DEA-C01-style scenario questions; a services glossary doesn't.
+     Mark each of these three as present/missing per leaf in the
+     runbook table (not just "covered: yes/no") so a gap in *design* or
+     *tradeoffs* specifically — as opposed to raw content existing at
+     all — is visible and fixable before the pass is called done.
    - The in-scope and out-of-scope service/tool lists straight from the
      guide, and a currency-corrections table (this becomes section 7).
    - A generation checklist mirroring the folder layout (`00-` through
