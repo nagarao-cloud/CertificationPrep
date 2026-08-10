@@ -93,21 +93,43 @@ A placeholder looks like this:
 > Scheduled for: **Day 3**
 ```
 
-## 5. Files written in full (as of last update)
+## 5. Files written in full (as of 2026-08-09)
 
-| File | Lines | Purpose |
-|---|---|---|
-| `00-START-HERE/DECISION-TREES.md` | ~1,030 | 16 decision trees + 17 worked question walkthroughs |
-| `00-START-HERE/SERVICE-SELECTION-MATRIX.md` | ~990 | Keyword→service reflex table + 16 comparison matrices |
-| `00-START-HERE/EXAM-GUIDE.md` | ~680 | Task statements, service depth ratings, self-assessment |
-| `00-START-HERE/EXAM-TRAPS.md` | ~580 | 60 traps in setup→wrong→right→principle format |
-| `00-START-HERE/10-DAY-PLAN.md` | ~240 | Daily schedule with spaced repetition |
-| `00-START-HERE/MNEMONICS.md` | ~130 | Memory hooks |
-| `00-START-HERE/50-TIPS.md` | ~120 | User's original tip list, audited and re-weighted |
-| `00-START-HERE/EXAM-STRATEGY.md` | ~100 | Time management, elimination heuristics |
-| `README.md` | ~110 | Index + master mental map |
+**This folder is at 100% completion — every placeholder has been filled.**
+That happened in one deliberate bulk pass, explicitly requested by the
+user, which overrode rule 4 for that pass only. Rule 4 still governs any
+*new* placeholder that gets added to this folder later (e.g. a new lab
+or a new comparison file) — a 100%-complete folder isn't an argument for
+abandoning just-in-time generation as the *default*, it's the record of
+one deliberate exception.
 
-Everything else in `01-` through `09-` is a placeholder.
+| Folder | Files | Total lines | Notes |
+|---|---|---|---|
+| `00-START-HERE/` | 17 | ~6,100 | Core reference — exam guide, plan, matrices, cheat sheets, glossary, flashcards |
+| `01-domains/` | 5 | ~10,600 | 4 domain deep-dives (2,300–3,000 lines each, 40 Q&A each) + summaries |
+| `02-services/` | 24 | ~14,900 | One file per in-scope service, ~450–900 lines each, 15 Q&A each |
+| `03-comparisons/` | 10 | ~2,500 | Head-to-head decision guides |
+| `04-architectures/` | 11 | ~6,600 | 5 industry-vertical + 6 pattern architectures |
+| `05-labs/` | 9 | ~3,400 | 8 hands-on labs + Terraform notes |
+| `06-practice/` | 9 | ~4,300 | 2 full 65-question mock exams + tiered question banks |
+| `07-revision/` | 6 | ~1,500 | Spaced-repetition sheets, compressed by design |
+| `08-interview/` | 4 | ~4,000 | Post-exam interview prep |
+
+Total: **~63,400 lines across 92 files.** Generated via a batched
+parallel-agent pass — see the repo root's [`_scripts/README.md`](../../_scripts/README.md)
+for the reusable playbook, which is now also baked into
+`_TEMPLATE/CLAUDE.md` §12 for future exam folders.
+
+**Currency note:** this pass also corrected the folder against the
+official DEA-C01 exam guide **v1.1 (2025-12-12)**, verified live against
+`docs.aws.amazon.com` — not just against the user's original source
+material, which predated that revision. Standout corrections: AWS SCT
+(standalone tool) removed from scope → **DMS Schema Conversion** is the
+current name; AWS CodeCommit removed from scope; **Amazon S3 Tables**,
+**Amazon Kendra**, **AWS Data Exchange**, and **Amazon Q** added to
+scope. If this folder is revisited far in the future, re-check that
+revisions page again before trusting anything here as still current —
+exam guides move, this snapshot doesn't.
 
 ## 6. Exam facts to be accurate about
 
