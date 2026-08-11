@@ -52,6 +52,7 @@ placeholders unprompted — doing so produces shallow filler.
 | `01-domains/DOMAIN-1-fundamentals-of-ai-and-ml.md` | 634 | Day 1 — full task-statement coverage (1.1–1.3), comparison tables, ASCII diagrams, 15 practice Qs |
 | `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | 568 | Day 2-3 — full task-statement coverage (2.1–2.3): FM concepts/lifecycle, capabilities/limitations, AWS GenAI infrastructure, 15 practice Qs |
 | `01-domains/DOMAIN-3-applications-of-foundation-models.md` | 703 | Day 4-5 — full task-statement coverage (3.1–3.4): model selection, inference params, RAG/vector DBs, prompt engineering + misuse risks, fine-tuning, evaluation metrics, 18 practice Qs |
+| `01-domains/DOMAIN-4-responsible-ai.md` | 458 | Day 6 — full task-statement coverage (4.1–4.2): responsible-AI features, Clarify/Guardrails/Model Cards, legal risks, dataset characteristics, interpretability tradeoffs, human-centered design, 14 practice Qs |
 
 ## 6. Exam facts
 
@@ -137,6 +138,18 @@ continuous pre-training vs. fine-tuning, fine-tuning methods
 (instruction tuning, domain adaptation, transfer learning, RLHF), the
 prompt-engineering → RAG → fine-tuning cost/effort ladder, and
 evaluation metrics (human evaluation, ROUGE, BLEU, BERTScore).
+
+Established in Day 6 (Domain 4) — build on these too: the six
+responsible-AI features (bias, fairness, inclusivity, robustness,
+safety, veracity), Amazon SageMaker Clarify (bias detection, SHAP-based
+explainability) vs. Amazon Bedrock Guardrails (runtime safety
+filtering), environmental/sustainability considerations in model
+selection, GenAI legal risks (IP infringement, biased outputs, loss of
+customer trust, end-user risk, hallucinations as a liability concern),
+responsible dataset characteristics (inclusivity, diversity, curated
+sources, balance), Amazon SageMaker Model Cards, the interpretability-
+vs-performance and transparency-vs-security tradeoffs, and
+human-centered design for explainable AI.
 
 ## 9. Typical requests and what they mean
 
