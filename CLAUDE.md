@@ -61,6 +61,7 @@ CertificationPrep/
 | Vendor | Code | Certification | Status | Folder |
 |---|---|---|---|---|
 | AWS | **DEA-C01** | Certified Data Engineer – Associate | 🟡 Active | [`AWS/AWSDEA/`](AWS/AWSDEA/) |
+| GCP | **PCA** | Professional Cloud Architect | 🟡 Active | [`GCP/GCPPCA/`](GCP/GCPPCA/) |
 
 Add a row here when a new exam folder is created.
 
