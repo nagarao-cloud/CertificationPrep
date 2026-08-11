@@ -16,7 +16,7 @@ on implementation detail (no CLI/SDK depth expected).
 | 2-3 | GenAI foundations — FM concepts/lifecycle, capabilities & limitations, AWS GenAI infrastructure (Bedrock/PartyRock/JumpStart/Q) | Domain 2: Fundamentals of Generative AI (all 3 task statements — small enough domain to complete in one file) | 24% | `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | ✅ written |
 | 4-5 | FM application design (model selection, inference params, RAG, vector DBs), prompt engineering techniques & risks, fine-tuning, evaluation metrics | Domain 3: Applications of Foundation Models (all 4 task statements — largest domain, completed in one file) | 28% | `01-domains/DOMAIN-3-applications-of-foundation-models.md` | ✅ written |
 | 6 | Responsible AI — bias, fairness, explainability, transparency | Domain 4: Guidelines for Responsible AI | 14% | `01-domains/DOMAIN-4-responsible-ai.md` | ✅ written |
-| 7 | Security, compliance, governance for AI solutions | Domain 5: Security, Compliance, and Governance for AI Solutions | 14% | `01-domains/DOMAIN-5-security-compliance-governance.md` | 🕐 scheduled |
+| 7 | Security, compliance, governance for AI solutions | Domain 5: Security, Compliance, and Governance for AI Solutions | 14% | `01-domains/DOMAIN-5-security-compliance-governance.md` | ✅ written |
 | 8 | AWS AI/ML service matrix — head-to-head comparisons across all 5 domains | Cross-domain | — | `03-comparisons/` | 🕐 scheduled |
 | 9 | Full practice exam (65 Qs, timed) + weak-area review | Cross-domain | — | `06-practice/` | 🕐 scheduled |
 | 10 | Final revision sheet, flashcards, mnemonics, exam-day checklist | Cross-domain | — | `07-revision/` | 🕐 scheduled |

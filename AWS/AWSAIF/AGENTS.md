@@ -53,6 +53,7 @@ placeholders unprompted — doing so produces shallow filler.
 | `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | 568 | Day 2-3 — full task-statement coverage (2.1–2.3): FM concepts/lifecycle, capabilities/limitations, AWS GenAI infrastructure, 15 practice Qs |
 | `01-domains/DOMAIN-3-applications-of-foundation-models.md` | 703 | Day 4-5 — full task-statement coverage (3.1–3.4): model selection, inference params, RAG/vector DBs, prompt engineering + misuse risks, fine-tuning, evaluation metrics, 18 practice Qs |
 | `01-domains/DOMAIN-4-responsible-ai.md` | 458 | Day 6 — full task-statement coverage (4.1–4.2): responsible-AI features, Clarify/Guardrails/Model Cards, legal risks, dataset characteristics, interpretability tradeoffs, human-centered design, 14 practice Qs |
+| `01-domains/DOMAIN-5-security-compliance-governance.md` | 478 | Day 7 — full task-statement coverage (5.1–5.3): shared responsibility model, PrivateLink/IAM/encryption, GenAI threats, Security Scoping Matrix, governance/compliance services (Config/Inspector/Audit Manager/Artifact/CloudTrail/Trusted Advisor), data governance lifecycle, 14 practice Qs |
 
 ## 6. Exam facts
 
@@ -150,6 +151,20 @@ responsible dataset characteristics (inclusivity, diversity, curated
 sources, balance), Amazon SageMaker Model Cards, the interpretability-
 vs-performance and transparency-vs-security tradeoffs, and
 human-centered design for explainable AI.
+
+Established in Day 7 (Domain 5) — all five domains now covered. Build
+on these too: the shared responsibility model applied to AI (AWS
+secures the platform; customer secures data/IAM/configuration), AWS
+PrivateLink, encryption at rest/in transit, source citation/data
+lineage/cataloging, secure data engineering (data quality, PETs, access
+controls), GenAI-specific threats (prompt injection, data poisoning,
+adversarial attacks, data leakage, bias amplification), the Generative
+AI Security Scoping Matrix (5 ownership/control levels and their
+corresponding security responsibility), the six governance/compliance
+services (Config, Inspector, Audit Manager, Artifact, CloudTrail,
+Trusted Advisor) and each one's distinct role, and the data governance
+lifecycle (collect/store/use/archive/delete, logging, residency,
+monitoring, retention, review cadence).
 
 ## 9. Typical requests and what they mean
 
