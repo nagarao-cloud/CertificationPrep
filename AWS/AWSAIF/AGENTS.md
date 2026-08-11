@@ -54,6 +54,7 @@ placeholders unprompted — doing so produces shallow filler.
 | `01-domains/DOMAIN-3-applications-of-foundation-models.md` | 703 | Day 4-5 — full task-statement coverage (3.1–3.4): model selection, inference params, RAG/vector DBs, prompt engineering + misuse risks, fine-tuning, evaluation metrics, 18 practice Qs |
 | `01-domains/DOMAIN-4-responsible-ai.md` | 458 | Day 6 — full task-statement coverage (4.1–4.2): responsible-AI features, Clarify/Guardrails/Model Cards, legal risks, dataset characteristics, interpretability tradeoffs, human-centered design, 14 practice Qs |
 | `01-domains/DOMAIN-5-security-compliance-governance.md` | 478 | Day 7 — full task-statement coverage (5.1–5.3): shared responsibility model, PrivateLink/IAM/encryption, GenAI threats, Security Scoping Matrix, governance/compliance services (Config/Inspector/Audit Manager/Artifact/CloudTrail/Trusted Advisor), data governance lifecycle, 14 practice Qs |
+| `03-comparisons/AWS-AI-ML-SERVICE-MATRIX.md` | 151 | Day 8 — cross-domain comparison matrices (compressed by design, not padded): build platforms, managed AI services, vector DBs, FM selection, prompt/RAG/fine-tuning, governance services, explainability spectrum |
 
 ## 6. Exam facts
 
