@@ -13,8 +13,7 @@ on implementation detail (no CLI/SDK depth expected).
 | Day | Focus | Domain(s) covered | Weight | Primary file(s) | Status |
 |---|---|---|---|---|---|
 | 1 | AI/ML fundamentals — terminology, ML types, lifecycle, metrics | Domain 1: Fundamentals of AI and ML | 20% | `01-domains/DOMAIN-1-fundamentals-of-ai-and-ml.md` | ✅ written |
-| 2 | GenAI foundations — how FMs work, prompt engineering basics, GenAI lifecycle | Domain 2: Fundamentals of Generative AI (part 1) | 24% | `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | 🕐 scheduled |
-| 3 | GenAI capabilities & limitations — advanced techniques, GenAI risks | Domain 2: Fundamentals of Generative AI (part 2) | (cont.) | same file, extended | 🕐 scheduled |
+| 2-3 | GenAI foundations — FM concepts/lifecycle, capabilities & limitations, AWS GenAI infrastructure (Bedrock/PartyRock/JumpStart/Q) | Domain 2: Fundamentals of Generative AI (all 3 task statements — small enough domain to complete in one file) | 24% | `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | ✅ written |
 | 4 | Foundation model applications — RAG, fine-tuning, agents, Bedrock | Domain 3: Applications of Foundation Models (part 1) | 28% | `01-domains/DOMAIN-3-applications-of-foundation-models.md` | 🕐 scheduled |
 | 5 | Prompt engineering deep dive, model selection & evaluation, cost/performance | Domain 3: Applications of Foundation Models (part 2) | (cont.) | same file, extended | 🕐 scheduled |
 | 6 | Responsible AI — bias, fairness, explainability, transparency | Domain 4: Guidelines for Responsible AI | 14% | `01-domains/DOMAIN-4-responsible-ai.md` | 🕐 scheduled |

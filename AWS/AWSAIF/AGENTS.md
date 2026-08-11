@@ -50,6 +50,7 @@ placeholders unprompted — doing so produces shallow filler.
 |---|---|---|
 | `00-START-HERE/STUDY-PLAN.md` | 43 | Day-by-day roadmap (10-day default, adjustable) |
 | `01-domains/DOMAIN-1-fundamentals-of-ai-and-ml.md` | 634 | Day 1 — full task-statement coverage (1.1–1.3), comparison tables, ASCII diagrams, 15 practice Qs |
+| `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | 568 | Day 2-3 — full task-statement coverage (2.1–2.3): FM concepts/lifecycle, capabilities/limitations, AWS GenAI infrastructure, 15 practice Qs |
 
 ## 6. Exam facts
 
@@ -109,6 +110,19 @@ monitor/retrain), data drift vs. concept drift, MLOps concepts
 readiness), and the AWS managed-AI-service map (Rekognition, Textract,
 Transcribe, Polly, Translate, Comprehend, Lex, Personalize, Fraud
 Detector, Kendra) vs. build-your-own on Amazon SageMaker AI.
+
+Established in Day 2-3 (Domain 2) — build on these too: foundation
+model vs. task-specific model, LLM/multi-modal/diffusion model types,
+tokens/embeddings/vectors/context window/transformer architecture at a
+conceptual level, the 7-stage FM lifecycle (data selection → model
+selection → pre-training → fine-tuning → evaluation → deployment →
+feedback) and which stages an AWS customer actually performs, GenAI's
+named advantages (adaptability, responsiveness, simplicity) and
+limitations (hallucinations, interpretability, inaccuracy,
+nondeterminism), and the AWS GenAI stack (Bedrock incl. Guardrails/
+Knowledge Bases/Agents, PartyRock, SageMaker JumpStart, Amazon Q
+Business/Developer) plus on-demand token pricing vs. provisioned
+throughput.
 
 ## 9. Typical requests and what they mean
 
