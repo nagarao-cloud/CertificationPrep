@@ -19,7 +19,11 @@ on implementation detail (no CLI/SDK depth expected).
 | 7 | Security, compliance, governance for AI solutions | Domain 5: Security, Compliance, and Governance for AI Solutions | 14% | `01-domains/DOMAIN-5-security-compliance-governance.md` | ✅ written |
 | 8 | AWS AI/ML service matrix — head-to-head comparisons across all 5 domains | Cross-domain | — | `03-comparisons/AWS-AI-ML-SERVICE-MATRIX.md` | ✅ written |
 | 9 | Full practice exam (65 Qs, timed) + weak-area review | Cross-domain | — | `06-practice/MOCK-EXAM-1.md` + answer key | ✅ written |
-| 10 | Final revision sheet, flashcards, mnemonics, exam-day checklist | Cross-domain | — | `07-revision/` | 🕐 scheduled |
+| 10 | Final revision sheet, flashcards, mnemonics, exam-day checklist | Cross-domain | — | `07-revision/` | ✅ written |
+
+**All 10 days complete.** Every domain, comparison matrix, mock exam,
+and revision resource in this study plan is now written in full — see
+`01-domains/`, `03-comparisons/`, `06-practice/`, and `07-revision/`.
 
 ## Why this order
 

@@ -56,6 +56,7 @@ placeholders unprompted — doing so produces shallow filler.
 | `01-domains/DOMAIN-5-security-compliance-governance.md` | 478 | Day 7 — full task-statement coverage (5.1–5.3): shared responsibility model, PrivateLink/IAM/encryption, GenAI threats, Security Scoping Matrix, governance/compliance services (Config/Inspector/Audit Manager/Artifact/CloudTrail/Trusted Advisor), data governance lifecycle, 14 practice Qs |
 | `03-comparisons/AWS-AI-ML-SERVICE-MATRIX.md` | 151 | Day 8 — cross-domain comparison matrices (compressed by design, not padded): build platforms, managed AI services, vector DBs, FM selection, prompt/RAG/fine-tuning, governance services, explainability spectrum |
 | `06-practice/MOCK-EXAM-1.md` + `MOCK-EXAM-1-ANSWER-KEY.md` | 537 + 443 | Day 9 — full 65-question mock exam proportional to real domain weights (13/16/18/9/9), multiple-choice + multiple-response, every option explained and domain-tagged for weak-area review |
+| `07-revision/REVISION-SHEET.md` + `FLASHCARDS.md` + `EXAM-DAY-CHECKLIST.md` | 128 + 65 + 84 | Day 10 — compressed-by-design revision materials: per-domain fact sheet, 44 flashcards, exam-day logistics/strategy/mnemonics. **All 10 study-plan days now complete.** |
 
 ## 6. Exam facts
 
