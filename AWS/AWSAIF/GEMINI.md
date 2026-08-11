@@ -51,6 +51,7 @@ placeholders unprompted — doing so produces shallow filler.
 | `00-START-HERE/STUDY-PLAN.md` | 43 | Day-by-day roadmap (10-day default, adjustable) |
 | `01-domains/DOMAIN-1-fundamentals-of-ai-and-ml.md` | 634 | Day 1 — full task-statement coverage (1.1–1.3), comparison tables, ASCII diagrams, 15 practice Qs |
 | `01-domains/DOMAIN-2-fundamentals-of-generative-ai.md` | 568 | Day 2-3 — full task-statement coverage (2.1–2.3): FM concepts/lifecycle, capabilities/limitations, AWS GenAI infrastructure, 15 practice Qs |
+| `01-domains/DOMAIN-3-applications-of-foundation-models.md` | 703 | Day 4-5 — full task-statement coverage (3.1–3.4): model selection, inference params, RAG/vector DBs, prompt engineering + misuse risks, fine-tuning, evaluation metrics, 18 practice Qs |
 
 ## 6. Exam facts
 
@@ -123,6 +124,19 @@ nondeterminism), and the AWS GenAI stack (Bedrock incl. Guardrails/
 Knowledge Bases/Agents, PartyRock, SageMaker JumpStart, Amazon Q
 Business/Developer) plus on-demand token pricing vs. provisioned
 throughput.
+
+Established in Day 4-5 (Domain 3) — build on these too: model-selection
+criteria (cost, modality, latency, multi-lingual, size, complexity,
+customization, input/output length), inference parameters (temperature,
+top-p, top-k, max tokens), RAG mechanics and AWS vector-store options
+(OpenSearch Service, Aurora/RDS PostgreSQL pgvector, Neptune,
+DocumentDB), the prompt-anatomy/zero-shot/few-shot/chain-of-thought/
+negative-prompting vocabulary, prompt-misuse risks (injection, goal
+hijacking, prompt leaking, jailbreaking, poisoning), pre-training vs.
+continuous pre-training vs. fine-tuning, fine-tuning methods
+(instruction tuning, domain adaptation, transfer learning, RLHF), the
+prompt-engineering → RAG → fine-tuning cost/effort ladder, and
+evaluation metrics (human evaluation, ROUGE, BLEU, BERTScore).
 
 ## 9. Typical requests and what they mean
 
