@@ -242,21 +242,25 @@ right content type for this leaf.
 
 | Leaf | File(s) | Design | Decision matrix | Tradeoffs |
 |---|---|---|---|---|
-| 1.1 Low-code workflow config | `01-domains/SECTION-1-low-code-tools.md` §1.1, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md`, `05-labs/lab-01-agent-designer-cx-studio-walkthrough.md` | ✅ | 🕐 | 🕐 |
-| 1.2 Enterprise data connection | `01-domains/SECTION-1-low-code-tools.md` §1.2, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md` | ✅ | 🕐 | 🕐 |
-| 2.1 Using coding agents effectively | `01-domains/SECTION-2-coding-agents.md` §2.1, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md`, `05-labs/lab-02-antigravity-coding-agent-workflow.md` | ✅ | 🕐 | 🕐 |
-| 2.2 Customizing coding agents | `01-domains/SECTION-2-coding-agents.md` §2.2, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md` | ✅ | — | 🕐 |
-| 3.1 Designing/building agentic workflows in code | `01-domains/SECTION-3-custom-agents.md` §3.1, `02-services/03-adk-custom-development.md`, `03-comparisons/01-low-code-vs-custom-development.md`, `04-architectures/pattern-custom-multi-agent-adk.md`, `05-labs/lab-03-adk-custom-agent-build.md` | ✅ | 🕐 | 🕐 |
-| 3.2 Integrating enterprise domain knowledge | `01-domains/SECTION-3-custom-agents.md` §3.2, `02-services/03-adk-custom-development.md`, `04-architectures/pattern-custom-multi-agent-adk.md` | ✅ | 🕐 | 🕐 |
-| 3.3 Orchestrating/coordinating agentic workflows | `01-domains/SECTION-3-custom-agents.md` §3.3, `02-services/04-orchestration-protocols.md`, `03-comparisons/02-orchestration-pattern-options.md`, `03-comparisons/03-a2a-vs-mcp-vs-direct-integration.md`, `04-architectures/pattern-multi-agent-a2a-mcp-orchestration.md`, `05-labs/lab-04-a2a-mcp-multi-agent-integration.md` | ✅ | 🕐 | 🕐 |
-| 4.1 Evaluating agents (dev + prod) | `01-domains/SECTION-4-evaluate-deploy.md` §4.1, `02-services/05-evaluation-deployment.md`, `03-comparisons/05-evaluation-approaches.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md`, `05-labs/lab-05-agent-evaluation-deployment.md` | ✅ | 🕐 | 🕐 |
-| 4.2 Deploying/scaling production workloads | `01-domains/SECTION-4-evaluate-deploy.md` §4.2, `02-services/05-evaluation-deployment.md`, `03-comparisons/04-agent-hosting-deployment-options.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md` | ✅ | 🕐 | 🕐 |
-| 5.1 Agent security and governance config | `01-domains/SECTION-5-secure-govern.md` §5.1, `02-services/06-security-governance.md`, `03-comparisons/06-security-governance-models.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md`, `05-labs/lab-06-secure-agent-governance-setup.md` | ✅ | 🕐 | 🕐 |
-| 5.2 Secure agent behavior/execution | `01-domains/SECTION-5-secure-govern.md` §5.2, `02-services/06-security-governance.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md` | ✅ | 🕐 | 🕐 |
+| 1.1 Low-code workflow config | `01-domains/SECTION-1-low-code-tools.md` §1.1, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md`, `05-labs/lab-01-agent-designer-cx-studio-walkthrough.md` | ✅ | ✅ (inline Agent Designer vs. CX Agent Studio table, SECTION-1) | ✅ |
+| 1.2 Enterprise data connection | `01-domains/SECTION-1-low-code-tools.md` §1.2, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md` | ✅ | ✅ (inline, SECTION-1) | ✅ |
+| 2.1 Using coding agents effectively | `01-domains/SECTION-2-coding-agents.md` §2.1, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md`, `05-labs/lab-02-antigravity-coding-agent-workflow.md` | ✅ | ✅ (inline, SECTION-2) | ✅ |
+| 2.2 Customizing coding agents | `01-domains/SECTION-2-coding-agents.md` §2.2, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md` | ✅ | — (judgment-based, no matrix by design) | ✅ |
+| 3.1 Designing/building agentic workflows in code | `01-domains/SECTION-3-custom-agents.md` §3.1, `02-services/03-adk-custom-development.md`, `03-comparisons/01-low-code-vs-custom-development.md`, `04-architectures/pattern-custom-multi-agent-adk.md`, `05-labs/lab-03-adk-custom-agent-build.md` | ✅ | ✅ (dedicated `03-comparisons/01`) | ✅ |
+| 3.2 Integrating enterprise domain knowledge | `01-domains/SECTION-3-custom-agents.md` §3.2, `02-services/03-adk-custom-development.md`, `04-architectures/pattern-custom-multi-agent-adk.md` | ✅ | ✅ (inline, SECTION-3) | ✅ |
+| 3.3 Orchestrating/coordinating agentic workflows | `01-domains/SECTION-3-custom-agents.md` §3.3, `02-services/04-orchestration-protocols.md`, `03-comparisons/02-orchestration-pattern-options.md`, `03-comparisons/03-a2a-vs-mcp-vs-direct-integration.md`, `04-architectures/pattern-multi-agent-a2a-mcp-orchestration.md`, `05-labs/lab-04-a2a-mcp-multi-agent-integration.md` | ✅ | ✅ (dedicated `03-comparisons/02`, `03`) | ✅ |
+| 4.1 Evaluating agents (dev + prod) | `01-domains/SECTION-4-evaluate-deploy.md` §4.1, `02-services/05-evaluation-deployment.md`, `03-comparisons/05-evaluation-approaches.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md`, `05-labs/lab-05-agent-evaluation-deployment.md` | ✅ | ✅ (dedicated `03-comparisons/05`) | ✅ |
+| 4.2 Deploying/scaling production workloads | `01-domains/SECTION-4-evaluate-deploy.md` §4.2, `02-services/05-evaluation-deployment.md`, `03-comparisons/04-agent-hosting-deployment-options.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md` | ✅ | ✅ (dedicated `03-comparisons/04`) | ✅ |
+| 5.1 Agent security and governance config | `01-domains/SECTION-5-secure-govern.md` §5.1, `02-services/06-security-governance.md`, `03-comparisons/06-security-governance-models.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md`, `05-labs/lab-06-secure-agent-governance-setup.md` | ✅ | ✅ (dedicated `03-comparisons/06`) | ✅ |
+| 5.2 Secure agent behavior/execution | `01-domains/SECTION-5-secure-govern.md` §5.2, `02-services/06-security-governance.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md` | ✅ | ✅ (inline, SECTION-5) | ✅ |
 
-Status: **in progress** — this table is populated with planned file
-assignments at RUNBOOK-writing time; flip 🕐 → ✅ as each generation
-batch (Step 4 of the plan / §12 of `CLAUDE.md`) completes and content
+Status: **complete** as of the final verification sweep (see §9 log).
+Every leaf has Design + Tradeoffs content; only leaf 2.2's Decision
+matrix is intentionally "—" (customizing an existing coding agent with
+skills/plugins/hooks is a configuration task, not a choice between named
+alternatives — there is nothing to build a head-to-head matrix from).
+Verified against the actual generated files (grep for tradeoff/decision
+language, spot-read of inline tables), not assumed from the plan.
 is verified against this leaf.
 
 ---
@@ -264,27 +268,30 @@ is verified against this leaf.
 ## 5. Generation checklist (mirrors the 00–09 folder layout)
 
 - [x] `00-START-HERE/` — RUNBOOK.md (this file)
-- [ ] `00-START-HERE/` — STUDY-PLAN.md, SERVICE-MATRIX.md,
-      DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md
-- [ ] `01-domains/` — 5 files (SECTION-1 through SECTION-5)
-- [ ] `02-services/` — 7 files
-- [ ] `03-comparisons/` — 6 files
-- [ ] `04-architectures/` — 6 files
-- [ ] `05-labs/` — 7 files (6 per-section labs + 1 flagship capstone,
-      `lab-07-capstone-realtime-agentic-project.md`, see §8)
-- [ ] `06-practice/` — 7 files (5 section banks + 2 mock exams)
-- [ ] `07-revision/` — 6 files (5 cheatsheets + master flashcards)
-- [x] `08-interview/` — 2 files (`agentic-architect-scenario-questions.md`,
+- [x] `00-START-HERE/` — STUDY-PLAN.md, SERVICE-MATRIX.md,
+      DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md (5 files, 1,196 lines)
+- [x] `01-domains/` — 5 files, 3,811 lines (SECTION-1 through SECTION-5)
+- [x] `02-services/` — 7 files, 2,429 lines
+- [x] `03-comparisons/` — 6 files, 1,253 lines
+- [x] `04-architectures/` — 6 files, 2,124 lines
+- [x] `05-labs/` — 7 files, 4,767 lines (6 per-section labs + 1 flagship
+      capstone, `lab-07-capstone-realtime-agentic-project.md`, see §8)
+- [x] `06-practice/` — 7 files, 3,896 lines (5 section banks + 2 mock exams)
+- [x] `07-revision/` — 6 files, 516 lines (5 cheatsheets + master flashcards)
+- [x] `08-interview/` — 2 files, 1,445 lines (`agentic-architect-scenario-questions.md`,
       `behavioral-and-tradeoff-questions.md` — 2026-08-28)
-- [x] `09-assets/` — 3 files (`architecture-diagrams.md`, `mind-maps.md`,
+- [x] `09-assets/` — 3 files, 1,004 lines (`architecture-diagrams.md`, `mind-maps.md`,
       `protocol-and-service-decision-flowcharts.md` — 2026-08-28)
-- [ ] `CLAUDE.md` §5 updated with per-folder line-count summary,
+- [x] `CLAUDE.md` §5 updated with per-folder line-count summary,
       mirrored to `GEMINI.md`/`AGENTS.md`
-- [ ] `README.md` and `llms.txt` populated (currently template
+- [x] `README.md` and `llms.txt` populated (final state, no template
       placeholders)
-- [ ] Final sweep: no placeholder markers, no Agent Engine/Vertex AI
-      Search terminology traps, weights consistent everywhere, §5
-      line-count summary updated in `CLAUDE.md` and this file
+- [x] Final sweep: no placeholder markers outside legends, no unqualified
+      Agent Engine/Vertex AI Search/Vertex AI Agent Builder/Gemini Code
+      Assist terminology, weights (13/17/33/22/15%) and tool count
+      (28 items) consistent everywhere, coverage map closed (§4), §5
+      line-count summary updated in `CLAUDE.md` and this file — see §9
+      log for the full verification record
 
 ## 6. In-scope / out-of-scope tool signal
 

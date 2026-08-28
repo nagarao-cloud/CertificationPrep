@@ -90,14 +90,31 @@ placeholders unprompted — doing so produces shallow filler.
 
 ## 5. Files written in full
 
-| File | Lines | Purpose |
-|---|---|---|
-| `08-interview/agentic-architect-scenario-questions.md` | 925 | 20 open-ended, architect-level scenario questions with worked model-answer tradeoff discussions |
-| `08-interview/behavioral-and-tradeoff-questions.md` | 520 | 13 judgment/tradeoff questions (stakeholder pushback, cost cuts, autonomy calibration) with model answers |
-| `09-assets/architecture-diagrams.md` | 284 | Index of the 6 `04-architectures/` patterns + 3 new cross-cutting diagrams (full-stack, 28-tool map, Meridian request trace) |
-| `09-assets/mind-maps.md` | 241 | 6 ASCII mind maps — 1 whole-exam overview + 1 per section |
-| `09-assets/protocol-and-service-decision-flowcharts.md` | 479 | 7 ASCII decision flowcharts (start → decision nodes → end states) for recurring protocol/service choices |
-| _(remaining folders — see `00-START-HERE/RUNBOOK.md` §5 generation checklist for current status)_ | | |
+Full bulk-generation pass completed 2026-08-28 (§12 playbook, 3 waves
+of parallel background agents). Per-folder summary (content files only,
+excluding per-folder `README.md` stubs and this file):
+
+| Folder | Files | Lines | Contents |
+|---|---|---|---|
+| `00-START-HERE/` | 5 | 1,196 | RUNBOOK.md, STUDY-PLAN.md, SERVICE-MATRIX.md, DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md |
+| `01-domains/` | 5 | 3,811 | One deep-dive per exam section (SECTION-1 through SECTION-5), Section 3 deliberately longest at ~33% weight |
+| `02-services/` | 7 | 2,429 | All 28 in-scope tools, grouped by function |
+| `03-comparisons/` | 6 | 1,253 | Head-to-head decision matrices for the exam's recurring architectural choices |
+| `04-architectures/` | 6 | 2,124 | Generic production patterns (no published case-study pool for this exam, unlike GCPPCA) |
+| `05-labs/` | 7 | 4,767 | 6 per-section labs + the flagship capstone (`lab-07-capstone-realtime-agentic-project.md`, 2,053 lines alone) |
+| `06-practice/` | 7 | 3,896 | 5 per-section question banks + 2 mock exams (80Q + 40Q), every answer inline |
+| `07-revision/` | 6 | 516 | 5 per-section cheatsheets + master flashcards (compressed by design) |
+| `08-interview/` | 2 | 1,445 | Architect-level scenario questions + behavioral/tradeoff questions |
+| `09-assets/` | 3 | 1,004 | Consolidated diagrams, mind maps, decision-flowchart index |
+| **Total** | **54** | **23,587** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
+
+**Mid-pass correction:** the exam guide's verbatim in-scope tool list
+has **28 items, not 23** as first transcribed into this file and
+`RUNBOOK.md` — caught during Wave 2 generation and corrected across all
+affected files before the pass completed (see `RUNBOOK.md` §9 log).
+
+Full detail and provenance: `00-START-HERE/RUNBOOK.md` §4 (coverage
+map) and §9 (checklist status log).
 
 ## 6. Exam facts
 

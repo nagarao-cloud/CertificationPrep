@@ -18,13 +18,17 @@ AGENTS.md) before making changes.
 
 - [Start here](00-START-HERE/): core reference material, written in full
 
-## Optional (placeholders, generated just-in-time)
+## Full reference (written in full, 2026-08-28 bulk-generation pass)
 
-- [Domains](01-domains/)
-- [Services](02-services/)
-- [Comparisons](03-comparisons/)
-- [Architectures](04-architectures/)
-- [Labs](05-labs/)
-- [Practice](06-practice/)
-- [Revision](07-revision/)
-- [Interview](08-interview/)
+- [Domains](01-domains/): one deep-dive per exam section
+- [Services](02-services/): all 28 in-scope tools, grouped by function
+- [Comparisons](03-comparisons/): head-to-head decision matrices
+- [Architectures](04-architectures/): production architecture patterns
+- [Labs](05-labs/): per-section walkthroughs plus a flagship
+  ground-zero-to-complete capstone project
+- [Practice](06-practice/): per-section question banks and mock exams
+- [Revision](07-revision/): compressed cheatsheets and flashcards
+- [Interview](08-interview/): architect-level scenario and
+  behavioral/tradeoff questions
+- [Assets](09-assets/): consolidated diagrams, mind maps, decision
+  flowcharts
