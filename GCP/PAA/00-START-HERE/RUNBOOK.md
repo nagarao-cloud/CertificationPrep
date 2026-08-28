@@ -426,3 +426,62 @@ scenario. Self-verified: no 🕐 markers, no uncorrected "Agent Engine" /
 "Vertex AI Search" / "Vertex AI Agent Builder" / "Gemini Code Assist"
 occurrences outside currency-correction callouts, and the 28-tool count
 (not 23) used throughout.
+
+**2026-08-28 — Final verification sweep, folder complete.** All 10
+subfolders generated: 54 content files, 23,587 lines. Sweep performed:
+
+1. Placeholder markers: none outside this file's own legend and
+   `README.md`'s explanatory prose.
+2. Terminology grep across the whole folder for "Agent Engine,"
+   "Vertex AI Search," "Vertex AI Agent Builder," and "Gemini Code
+   Assist" — every occurrence is inside an explicit currency-correction
+   or wrong-answer callout, none asserted as current fact. One
+   diagram-label check (`SECTION-3-custom-agents.md`'s orchestration
+   diagram) confirmed correctly paired ("Agent Runtime ... formerly
+   Agent Engine").
+3. Weight consistency: 13/17/33/22/15% used consistently everywhere
+   they're cited; no stray percentages found.
+4. Tool-count consistency: the 23→28 correction (see the earlier log
+   entry) is now clean everywhere — zero remaining "23-item" references.
+5. GCPPCA cross-contamination: every "GCPPCA" mention found by grep is
+   a deliberate boundary-setting statement ("this is GCPPCA's topic,
+   not PAA's"), not leaked case-study or domain content. No
+   Dress4Win/Mountkirk Games/TerramEarth/Helicopter Racing
+   League/EHR Healthcare references anywhere.
+6. `06-practice/` integrity: every file's `**Q`-count matches its
+   `*Answer:`-count exactly (15/15, 18/18, 30/30, 22/22, 16/16, 80/80,
+   40/40) — no numbering drift possible by construction (answers are
+   inline, not a separate key).
+7. Coverage map (§4): closed — all 11 task leaves have Design and
+   Tradeoffs content confirmed present by spot-check (not just assumed
+   from the generation plan); Decision matrix is present for every leaf
+   except 2.2, which is intentionally "—" (a configuration task with no
+   named alternatives to compare).
+8. File-size sanity: only per-folder `README.md` stubs and one
+   comparison file (182 lines, just under the 200-line spot-check
+   threshold but consistent with this folder's overall comparison-file
+   depth) are on the thin side — no reference file was found padded or
+   collapsed to filler.
+9. **Beginner-audience remediation:** Wave 1 (`01-domains/`,
+   `02-services/`, `03-comparisons/` — 18 files) was generated before
+   the user's beginner correction landed. A targeted remediation pass
+   patched first-use definitions of general vocabulary (LLM, prompt,
+   RAG, embedding, IAM, OAuth 2.0, service account, CI/CD, tool-calling)
+   in 15 of the 18 files; 3 needed no changes. Notable fix:
+   `SECTION-5-secure-govern.md` had explicitly told the reader the exam
+   assumes prior OAuth 2.0 knowledge, citing the (by-then-superseded)
+   original CLAUDE.md wording — replaced with an actual definition.
+10. `CLAUDE.md` §5, `GEMINI.md`/`AGENTS.md` sync, `README.md`, and
+    `llms.txt` all updated to their finished-folder state (no template
+    placeholders remain).
+11. Root registry rows (`/CLAUDE.md` and `/README.md`) confirmed
+    correct for both `GCPPCA` and `PAA`.
+
+**Known, deliberately-flagged limitations carried into the content
+itself (not defects — see CLAUDE.md §7's last row):** `05-labs/`
+walkthroughs, including the capstone, are best-effort/illustrative —
+no live access to the Google Skills platform or any of the actual
+consoles (Agent Designer, CX Agent Studio, Antigravity) was available
+in this environment, so exact UI click-paths are not console-verified.
+Cross-check against the live console before an actual exam attempt.
+This folder is otherwise complete and ready for study.
