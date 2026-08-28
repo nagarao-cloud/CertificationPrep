@@ -274,8 +274,10 @@ is verified against this leaf.
       `lab-07-capstone-realtime-agentic-project.md`, see §8)
 - [ ] `06-practice/` — 7 files (5 section banks + 2 mock exams)
 - [ ] `07-revision/` — 6 files (5 cheatsheets + master flashcards)
-- [ ] `08-interview/` — 2 files
-- [ ] `09-assets/` — 3 files
+- [x] `08-interview/` — 2 files (`agentic-architect-scenario-questions.md`,
+      `behavioral-and-tradeoff-questions.md` — 2026-08-28)
+- [x] `09-assets/` — 3 files (`architecture-diagrams.md`, `mind-maps.md`,
+      `protocol-and-service-decision-flowcharts.md` — 2026-08-28)
 - [ ] `CLAUDE.md` §5 updated with per-folder line-count summary,
       mirrored to `GEMINI.md`/`AGENTS.md`
 - [ ] `README.md` and `llms.txt` populated (currently template
@@ -402,3 +404,18 @@ correction landed; they get a beginner-friendliness spot-check during
 the final verification sweep (§9 close-out, once all waves are in) and
 a targeted remediation pass if needed, rather than being discarded and
 restarted.
+
+**2026-08-28 — `08-interview/` and `09-assets/` generated.** Both
+files in `08-interview/` (20 scenario questions, 13 behavioral/
+tradeoff questions, all with worked model-answer discussions) and all
+three files in `09-assets/` (a consolidated architecture-diagram index
+plus 3 new cross-cutting diagrams not duplicated elsewhere; 6 ASCII
+mind maps — 1 overall + 1 per section; 7 decision flowcharts in
+explicit start/decision-node/end-state form, covering the same 6
+recurring decisions as `DECISION-TREES.md` plus a new "which of the 28
+tools applies" master lookup) were written at full depth, grounded in
+the 6 `04-architectures/` patterns and the Meridian Tools capstone
+scenario. Self-verified: no 🕐 markers, no uncorrected "Agent Engine" /
+"Vertex AI Search" / "Vertex AI Agent Builder" / "Gemini Code Assist"
+occurrences outside currency-correction callouts, and the 28-tool count
+(not 23) used throughout.

@@ -92,7 +92,12 @@ placeholders unprompted — doing so produces shallow filler.
 
 | File | Lines | Purpose |
 |---|---|---|
-| _(none yet)_ | | |
+| `08-interview/agentic-architect-scenario-questions.md` | 925 | 20 open-ended, architect-level scenario questions with worked model-answer tradeoff discussions |
+| `08-interview/behavioral-and-tradeoff-questions.md` | 520 | 13 judgment/tradeoff questions (stakeholder pushback, cost cuts, autonomy calibration) with model answers |
+| `09-assets/architecture-diagrams.md` | 284 | Index of the 6 `04-architectures/` patterns + 3 new cross-cutting diagrams (full-stack, 28-tool map, Meridian request trace) |
+| `09-assets/mind-maps.md` | 241 | 6 ASCII mind maps — 1 whole-exam overview + 1 per section |
+| `09-assets/protocol-and-service-decision-flowcharts.md` | 479 | 7 ASCII decision flowcharts (start → decision nodes → end states) for recurring protocol/service choices |
+| _(remaining folders — see `00-START-HERE/RUNBOOK.md` §5 generation checklist for current status)_ | | |
 
 ## 6. Exam facts
 
