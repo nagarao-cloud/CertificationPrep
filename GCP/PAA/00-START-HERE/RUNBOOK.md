@@ -242,17 +242,17 @@ right content type for this leaf.
 
 | Leaf | File(s) | Design | Decision matrix | Tradeoffs |
 |---|---|---|---|---|
-| 1.1 Low-code workflow config | `01-domains/SECTION-1-low-code-tools.md` §1.1, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md`, `05-labs/lab-01-agent-designer-cx-studio-walkthrough.md` | 🕐 | 🕐 | 🕐 |
-| 1.2 Enterprise data connection | `01-domains/SECTION-1-low-code-tools.md` §1.2, `02-services/01-gemini-enterprise-low-code.md` | — | 🕐 | 🕐 |
-| 2.1 Using coding agents effectively | `01-domains/SECTION-2-coding-agents.md` §2.1, `02-services/02-coding-agents-devtools.md`, `05-labs/lab-02-antigravity-coding-agent-workflow.md` | 🕐 | 🕐 | 🕐 |
-| 2.2 Customizing coding agents | `01-domains/SECTION-2-coding-agents.md` §2.2, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md` | 🕐 | — | 🕐 |
-| 3.1 Designing/building agentic workflows in code | `01-domains/SECTION-3-custom-agents.md` §3.1, `02-services/03-adk-custom-development.md`, `03-comparisons/01-low-code-vs-custom-development.md`, `05-labs/lab-03-adk-custom-agent-build.md` | 🕐 | 🕐 | 🕐 |
-| 3.2 Integrating enterprise domain knowledge | `01-domains/SECTION-3-custom-agents.md` §3.2, `02-services/03-adk-custom-development.md` | 🕐 | 🕐 | 🕐 |
-| 3.3 Orchestrating/coordinating agentic workflows | `01-domains/SECTION-3-custom-agents.md` §3.3, `02-services/04-orchestration-protocols.md`, `03-comparisons/02-orchestration-pattern-options.md`, `03-comparisons/03-a2a-vs-mcp-vs-direct-integration.md`, `04-architectures/pattern-multi-agent-a2a-mcp-orchestration.md`, `05-labs/lab-04-a2a-mcp-multi-agent-integration.md` | 🕐 | 🕐 | 🕐 |
-| 4.1 Evaluating agents (dev + prod) | `01-domains/SECTION-4-evaluate-deploy.md` §4.1, `02-services/05-evaluation-deployment.md`, `03-comparisons/05-evaluation-approaches.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md`, `05-labs/lab-05-agent-evaluation-deployment.md` | 🕐 | 🕐 | 🕐 |
-| 4.2 Deploying/scaling production workloads | `01-domains/SECTION-4-evaluate-deploy.md` §4.2, `02-services/05-evaluation-deployment.md`, `03-comparisons/04-agent-hosting-deployment-options.md` | 🕐 | 🕐 | 🕐 |
-| 5.1 Agent security and governance config | `01-domains/SECTION-5-secure-govern.md` §5.1, `02-services/06-security-governance.md`, `03-comparisons/06-security-governance-models.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md`, `05-labs/lab-06-secure-agent-governance-setup.md` | 🕐 | 🕐 | 🕐 |
-| 5.2 Secure agent behavior/execution | `01-domains/SECTION-5-secure-govern.md` §5.2, `02-services/06-security-governance.md` | 🕐 | 🕐 | 🕐 |
+| 1.1 Low-code workflow config | `01-domains/SECTION-1-low-code-tools.md` §1.1, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md`, `05-labs/lab-01-agent-designer-cx-studio-walkthrough.md` | ✅ | 🕐 | 🕐 |
+| 1.2 Enterprise data connection | `01-domains/SECTION-1-low-code-tools.md` §1.2, `02-services/01-gemini-enterprise-low-code.md`, `04-architectures/pattern-low-code-cx-agent.md` | ✅ | 🕐 | 🕐 |
+| 2.1 Using coding agents effectively | `01-domains/SECTION-2-coding-agents.md` §2.1, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md`, `05-labs/lab-02-antigravity-coding-agent-workflow.md` | ✅ | 🕐 | 🕐 |
+| 2.2 Customizing coding agents | `01-domains/SECTION-2-coding-agents.md` §2.2, `02-services/02-coding-agents-devtools.md`, `04-architectures/pattern-coding-agent-cicd-integration.md` | ✅ | — | 🕐 |
+| 3.1 Designing/building agentic workflows in code | `01-domains/SECTION-3-custom-agents.md` §3.1, `02-services/03-adk-custom-development.md`, `03-comparisons/01-low-code-vs-custom-development.md`, `04-architectures/pattern-custom-multi-agent-adk.md`, `05-labs/lab-03-adk-custom-agent-build.md` | ✅ | 🕐 | 🕐 |
+| 3.2 Integrating enterprise domain knowledge | `01-domains/SECTION-3-custom-agents.md` §3.2, `02-services/03-adk-custom-development.md`, `04-architectures/pattern-custom-multi-agent-adk.md` | ✅ | 🕐 | 🕐 |
+| 3.3 Orchestrating/coordinating agentic workflows | `01-domains/SECTION-3-custom-agents.md` §3.3, `02-services/04-orchestration-protocols.md`, `03-comparisons/02-orchestration-pattern-options.md`, `03-comparisons/03-a2a-vs-mcp-vs-direct-integration.md`, `04-architectures/pattern-multi-agent-a2a-mcp-orchestration.md`, `05-labs/lab-04-a2a-mcp-multi-agent-integration.md` | ✅ | 🕐 | 🕐 |
+| 4.1 Evaluating agents (dev + prod) | `01-domains/SECTION-4-evaluate-deploy.md` §4.1, `02-services/05-evaluation-deployment.md`, `03-comparisons/05-evaluation-approaches.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md`, `05-labs/lab-05-agent-evaluation-deployment.md` | ✅ | 🕐 | 🕐 |
+| 4.2 Deploying/scaling production workloads | `01-domains/SECTION-4-evaluate-deploy.md` §4.2, `02-services/05-evaluation-deployment.md`, `03-comparisons/04-agent-hosting-deployment-options.md`, `04-architectures/pattern-evaluation-deployment-pipeline.md` | ✅ | 🕐 | 🕐 |
+| 5.1 Agent security and governance config | `01-domains/SECTION-5-secure-govern.md` §5.1, `02-services/06-security-governance.md`, `03-comparisons/06-security-governance-models.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md`, `05-labs/lab-06-secure-agent-governance-setup.md` | ✅ | 🕐 | 🕐 |
+| 5.2 Secure agent behavior/execution | `01-domains/SECTION-5-secure-govern.md` §5.2, `02-services/06-security-governance.md`, `04-architectures/pattern-secure-governed-enterprise-agent-platform.md` | ✅ | 🕐 | 🕐 |
 
 Status: **in progress** — this table is populated with planned file
 assignments at RUNBOOK-writing time; flip 🕐 → ✅ as each generation
