@@ -6,7 +6,7 @@ capabilities [e.g., custom integration layers for managed databases, API
 integrations, and MCP server that connects agents to third-party SaaS
 tools and remote servers]") and Task 3.3 ("Orchestrating agents using
 agentic protocols [e.g., MCP and Agent2Agent (A2A)]"). Both **A2A** and
-**MCP** appear on the guide's 23-item in-scope tool list verbatim as
+**MCP** appear on the guide's 28-item in-scope tool list verbatim as
 "Agentic protocols (e.g., Agent2Agent [A2A], MCP)" and again separately
 as "Model Context Protocol (MCP) servers" — the guide treats these as
 two distinct, named protocols, not synonyms, and expects you to know

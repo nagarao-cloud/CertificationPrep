@@ -4,7 +4,7 @@
 workloads"), specifically: "Selecting optimal deployment runtime based
 on the use case, requirements, and cost (e.g., **Agent Runtime, Cloud
 Run, and GKE**)." All three are verbatim from the guide's task 4.2
-bullet and all three also appear on the 23-item in-scope tool list.
+bullet and all three also appear on the 28-item in-scope tool list.
 **Agent Runtime** is the current name for this managed runtime — the
 guide's own in-scope list writes it as "Agent Runtime (formerly Agent
 Engine)"; never lead with "Agent Engine" on this exam.

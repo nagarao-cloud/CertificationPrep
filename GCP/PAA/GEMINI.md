@@ -138,7 +138,7 @@ Full sourcing and rationale for each row: `00-START-HERE/RUNBOOK.md` §7.
 | "Gemini Code Assist is the coding-agent tool this exam covers" | "The guide names **Antigravity** (CLI/SDK/App) and **Claude Code on Google Cloud** explicitly as the coding-agent examples — Gemini Code Assist is not named in the guide at all. Lead with Antigravity/Claude Code on Google Cloud." |
 | "PAB is a generic IAM concept" | "**PAB (principal access boundary)** is a specific policy mechanism configured via **Agent Identity** for this exam — treat it as agent-specific access-boundary configuration, not a synonym for a generic IAM role/policy." |
 | "ADK is a closed-source, Google-proprietary SDK" | "ADK (Agent Development Kit) is explicitly described in the guide as an **open-source** library for building custom agents." |
-| "This exam overlaps heavily with GCPPCA's cloud-architecture content" | "PAA is a dedicated agentic-AI exam. Generic GCP architecture topics (raw compute/storage/networking selection, generic HA/DR) are not in the guide's 23-item in-scope tool list and should not be assumed in scope here — see `00-START-HERE/RUNBOOK.md` §6." |
+| "This exam overlaps heavily with GCPPCA's cloud-architecture content" | "PAA is a dedicated agentic-AI exam. Generic GCP architecture topics (raw compute/storage/networking selection, generic HA/DR) are not in the guide's 28-item in-scope tool list and should not be assumed in scope here — see `00-START-HERE/RUNBOOK.md` §6." |
 
 ## 8. Domain vocabulary in active use
 

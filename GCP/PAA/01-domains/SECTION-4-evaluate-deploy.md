@@ -340,7 +340,7 @@ Three named things to identify through monitoring:
   returned by tools, not just whether the output "sounds right."
 
 **Google Cloud Observability (Cloud Logging and Cloud Trace)** — the
-in-scope observability tooling named in the guide's 23-item tool list
+in-scope observability tooling named in the guide's 28-item tool list
 — is the mechanism for actually collecting the telemetry that this
 kind of monitoring/troubleshooting (§2.2 and §2.3 together) depends
 on: Cloud Logging for structured event/error logs, Cloud Trace for

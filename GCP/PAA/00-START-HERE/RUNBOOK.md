@@ -17,7 +17,7 @@
 2. **The official exam guide PDF**
    (`professional_agentic_architect_exam_guide_english.pdf`) — gives
    the 5-section domain structure, exact weights, every task-level
-   bullet, and the 23-item in-scope tool list.
+   bullet, and the 28-item in-scope tool list.
 
 **Access constraint and how source 2 was actually obtained:** this
 session's outbound network egress goes through a policy-enforcing
@@ -286,7 +286,7 @@ is verified against this leaf.
 
 ## 6. In-scope / out-of-scope tool signal
 
-**In scope — verbatim list from the exam guide PDF (23 items, page
+**In scope — verbatim list from the exam guide PDF (28 items, page
 4), the authoritative scope for this exam:**
 
 Agent Development Kit (ADK) · Agent evaluation · Agent Gateway · Agent
@@ -303,7 +303,7 @@ Protection · Skill Registry.
 
 **Out of scope, by inference:** the guide publishes no explicit
 "out of scope" list (unlike some vendors' guides). Treat anything not
-in the 23-item list above as presumptively out of scope. The single
+in the 28-item list above as presumptively out of scope. The single
 biggest cross-contamination risk is generic GCP architecture content
 that belongs to `GCP/GCPPCA/` (raw compute/storage/networking service
 selection unrelated to agents, generic HA/DR patterns, IAM taught as a
@@ -325,7 +325,7 @@ database" architecture topic the way GCPPCA covers them.
 | "Gemini Code Assist is the coding-agent tool tested here" | "The guide names **Antigravity** (CLI/SDK/App) and **Claude Code on Google Cloud** explicitly, in Sections 2.1/2.2" | Direct quote from Section 2's task bullets. Gemini Code Assist does not appear in the guide. |
 | "PAB is a generic IAM policy concept" | "**PAB (principal access boundary)** is a specific named mechanism, configured via **Agent Identity**, per task 5.1" | Direct quote from Section 5.1. |
 | "ADK is closed-source / Google-internal" | "ADK (Agent Development Kit) is explicitly described as **open-source** in task 3.1" | Direct quote: "Building custom agents using open-source libraries (e.g., Agent Development Kit [ADK])." |
-| "This exam overlaps with GCPPCA's cloud-architecture content" | "PAA is a dedicated agentic-AI exam; the 23-item in-scope tool list contains no general compute/storage/networking-selection topics — don't reuse GCPPCA study material or assume overlap" | Confirmed by comparing the guide's in-scope tool list against GCPPCA's domain content — no overlap beyond data-layer services used in an agent-specific way (see §6). |
+| "This exam overlaps with GCPPCA's cloud-architecture content" | "PAA is a dedicated agentic-AI exam; the 28-item in-scope tool list contains no general compute/storage/networking-selection topics — don't reuse GCPPCA study material or assume overlap" | Confirmed by comparing the guide's in-scope tool list against GCPPCA's domain content — no overlap beyond data-layer services used in an agent-specific way (see §6). |
 | "This exam's guide has weighted percentages that are estimates/unpublished" | "Weights are **explicitly published in the guide itself** — 13/17/33/22/15%, verbatim per-section, summing to 100%" | Directly stated in each section header of the guide (e.g. "Section 3: Developing custom agents (~33% of the exam)"). This corrects the plan's own earlier draft, written before the PDF was available, which assumed weights were unpublished. |
 | "`05-labs/` walkthroughs in this folder are verified, click-by-click console steps" | "Lab content is **best-effort**, built from the guide's stated tool capabilities and general product knowledge — this environment has no live access to the Google Skills platform or any of Agent Designer/CX Agent Studio/Antigravity's actual consoles, so exact UI paths are illustrative, not verified. Cross-check against the live console before an exam attempt." | Stated directly by the user's approved plan — an honesty requirement, not a guide fact. Google Skills/console UI is also the part of this beta product surface most likely to change before GA. |
 
