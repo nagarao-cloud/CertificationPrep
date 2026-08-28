@@ -23,11 +23,13 @@ files outside this folder, and nothing here should be written outside it.
 ## 2. Who the user is
 
 - **Name:** Naga (GitHub: `nagarao-cloud`)
-- **Level:** intermediate — no confirmed timeline; treat as comfortable
-  with general cloud/AI concepts (LLMs, RAG, IAM, tool-calling) but not
-  assumed to already know Google's specific agent-platform product
-  names (Agent Runtime, Agent Gateway, Agent Registry, etc. are all
-  explained on first use). Fill in with a firmer signal once known.
+- **Level:** **beginner** (corrected 2026-08-28 — do not assume prior
+  intermediate cloud/AI knowledge). Treat general AI/cloud vocabulary
+  (LLM, RAG, embeddings, tool-calling, IAM, OAuth, session/state,
+  vector database) as **not yet known** and explain it on first
+  substantive use, the same way §8 already requires for PAA-specific
+  product names. Ground-zero framing applies everywhere in this
+  folder, not just the capstone project in §3.
 - **Goal:** Pass PAA
 - **Timeline:** intermediate, no confirmed timeline — fill in when known
 - **Sourcing note:** this is a brand-new BETA certification (registration
@@ -59,6 +61,26 @@ plus two PAA-specific overrides:
   a wide margin. Give it more file depth, more practice questions, and
   more study-plan days than the other four sections combined would
   suggest from a naive even split.
+- **Beginner, ground-zero framing (added 2026-08-28).** Every reference
+  file should introduce concepts assuming no prior exposure — define a
+  term the first time it's used in that file even if it was already
+  defined in an earlier file, rather than assuming cross-file memory.
+  Favor "here's what this is and why it exists" before "here's how to
+  configure it."
+- **Capstone real-time project — required, not optional.** In addition
+  to the per-section labs in `05-labs/`, this folder must include one
+  end-to-end, ground-zero-to-complete capstone project in
+  `05-labs/lab-07-capstone-realtime-agentic-project.md` that a true
+  beginner can follow start to finish. It must cover the full project
+  lifecycle explicitly: **problem framing → requirements → design/
+  architecture → step-by-step implementation → evaluation → deployment
+  → security/governance → best practices and lessons learned.** The
+  project should touch all 5 exam sections so it doubles as an
+  integrated review (see RUNBOOK.md §9 for the concrete project concept
+  and section-by-section mapping). Depth target: this is the flagship
+  file of the folder — it can and should run longer than a standard
+  reference file (1,500–2,500+ lines) rather than being compressed to
+  fit a normal lab's length.
 
 ## 4. The just-in-time generation rule ⚠️
 
@@ -120,14 +142,17 @@ Full sourcing and rationale for each row: `00-START-HERE/RUNBOOK.md` §7.
 
 ## 8. Domain vocabulary in active use
 
-Terms below are assumed known (general AI/cloud vocabulary) and used
-without re-explanation; **PAA-specific product/protocol names are
-treated as new** per §2 and are explained in full on first use in each
-file:
+**Corrected 2026-08-28 — user is a beginner, not intermediate (see
+§2).** Nothing below is "assumed known" anymore; every term, general
+AI/cloud vocabulary included, is explained in full the first time it's
+used in each file, not just PAA-specific product names. The lists below
+now serve as a **glossary/checklist of what must be defined**, not a
+list of what can be skipped:
 
-- General AI/cloud vocabulary assumed known: agent, LLM, prompt,
-  tool-calling/function-calling, RAG (retrieval-augmented generation),
-  embedding, vector database, IAM, service account, OAuth 2.0, CI/CD.
+- General AI/cloud vocabulary to define on first use (no longer
+  assumed): agent, LLM, prompt, tool-calling/function-calling, RAG
+  (retrieval-augmented generation), embedding, vector database, IAM,
+  service account, OAuth 2.0, CI/CD.
 - PAA-specific shorthand introduced on first use per file: **ADK**
   (Agent Development Kit — open-source), **A2A** (Agent2Agent protocol),
   **MCP** (Model Context Protocol), **PAB** (principal access boundary),

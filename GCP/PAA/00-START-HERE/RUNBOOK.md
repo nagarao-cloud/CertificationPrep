@@ -270,7 +270,8 @@ is verified against this leaf.
 - [ ] `02-services/` — 7 files
 - [ ] `03-comparisons/` — 6 files
 - [ ] `04-architectures/` — 6 files
-- [ ] `05-labs/` — 6 files
+- [ ] `05-labs/` — 7 files (6 per-section labs + 1 flagship capstone,
+      `lab-07-capstone-realtime-agentic-project.md`, see §8)
 - [ ] `06-practice/` — 7 files (5 section banks + 2 mock exams)
 - [ ] `07-revision/` — 6 files (5 cheatsheets + master flashcards)
 - [ ] `08-interview/` — 2 files
@@ -328,7 +329,51 @@ database" architecture topic the way GCPPCA covers them.
 | "This exam's guide has weighted percentages that are estimates/unpublished" | "Weights are **explicitly published in the guide itself** — 13/17/33/22/15%, verbatim per-section, summing to 100%" | Directly stated in each section header of the guide (e.g. "Section 3: Developing custom agents (~33% of the exam)"). This corrects the plan's own earlier draft, written before the PDF was available, which assumed weights were unpublished. |
 | "`05-labs/` walkthroughs in this folder are verified, click-by-click console steps" | "Lab content is **best-effort**, built from the guide's stated tool capabilities and general product knowledge — this environment has no live access to the Google Skills platform or any of Agent Designer/CX Agent Studio/Antigravity's actual consoles, so exact UI paths are illustrative, not verified. Cross-check against the live console before an exam attempt." | Stated directly by the user's approved plan — an honesty requirement, not a guide fact. Google Skills/console UI is also the part of this beta product surface most likely to change before GA. |
 
-## 8. Checklist status log
+## 8. Capstone real-time project (added 2026-08-28, per user request)
+
+**Scope change:** the user identified as a beginner (not intermediate,
+correcting CLAUDE.md §2) and asked for a ground-zero, end-to-end,
+hands-on real-world project — design → implementation → evaluation →
+best practices — in addition to the standard per-section labs. This is
+now a **required** file: `05-labs/lab-07-capstone-realtime-agentic-project.md`
+(see CLAUDE.md §3). It is the folder's flagship file and should run
+1,500–2,500+ lines rather than a standard lab's length.
+
+**Project concept — "Internal Knowledge & Support Agent Platform"** (a
+realistic enterprise scenario chosen because it naturally exercises all
+5 exam sections, so the capstone doubles as an integrated review, not
+just a Section-3 exercise):
+
+A fictional mid-size company wants an internal agent that (a) answers
+employee questions against internal docs/policies, (b) can be extended
+by engineers into a more capable coding/ops assistant, and (c) must be
+secure and governed before any production rollout. The project is
+staged in phases that map directly onto the exam sections:
+
+| Phase | What gets built | Exam section(s) exercised |
+|---|---|---|
+| 0. Problem framing & requirements | Define the use case, success criteria, constraints (cost, data sensitivity, latency) — beginner-friendly requirements-gathering primer | — (project-management framing, not exam content, but necessary scaffolding for a true beginner) |
+| 1. MVP via low-code | Stand up a first version in Gemini Enterprise using Agent Designer + CX Agent Studio, grounded on internal docs via Agent Search | Section 1 (~13%) |
+| 2. Extend with coding agents | Use Antigravity / Claude Code on Google Cloud to build custom tooling, skills, and CI/CD around the agent's codebase, in a GKE/Cloud Workstations sandbox | Section 2 (~17%) |
+| 3. Rebuild the core as custom code | Replace/extend the low-code core with an ADK-based custom agent: model selection (LLM vs SLM, cost/security tradeoffs), RAG pipeline via RAG Engine/Vector Search 1.0/Agent Retrieval, session/memory via Agent Platform Memory Bank, multi-agent orchestration via A2A/MCP and Agent Registry | Section 3 (~33% — the project's largest phase, matching the exam's largest section) |
+| 4. Evaluate | Build golden datasets and an evaluation pipeline with ADK evalset, Agent Platform Gen AI evaluation service, and a custom autorater; interpret results and iterate | Section 4 (~22%, evaluation half) |
+| 5. Deploy & operate | Deploy to Agent Runtime (compare against Cloud Run/GKE), instrument with Google Cloud Observability, troubleshoot drift/latency/reasoning-loop failure modes | Section 4 (~22%, deployment half) |
+| 6. Secure & govern | Add OAuth2-based tool auth, PAB policies via Agent Identity, Agent Gateway traffic monitoring, Model Armor guardrails, and a HITL approval gate for high-risk actions | Section 5 (~15%) |
+| 7. Retrospective / best practices | What worked, what a real team would do differently, common pitfalls mapped back to exam traps (§7's currency-corrections table) | Cross-cutting review |
+
+**Beginner framing requirement:** every phase must explain each new
+concept from zero before using it (per CLAUDE.md §2/§3/§8 — no term is
+assumed known), include the reasoning behind each design decision (not
+just the decision), and flag every step that is best-effort/illustrative
+rather than console-verified (per §7's last currency-correction row —
+no live Google Skills/console access in this environment).
+
+**Coverage-map update:** this capstone is an additional cross-cutting
+artifact layered on top of the per-leaf coverage map in §4 — it does
+not replace any leaf's dedicated Design/Decision-matrix/Tradeoffs
+content, it demonstrates all of them working together end to end.
+
+## 9. Checklist status log
 
 **2026-08-28 — RUNBOOK created.** Plan for this folder was originally
 drafted using only `cloud.google.com`'s public certification page
@@ -343,3 +388,17 @@ runbook with verbatim guide content before any content files were
 generated — so no downstream file was ever written from the
 reconstructed version. Nothing else has been generated yet at the time
 of this entry.
+
+**2026-08-28 — Wave 1 launched, then scope corrected mid-flight.** Wave
+1 (background agents for `01-domains/`, `02-services/`, `03-comparisons/`)
+was launched before the user clarified they are a **beginner**, not
+intermediate, and asked for a required ground-zero capstone project.
+CLAUDE.md §2/§3/§8 and this RUNBOOK (§8, new) were updated immediately
+with the correction and the capstone project design, before Wave 2
+(`05-labs/`, which now includes the capstone as file 7 of 7) was
+launched — so Wave 2 onward reflects the beginner/capstone requirement
+from the start. Wave 1's files were already in flight when the
+correction landed; they get a beginner-friendliness spot-check during
+the final verification sweep (§9 close-out, once all waves are in) and
+a targeted remediation pass if needed, rather than being discarded and
+restarted.
