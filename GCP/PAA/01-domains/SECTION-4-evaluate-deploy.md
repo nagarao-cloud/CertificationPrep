@@ -165,7 +165,7 @@ named options, each with a different fit:
 |---|---|---|
 | **ADK evaluation tooling (evalset)** | Evaluation tooling built into the ADK ecosystem — an "evalset" is a structured set of test cases (inputs, expected trajectories/outputs) you run against an ADK-built custom agent | You built the agent in ADK (Section 3.1) and want evaluation that understands ADK's own agent/tool-call structure natively |
 | **Agent Platform Gen AI evaluation service** | A managed evaluation service within the broader Agent Platform, for assessing generative/agentic quality (response quality, retrieval quality, etc.) as a service rather than a library you wire in yourself | You want a managed evaluation capability without building/maintaining your own evaluation harness — especially useful across agents built with different underlying tooling |
-| **Custom autoraters** | Purpose-built evaluator models/logic (often themselves LLM-based "judge" models, or rule-based scorers) you design to score outputs against criteria that off-the-shelf tooling doesn't directly capture | Your success criteria are domain-specific/nuanced enough that generic evaluation tooling can't score them well (e.g., "does this response match our specific brand voice and compliance requirements simultaneously") |
+| **Custom autoraters** | Purpose-built evaluator models/logic (often themselves LLM-based — LLM = large language model, the AI model that generates text responses — "judge" models, or rule-based scorers) you design to score outputs against criteria that off-the-shelf tooling doesn't directly capture | Your success criteria are domain-specific/nuanced enough that generic evaluation tooling can't score them well (e.g., "does this response match our specific brand voice and compliance requirements simultaneously") |
 
 **Don't use** ADK evaluation tooling (evalset) alone when your success
 criteria are highly domain-specific and require nuanced judgment
@@ -199,7 +199,11 @@ evaluated **separately**, not conflated into one score:
 
 - **Response quality** — is the agent's final output correct,
   well-formed, appropriately toned, and useful?
-- **Retrieval quality** — for a RAG-grounded agent (Section 3.2), did
+- **Retrieval quality** — for a **RAG**-grounded agent (RAG =
+  retrieval-augmented generation: the agent looks up relevant content
+  from a knowledge source before generating its answer, rather than
+  answering from the model's training data alone — see Section 3.2),
+  did
   the retrieval step actually surface the right supporting content?
   This is upstream of response quality: an agent can produce a
   fluent, well-formed response that's wrong *because retrieval

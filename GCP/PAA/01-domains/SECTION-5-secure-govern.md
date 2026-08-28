@@ -67,14 +67,17 @@ and to how it *behaves* at runtime.
 Task 5.1's first bullet: **"Implementing authentication and secure
 tool execution (e.g., agent-to-tool API calls using OAuth 2.0)."**
 
-The exam assumes you already know OAuth 2.0 as general vocabulary
-(per this folder's `CLAUDE.md` §8 — it's listed as assumed-known
-general cloud vocabulary, not re-explained from scratch). What's
-exam-specific here is the **application**: OAuth 2.0 is the mechanism
-for authenticating **agent-to-tool** API calls — an agent acting as a
-client authenticating to a tool/API it needs to call, the same way a
-traditional application authenticates to an external API, but now the
-caller is an autonomous agent rather than a human-driven client.
+**OAuth 2.0** is a widely-used authorization standard: instead of an
+application handing over a user's actual password to every service it
+talks to, the application gets a limited, scoped **token** — proof
+that says "this caller is allowed to do these specific things" —
+issued by an authorization step, and presents that token on each
+request instead. What's exam-specific here is the **application**:
+OAuth 2.0 is the mechanism for authenticating **agent-to-tool** API
+calls — an agent acting as a client authenticating to a tool/API it
+needs to call, the same way a traditional application authenticates to
+an external API, but now the caller is an autonomous agent rather than
+a human-driven client.
 
 The exam's in-scope tool list also names **Auth Manager (OAuth 2.0)**
 explicitly — treat "Auth Manager" as the named Google Cloud mechanism
@@ -125,8 +128,10 @@ agent-to-tool calls instead.
 Task 5.1's second bullet: **"Configuring principal access boundary
 (PAB) policies using Agent Identity."** This is flagged as one of the
 most important currency corrections in this folder — treat PAB as a
-**specific, named, agent-focused mechanism**, not a generic IAM
-concept you already know from elsewhere.
+**specific, named, agent-focused mechanism**, not a generic **IAM**
+(Identity and Access Management — Google Cloud's general system for
+granting identities permissions to access resources) concept you
+already know from elsewhere.
 
 **PAB (principal access boundary)** defines the outer limit of what an
 agent (acting as a "principal" — the entity performing actions) is
@@ -326,7 +331,9 @@ Agent Gateway (visibility into the actual propagated calls) and
 governed via Agent Registry (which capabilities are registered as
 receiving which propagated identity/scope).
 
-**Don't use** a flattened, single "service account" style identity
+**Don't use** a flattened, single "**service account**" (a non-human
+identity — an account meant for an application, script, or agent to
+authenticate with, rather than a person) style identity
 shared uniformly across every hop of a multi-agent/multi-tool chain —
 this collapses accountability (you can no longer tell which specific
 original request/user/agent actually caused a downstream action) and

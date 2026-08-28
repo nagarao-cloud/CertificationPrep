@@ -281,7 +281,7 @@ full PAB-configuration treatment.
 | Google Cloud MCP Servers | Agent ↔ GCP services/third-party SaaS/remote servers | 3.2 | The MCP protocol itself (this is a set of pre-built server implementations *of* that protocol) |
 | Agent Registry | Discovery/catalog of agents & capabilities | 3.2, 3.3, 5.1, 5.2 | Agent Runtime (hosts execution; Registry only catalogs/discovers) |
 | Agent Runtime | Managed hosting/execution for agents | 3.3, 4.2 | "Agent Engine" (retired name) |
-| Agent Identity | Identity/permissions for agents (full entry in file 06) | 3.3, 5.1, 5.2 | A generic IAM concept — it's the specific PAB-configuring mechanism |
+| Agent Identity | Identity/permissions for agents (full entry in file 06) | 3.3, 5.1, 5.2 | A generic IAM (Identity and Access Management — Google Cloud's general permissions system) concept — it's the specific PAB-configuring mechanism |
 
 ---
 

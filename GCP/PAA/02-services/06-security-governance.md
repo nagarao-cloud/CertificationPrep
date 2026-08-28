@@ -57,8 +57,9 @@ generic IAM concept.** The exam guide's own task-5.1 language is
 explicit — "Configuring principal access boundary (PAB) policies using
 **Agent Identity**" — treat PAB as a specific, named, agent-specific
 access-boundary mechanism configured through this specific tool, not a
-synonym for "an IAM role" or "an IAM policy" in the generic cloud-IAM
-sense.
+synonym for "an IAM role" or "an IAM policy" in the generic cloud-**IAM**
+(Identity and Access Management — Google Cloud's general system for
+granting identities permission to touch resources) sense.
 
 **Problem it solves.** An autonomous agent making tool calls,
 delegating to other agents (A2A — see
@@ -88,8 +89,10 @@ handoff trust — see `04-orchestration-protocols.md` §6, which
 cross-references back to this section rather than duplicating it).
 
 **Decision note — Agent Identity/PAB vs. generic IAM.** Use generic
-Google Cloud IAM (service accounts, roles, policies) for the baseline
-question "what Google Cloud resources can this service account touch."
+Google Cloud IAM (service accounts — non-human identities meant for an
+application or workload rather than a person — roles, policies) for the
+baseline question "what Google Cloud resources can this service account
+touch."
 Use Agent Identity/PAB specifically for the agent-shaped question "when
 this agent is acting autonomously — possibly multiple hops deep through
 an A2A handoff or an MCP tool call — whose effective authority is it
@@ -200,8 +203,11 @@ an irreversible action is HITL.
 ## 5. Auth Manager (OAuth 2.0)
 
 **What it is.** The authentication-management service handling agent-
-to-tool API authentication via **OAuth 2.0** — named directly in task
-5.1: "Implementing authentication and secure tool execution (e.g.,
+to-tool API authentication via **OAuth 2.0** (a widely-used
+authorization standard: instead of handing over a real password, the
+caller gets a limited, scoped token — proof it's allowed to do specific
+things — and presents that on each call instead) — named directly in
+task 5.1: "Implementing authentication and secure tool execution (e.g.,
 agent-to-tool API calls using OAuth 2.0)."
 
 **Problem it solves.** When an agent calls a tool (an internal API, a

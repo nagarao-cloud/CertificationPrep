@@ -216,11 +216,14 @@ What ADK actually gives you as a builder:
   receives input, decides what tool(s) to call, calls them, and
   produces output — the fundamental "agent" abstraction this whole
   section builds on top of.
-- Structured integration points for tools/function-calling, so an
-  agent's available actions are defined as code (not just prose
-  instructions the model might or might not follow reliably — a
-  meaningful difference from Section 1's low-code, instruction-driven
-  approach).
+- Structured integration points for tools/**function-calling** (also
+  called tool-calling — the mechanism by which the model itself decides
+  mid-response to invoke a specific external function/API rather than
+  just generating text, which is exactly the "decides what tool(s) to
+  call, calls them" step described above), so an agent's available
+  actions are defined as code (not just prose instructions the model
+  might or might not follow reliably — a meaningful difference from
+  Section 1's low-code, instruction-driven approach).
 - The foundation other Section 3 capabilities plug into: sessions and
   memory (§1.3 below), enterprise knowledge integration (Section 3.2),
   and orchestration protocols (Section 3.3) are all things you wire
@@ -471,7 +474,9 @@ that; reserve the structured databases for the data they're suited to
 Task 3.2's second bullet: **"Configuring agent permissions (e.g.,
 Agent Identity)."** **Agent Identity** is the mechanism for defining
 *what a given agent is allowed to do and access* — the agent-specific
-analog of an IAM identity/role, but purpose-built for agentic
+analog of an **IAM** (Identity and Access Management — Google Cloud's
+system for controlling which identities can do what to which
+resources) identity/role, but purpose-built for agentic
 workflows. This is the same tool used in Section 5.1 to configure
 **PAB (principal access boundary)** policies, and it recurs in Section
 3.3 as one of the tools used to configure multi-agent handoffs

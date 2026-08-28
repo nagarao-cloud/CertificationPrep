@@ -47,7 +47,10 @@ GCPPCA. Here, the only question is: what role does this service play
 
 ## 2. BigQuery
 
-**Role in an agentic workflow.** Primarily a **RAG source** and a
+**Role in an agentic workflow.** Primarily a **RAG** (retrieval-
+augmented generation — the agent looks up relevant content before
+answering, rather than relying only on what the model already learned
+during training) **source** and a
 **tool-integration target** for structured, large-scale enterprise
 data — analytics tables, historical records, aggregated business data
 an agent needs to query or ground answers on.

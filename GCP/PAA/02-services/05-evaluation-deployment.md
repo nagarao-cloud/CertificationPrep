@@ -62,7 +62,8 @@ it after) an agent ships, rather than relying on ad hoc spot-checks.
 
 **How it's configured — verbatim task 4.1 considerations:**
 - **Creating test sets for agent evaluation**: golden data (a curated,
-  known-correct reference dataset), prompts, and edge cases — the raw
+  known-correct reference dataset), prompts (the instructions/context
+  sent to the model), and edge cases — the raw
   material every evaluation approach below is scored against.
 - **Creating continuous evaluation pipelines** to assess an agent's
   **tool execution** based on established success criteria — not just
@@ -80,7 +81,8 @@ it after) an agent ships, rather than relying on ad hoc spot-checks.
     criteria applied across multiple agents regardless of how each was
     built.
   - **Custom autoraters**: a custom-built evaluator (typically another
-    LLM acting as a judge, or a rule-based scorer) for evaluation
+    LLM — large language model, an AI model like Gemini — acting as a
+    judge, or a rule-based scorer) for evaluation
     criteria that don't fit a standard rubric — e.g., grading response
     tone against a brand voice, or scoring a domain-specific correctness
     criterion no off-the-shelf evaluator captures.

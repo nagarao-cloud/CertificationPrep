@@ -148,8 +148,13 @@ observed** (timeout, error, no-match) — not user intent at all.
 ### 1.1.3 System instructions and in-console prompt templates
 
 Both Agent Designer and CX Agent Studio let you shape the underlying
-LLM's behavior without leaving the console, via two related but
-distinct mechanisms:
+**LLM's** (large language model — the AI model, such as Gemini, that
+actually reads instructions and generates the agent's responses)
+behavior without leaving the console, via two related but distinct
+mechanisms. Everything sent to that model at once — instructions,
+context, and the user's input — is collectively called the **prompt**;
+the two mechanisms below are Gemini Enterprise's console-level ways of
+shaping that prompt without hand-writing it yourself:
 
 - **System instructions** — the persistent, top-level behavioral
   contract for the agent: persona, tone, hard constraints ("never
@@ -303,8 +308,10 @@ Key ideas to hold for the exam:
   not just stored — before an agent can usefully retrieve and reason
   over it. That typically means extracting a text-searchable
   representation (transcription for audio/video, captioning/description
-  for images, or multimodal embeddings that let the underlying Gemini
-  LLM reason natively over the media) so the content becomes
+  for images, or multimodal embeddings — numeric vectors that capture a
+  piece of content's meaning so a model can compare and search over it —
+  that let the underlying Gemini LLM reason natively over the media) so
+  the content becomes
   retrievable and groundable the same way text documents are.
   Gemini's models are natively multimodal, so unlike purely
   text-embedding architectures, images/video/audio content can be fed

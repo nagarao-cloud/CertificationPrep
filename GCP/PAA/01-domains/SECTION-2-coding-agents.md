@@ -108,7 +108,9 @@ tools."** Break this into its three parts:
   (e.g., a skill for "how our team writes database migrations" or "how
   to run our specific test suite and interpret its output"). Skills are
   how you encode team/organization-specific conventions into the
-  agent's behavior instead of re-explaining them in every prompt.
+  agent's behavior instead of re-explaining them in every **prompt**
+  (the instructions and context you send the underlying model each time
+  you ask it to do something).
 - **Access to tools** — the broader configuration of what the agent is
   actually allowed to call/execute: shell commands, file writes,
   package managers, deployment commands, cloud APIs. Scoping tool

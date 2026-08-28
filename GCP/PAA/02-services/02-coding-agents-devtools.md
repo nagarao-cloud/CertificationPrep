@@ -143,7 +143,10 @@ more broadly, including but not limited to ones built with Antigravity.
 **Problem it solves.** An individual developer's coding-agent session
 (Antigravity) is not the same problem as running a fleet of deployed
 agents across an organization — that needs build/scale/govern/optimize
-tooling at the platform level, callable from scripts and CI/CD, not
+tooling at the platform level, callable from scripts and **CI/CD**
+(continuous integration/continuous delivery — the automated pipelines
+that build, test, and ship code changes without a human manually
+running each step), not
 just from an interactive coding session.
 
 **How it's used.** Task 3.1 also names Agents CLI for "configuring

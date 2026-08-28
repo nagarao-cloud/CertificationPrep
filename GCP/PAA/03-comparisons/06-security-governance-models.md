@@ -15,8 +15,10 @@ bullets:
   "Configuring secure access to data and identity propagation (e.g.,
   Agent Gateway and Agent Registry)."
 
-Per this folder's currency correction: **PAB is not a generic IAM
-concept** — it's the specific principal access boundary mechanism,
+Per this folder's currency correction: **PAB is not a generic IAM**
+(Identity and Access Management — Google Cloud's general system for
+granting identities permission to access resources) **concept** — it's
+the specific principal access boundary mechanism,
 configured through Agent Identity, that this exam tests.
 
 ## 1. What layer of the stack each one governs
@@ -116,7 +118,9 @@ the way.**
   decision, structurally similar to least-privilege access control but
   applied specifically to agents as principals.
 - You're securing agent-to-tool API calls and need the authorization
-  layer underneath OAuth 2.0-based authentication (task 5.1) — PAB is
+  layer underneath **OAuth 2.0**-based authentication (OAuth 2.0: the
+  agent gets a limited, scoped token instead of sharing a real password,
+  and presents that token on each call) (task 5.1) — PAB is
   the policy that decides what an authenticated agent is actually
   allowed to do once it's authenticated.
 - The scenario is about a scoping/permissions design question — "this

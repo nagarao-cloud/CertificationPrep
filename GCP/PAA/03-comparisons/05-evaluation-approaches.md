@@ -32,7 +32,9 @@ quality (e.g., using ADK)."
   code, and a natural fit for the **continuous evaluation pipelines**
   task 4.1 calls for in **production**.
 - **Custom autoraters.** Purpose-built evaluators you design yourself —
-  typically an LLM-as-judge or a custom scoring function — when neither
+  typically an **LLM**-as-judge (LLM = large language model, the AI
+  model that generates text responses) or a custom scoring function —
+  when neither
   ADK's evalset format nor the platform's built-in evaluation service
   covers your specific **success criteria** (task 4.1's phrase, in the
   context of assessing "an agent's tool execution based on established

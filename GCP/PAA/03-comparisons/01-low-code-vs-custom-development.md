@@ -31,8 +31,9 @@ Gemini Enterprise:
 **Custom development: ADK (Agent Development Kit).** Per task 3.1, ADK
 is explicitly described as an **open-source library** for building
 custom agents in code. Task 3.1 also covers what custom development adds
-on top of "just write Python": explicit **model selection** (LLM vs.
-SLM, self-hosted vs. SaaS, OSS vs. proprietary — weighed against cost,
+on top of "just write Python": explicit **model selection** (**LLM**
+[large language model] vs. **SLM** [small language model], self-hosted
+vs. SaaS, OSS vs. proprietary — weighed against cost,
 security, and agent architecture), **session and memory configuration**
 (Agent Platform Memory Bank, managed sessions), and **skill
 configuration via Agents CLI** (plugins, agent-mode vs. human-mode). The
@@ -98,12 +99,14 @@ bindings, and control flow directly.
 - The agent's job is fundamentally a **state-based conversational
   flow** — customer support, intake forms, FAQ deflection — that maps
   cleanly onto pages, transition routes, and event handlers.
-- Prompt engineering (system instructions, few-shot/chain-of-thought
+- **Prompt** engineering (a prompt is the instructions/context sent to
+  the underlying LLM — system instructions, few-shot/chain-of-thought
   templates) is enough to get the behavior you need, with no requirement
   for custom control-flow code.
 - The data-connection need is "query our enterprise data securely" —
   something Gemini Enterprise + Agent Search already solve out of the
-  box — rather than a hand-tuned RAG pipeline with custom embedding
+  box — rather than a hand-tuned **RAG** (retrieval-augmented
+  generation) pipeline with custom **embedding** (vector representation)
   models, similarity scoring, and reranking (task 3.2 territory).
 - Time-to-value matters more than architectural control, and the team
   building it is conversation designers or business analysts rather than

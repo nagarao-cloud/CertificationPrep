@@ -65,8 +65,9 @@ definitions, memory wiring, and evaluation hooks (see
 `05-evaluation-deployment.md` for ADK's evalset tooling specifically).
 
 **How it's used — verbatim task 3.1 considerations:**
-- **Selecting and configuring the appropriate language model** — LLM
-  vs. SLM, self-hosted vs. SaaS, OSS vs. proprietary, weighed against
+- **Selecting and configuring the appropriate language model** — **LLM**
+  (large language model) vs. **SLM** (small language model), self-hosted
+  vs. SaaS, OSS vs. proprietary, weighed against
   cost, security, and agent architecture (full treatment in
   `01-gemini-enterprise-low-code.md` §6–§7).
 - **Building custom agents using open-source libraries** — ADK itself.
@@ -170,7 +171,9 @@ an ADK agent's code rather than configured as a Gemini Enterprise
 connector.
 
 **Problem it solves.** Building a RAG pipeline from raw components
-(chunking, embedding, indexing, retrieval, reranking, prompt assembly)
+(chunking, embedding, indexing, retrieval, reranking, prompt assembly —
+"prompt" being the final text, combining instructions and retrieved
+context, that actually gets sent to the LLM)
 by hand is a lot of undifferentiated engineering for a pattern nearly
 every enterprise agent needs. RAG Engine packages that pipeline as a
 managed service an ADK agent calls into, while still giving the

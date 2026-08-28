@@ -112,11 +112,14 @@ primitives for conversation state and instruction-following.
   condition, a parameter being filled); **event handlers** catch things
   that aren't a normal user turn (no-input timeout, webhook error,
   session escalation) and route the conversation accordingly. Think of
-  this as a finite-state machine layered on top of an LLM — the LLM
-  handles language understanding and generation *within* a page, while
-  the page graph gives you deterministic control over where the
-  conversation can go.
-- **System instructions and in-console prompt templates**: this is
+  this as a finite-state machine layered on top of an **LLM** (large
+  language model — the AI model, such as Gemini, that actually reads
+  and generates text) — the LLM handles language understanding and
+  generation *within* a page, while the page graph gives you
+  deterministic control over where the conversation can go.
+- **System instructions and in-console prompt templates**: a
+  **prompt** is the text — instructions plus context — actually sent to
+  the LLM to produce a response; this is
   where you write the persona/behavior contract for the agent, and
   where you build reusable prompt templates using **few-shot**
   (embedding example input/output pairs directly in the instruction so
@@ -173,7 +176,10 @@ answer.
 ## 5. Agent Search (formerly Vertex AI Search)
 
 **What it is.** The managed enterprise-data grounding/retrieval service
-that Gemini Enterprise agents connect to for RAG-style grounding on
+that Gemini Enterprise agents connect to for **RAG**-style grounding
+(RAG = retrieval-augmented generation: looking up relevant enterprise
+content and feeding it to the model before it answers, instead of
+relying on what the model already learned during training) on
 proprietary data. **Currency correction: this is "Agent Search," never
 "Vertex AI Search."** The exam guide itself gives the old name only in
 a parenthetical — "Agent Search (formerly Vertex AI Search)" — meaning
