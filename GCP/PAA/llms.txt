@@ -16,7 +16,8 @@ AGENTS.md) before making changes.
 
 ## Core reference
 
-- [Start here](00-START-HERE/): core reference material, written in full
+- [Start here](00-START-HERE/): core reference material, written in
+  full, including a consolidated A-Z glossary
 
 ## Full reference (written in full, 2026-08-28 bulk-generation pass)
 
@@ -27,7 +28,8 @@ AGENTS.md) before making changes.
 - [Labs](05-labs/): per-section walkthroughs plus a flagship
   ground-zero-to-complete capstone project
 - [Practice](06-practice/): per-section question banks and mock exams
-- [Revision](07-revision/): compressed cheatsheets and flashcards
+- [Revision](07-revision/): compressed cheatsheets, flashcards, and an
+  exam-day checklist
 - [Interview](08-interview/): architect-level scenario and
   behavioral/tradeoff questions
 - [Assets](09-assets/): consolidated diagrams, mind maps, decision

@@ -91,27 +91,42 @@ placeholders unprompted — doing so produces shallow filler.
 ## 5. Files written in full
 
 Full bulk-generation pass completed 2026-08-28 (§12 playbook, 3 waves
-of parallel background agents). Per-folder summary (content files only,
-excluding per-folder `README.md` stubs and this file):
+of parallel background agents), followed by a **gap-remediation pass
+the same day** after a self-review identified real gaps (a broken
+cross-reference, 9 stale placeholder READMEs, and 6 content gaps —
+GCP-account/cost onboarding, registration logistics, an exam-day
+checklist, and a consolidated glossary). Per-folder summary (content
+files only, excluding per-folder `README.md` stubs and this file):
 
 | Folder | Files | Lines | Contents |
 |---|---|---|---|
-| `00-START-HERE/` | 5 | 1,196 | RUNBOOK.md, STUDY-PLAN.md, SERVICE-MATRIX.md, DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md |
+| `00-START-HERE/` | 6 | 1,404 | RUNBOOK.md, STUDY-PLAN.md, SERVICE-MATRIX.md, DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md, GLOSSARY.md (added in remediation pass) |
 | `01-domains/` | 5 | 3,811 | One deep-dive per exam section (SECTION-1 through SECTION-5), Section 3 deliberately longest at ~33% weight |
 | `02-services/` | 7 | 2,429 | All 28 in-scope tools, grouped by function |
 | `03-comparisons/` | 6 | 1,253 | Head-to-head decision matrices for the exam's recurring architectural choices |
 | `04-architectures/` | 6 | 2,124 | Generic production patterns (no published case-study pool for this exam, unlike GCPPCA) |
-| `05-labs/` | 7 | 4,767 | 6 per-section labs + the flagship capstone (`lab-07-capstone-realtime-agentic-project.md`, 2,053 lines alone) |
+| `05-labs/` | 7 | 4,874 | 6 per-section labs + the flagship capstone (`lab-07-capstone-realtime-agentic-project.md`, 2,160 lines incl. the remediation pass's GCP-setup/cost-guidance sections) |
 | `06-practice/` | 7 | 3,896 | 5 per-section question banks + 2 mock exams (80Q + 40Q), every answer inline |
-| `07-revision/` | 6 | 516 | 5 per-section cheatsheets + master flashcards (compressed by design) |
+| `07-revision/` | 7 | 626 | 5 per-section cheatsheets + master flashcards + exam-day-checklist.md (added in remediation pass), compressed by design |
 | `08-interview/` | 2 | 1,445 | Architect-level scenario questions + behavioral/tradeoff questions |
 | `09-assets/` | 3 | 1,004 | Consolidated diagrams, mind maps, decision-flowchart index |
-| **Total** | **54** | **23,587** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
+| **Total** | **56** | **24,135** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
 
 **Mid-pass correction:** the exam guide's verbatim in-scope tool list
 has **28 items, not 23** as first transcribed into this file and
 `RUNBOOK.md` — caught during Wave 2 generation and corrected across all
 affected files before the pass completed (see `RUNBOOK.md` §9 log).
+
+**Gap-remediation pass (2026-08-28, same day):** fixed a broken
+cross-reference in `master-flashcards.md`; rewrote all 9 subfolder
+`README.md` files, which still said "Placeholder folder" despite the
+folder being complete; added GCP-account setup and cost/budget guidance
+to the capstone (§0.4/§0.5, a true beginner previously had no path to
+starting Phase 1); added a registration/scheduling-logistics section to
+`RUNBOOK.md` §2a and a re-verify-before-your-exam note, both honestly
+distinguishing confirmed facts from genuinely open questions rather
+than inventing specifics; added `07-revision/exam-day-checklist.md` and
+`00-START-HERE/GLOSSARY.md`.
 
 Full detail and provenance: `00-START-HERE/RUNBOOK.md` §4 (coverage
 map) and §9 (checklist status log).

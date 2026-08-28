@@ -322,15 +322,20 @@ is verified against this leaf.
 
 - [x] `00-START-HERE/` — RUNBOOK.md (this file)
 - [x] `00-START-HERE/` — STUDY-PLAN.md, SERVICE-MATRIX.md,
-      DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md (5 files, 1,196 lines)
+      DECISION-TREES.md, EXAM-TRAPS-AND-MNEMONICS.md, GLOSSARY.md
+      (6 files, 1,404 lines — GLOSSARY.md added in the gap-remediation
+      pass, see §9)
 - [x] `01-domains/` — 5 files, 3,811 lines (SECTION-1 through SECTION-5)
 - [x] `02-services/` — 7 files, 2,429 lines
 - [x] `03-comparisons/` — 6 files, 1,253 lines
 - [x] `04-architectures/` — 6 files, 2,124 lines
-- [x] `05-labs/` — 7 files, 4,767 lines (6 per-section labs + 1 flagship
-      capstone, `lab-07-capstone-realtime-agentic-project.md`, see §8)
+- [x] `05-labs/` — 7 files, 4,874 lines (6 per-section labs + 1 flagship
+      capstone, `lab-07-capstone-realtime-agentic-project.md` — 2,160
+      lines, incl. the remediation pass's §0.4/§0.5, see §8)
 - [x] `06-practice/` — 7 files, 3,896 lines (5 section banks + 2 mock exams)
-- [x] `07-revision/` — 6 files, 516 lines (5 cheatsheets + master flashcards)
+- [x] `07-revision/` — 7 files, 626 lines (5 cheatsheets + master
+      flashcards + exam-day-checklist.md, added in the gap-remediation
+      pass)
 - [x] `08-interview/` — 2 files, 1,445 lines (`agentic-architect-scenario-questions.md`,
       `behavioral-and-tradeoff-questions.md` — 2026-08-28)
 - [x] `09-assets/` — 3 files, 1,004 lines (`architecture-diagrams.md`, `mind-maps.md`,
@@ -345,6 +350,11 @@ is verified against this leaf.
       (28 items) consistent everywhere, coverage map closed (§4), §5
       line-count summary updated in `CLAUDE.md` and this file — see §9
       log for the full verification record
+- [x] Gap-remediation pass (2026-08-28, same day): broken cross-reference
+      fixed, all 9 subfolder READMEs rewritten (no longer say
+      "Placeholder folder"), capstone GCP-setup/cost-guidance added,
+      registration-logistics + re-verify note added to this file,
+      exam-day-checklist.md and GLOSSARY.md added — see §9 log
 
 ## 6. In-scope / out-of-scope tool signal
 
@@ -538,3 +548,47 @@ consoles (Agent Designer, CX Agent Studio, Antigravity) was available
 in this environment, so exact UI click-paths are not console-verified.
 Cross-check against the live console before an actual exam attempt.
 This folder is otherwise complete and ready for study.
+
+**2026-08-28 — Gap-remediation pass, same day.** The user asked for a
+self-review of the just-completed folder to find and fill gaps. Two
+research passes (structural completeness vs. `GCPPCA`; content gaps
+specific to a beginner-facing, brand-new beta exam) found two real
+structural bugs and six real content gaps, all confirmed with direct
+file evidence:
+
+1. **Broken cross-reference** in `master-flashcards.md`:7 (pointed at
+   a nonexistent `00-START-HERE/CLAUDE.md` path) — fixed.
+2. **9 of 10 subfolder READMEs still said "Placeholder folder"**,
+   contradicting this file's and the top-level README's own "complete"
+   claims — all 9 rewritten to describe real contents.
+3. **The capstone had zero GCP-account/console onboarding** — a true
+   beginner could not start Phase 1. Added §0.4 (creating a project,
+   project ID, enabling billing) and §0.5 (free-trial credits, a
+   3-bucket free/billable/bills-while-idle tool table, budget-alert
+   hygiene — flagging GKE's bill-while-idle risk explicitly).
+4. **No real cost/budget guidance anywhere** — folded into the same
+   §0.5 above rather than a separate file, since cost is only
+   actionable in the context of a specific build sequence.
+5. **Registration/scheduling logistics repeated as one bare fact six
+   times** — added §2a above, honestly distinguishing what's confirmed
+   (both components required) from what genuinely isn't (exact
+   registration flow, partial-pass retake policy, Google Skills
+   platform specifics) — no fabricated URLs or numbers.
+6. **No exam-day readiness file** — added
+   `07-revision/exam-day-checklist.md`, covering both required
+   components, generic-vs-PAA-specific-unconfirmed logistics flagged
+   honestly, and a compressed pull from `EXAM-TRAPS-AND-MNEMONICS.md`.
+7. **No consolidated glossary** — added `00-START-HERE/GLOSSARY.md`,
+   A-Z across all 28 tools plus general vocabulary, sourced from where
+   each term is already taught rather than re-derived.
+8. **No forward-looking re-verify instruction** — added to the end of
+   §1 above: this runbook is accurate as of 2026-08-28, not a permanent
+   guarantee, given PAA's beta status.
+
+Also fixed in passing: `STUDY-PLAN.md`'s Day 6 row previously promised
+"console orientation, no lab file yet" — now points at the capstone's
+new §0.4-0.5. New total after this pass: **56 files, 24,135 lines**
+(see `CLAUDE.md` §5 for the updated per-folder table). Verified: zero
+remaining "Placeholder folder" hits folder-wide; every new claim beyond
+confirmed exam facts is framed as "verify against the current official
+source," matching this folder's existing honesty conventions.

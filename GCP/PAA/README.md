@@ -15,7 +15,7 @@ this folder.
 
 | Folder | Contents |
 |---|---|
-| `00-START-HERE/` | Exam guide, study plan, service matrix, decision trees, traps, mnemonics |
+| `00-START-HERE/` | Exam guide, study plan, service matrix, decision trees, traps, mnemonics, glossary |
 | `01-domains/` | Per-domain deep dives |
 | `02-services/` | Per-service reference |
 | `03-comparisons/` | Head-to-head comparisons |
@@ -33,10 +33,13 @@ and scoped to **this exam only**. `llms.txt` is a machine-readable index.
 
 ## Status
 
-Full bulk-generation pass completed 2026-08-28 — all 10 folders written
-in full (54 content files, ~23,600 lines). No placeholder files remain.
-See `00-START-HERE/RUNBOOK.md` for sourcing and `CLAUDE.md` §5 for the
-per-folder breakdown.
+Full bulk-generation pass completed 2026-08-28 (54 files), followed by
+a same-day gap-remediation pass (56 files, ~24,100 lines total) that
+fixed a broken cross-reference, rewrote all 9 subfolder READMEs, and
+added GCP-account/cost onboarding to the capstone, registration
+logistics, an exam-day checklist, and a consolidated glossary. No
+placeholder files remain. See `00-START-HERE/RUNBOOK.md` §9 for the
+full log and `CLAUDE.md` §5 for the per-folder breakdown.
 
 ---
 
