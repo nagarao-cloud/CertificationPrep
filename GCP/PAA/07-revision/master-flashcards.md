@@ -4,7 +4,7 @@
 > Section 3 (~33% of the exam). Cover the **A** column and self-test.
 > Renames/traps block is deliberately first — it's the highest-value,
 > easiest-to-miss content in the whole folder. Source of truth for every
-> card: `00-START-HERE/RUNBOOK.md` §3/§6/§7, `00-START-HERE/CLAUDE.md` §7/§8.
+> card: `00-START-HERE/RUNBOOK.md` §3/§6/§7, `../CLAUDE.md` §7/§8.
 
 ---
 

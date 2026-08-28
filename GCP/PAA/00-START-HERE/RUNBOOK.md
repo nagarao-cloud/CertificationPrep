@@ -58,6 +58,17 @@ general product-documentation-style knowledge of how these tools work,
 and must be flagged as best-effort/illustrative rather than
 click-verified — see §7's last row and CLAUDE.md §3.
 
+**Re-verify before your actual exam attempt.** This runbook's sourcing
+is accurate **as of 2026-08-28** — not a permanent guarantee. PAA is
+explicitly a beta certification; Google has stated no revision schedule
+for this guide, but beta guides are the category of exam material most
+likely to be revised as the program matures toward GA. Before your exam
+date, re-check `cloud.google.com/learn/certification/agentic-architect`
+(and, if still available, the exam guide PDF itself) for any changes to
+the section weights, the 28-item in-scope tool list, or the exam
+format — treat every fact in this runbook as "verified 2026-08-28," not
+"verified forever."
+
 ---
 
 ## 2. Exam facts (confirmed from `cloud.google.com`, primary source)
@@ -78,6 +89,48 @@ click-verified — see §7's last row and CLAUDE.md §3.
 | Prerequisites | None formally required |
 | Recommended experience | 3+ years hands-on experience building/testing/deploying/managing cloud solutions, including 1+ years building agentic solutions on Google Cloud |
 | Validity | 1 year |
+
+## 2a. Registration and scheduling — what's known vs. what to verify live
+
+The two sources this runbook draws on (the live certification page and
+the exam guide PDF) answer *what* the exam consists of, but not every
+practical logistics question. Here's the honest split:
+
+**Confirmed:**
+- Registration for the beta opens **2026-09-03**, via the official
+  certification page: `cloud.google.com/learn/certification/agentic-architect`.
+  Always use that page directly for the current registration/scheduling
+  link — do not trust a URL copied from anywhere else, including this
+  file, since this environment could not independently verify a
+  deeper registration flow beyond that top-level page (see §1's access
+  note).
+- Both components are required: the proctored multiple-choice exam
+  (Pearson, ~80 questions, 3 hours) and the hands-on labs (**Google
+  Skills platform** — a distinct Google-operated platform for
+  lab-based skill validation, named explicitly in the exam guide as the
+  delivery mechanism for this component). You must pass both to earn
+  the certification.
+- Beta attempts don't count toward the total allowable exam attempts
+  (§2 table).
+
+**Not confirmed by either source — genuinely open questions, not
+guesses:**
+- Whether the MC exam and the Google Skills labs are scheduled
+  together, separately, or with a deadline between them.
+- What happens if a candidate passes one component but not the other —
+  whether a retake covers just the failed half or both, and what a
+  partial retake costs.
+- The Google Skills platform's actual URL, account-creation flow, or
+  interface — this runbook can say the platform exists and is named in
+  the guide, but not what using it looks like. If you've used **Google
+  Cloud Skills Boost** (formerly Qwiklabs) before, Google Skills is in
+  the same general category of lab-delivery platform, but treat that as
+  a category comparison, not a confirmed identity.
+
+**What to do with this:** close to your actual registration date, visit
+the certification page above and read its current FAQ/registration
+flow directly — don't rely on this runbook (or any other secondary
+source) for scheduling mechanics it was never able to confirm.
 
 ### Verbatim candidate description (quoted exactly from the exam guide PDF, page 1)
 

@@ -187,7 +187,7 @@ co-equal to MC prep, not a nice-to-have add-on squeezed in afterward.
 
 | When | Lab file | Pairs with | Honesty flag |
 |---|---|---|---|
-| Day 6 | (console orientation, no lab file yet) | Phase 0 close-out | — |
+| Day 6 | `lab-07-capstone-realtime-agentic-project.md` §0.4–0.5 | Phase 0 close-out | best-effort |
 | Days 9–11 | `lab-01-agent-designer-cx-studio-walkthrough.md` | Section 1 | best-effort |
 | Days 15–17 | `lab-02-antigravity-coding-agent-workflow.md` | Section 2 | best-effort |
 | Days 22–25 | `lab-03-adk-custom-agent-build.md` | Section 3 (3.1/3.2) | best-effort |

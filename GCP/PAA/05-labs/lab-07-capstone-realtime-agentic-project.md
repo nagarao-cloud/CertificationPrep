@@ -309,6 +309,113 @@ path" functional requirement from §0.3.1), then prove it works
 (Phase 4), run it reliably (Phase 5), and lock down access properly
 given the stated data-sensitivity constraint (Phase 6).
 
+## 0.4 Setting up your Google Cloud environment
+
+> **Illustrative, not console-verified** — same honesty flag as the
+> top of this file. Google's console layout can change; if a specific
+> button/menu name below doesn't match what you see, the underlying
+> concept (project, project ID, billing account) is still correct —
+> look for the equivalent control.
+
+Everything from Phase 1 onward assumes you already have a working
+Google Cloud project. If you've never used Google Cloud before, this
+section is for you — a true beginner cannot skip straight to Phase 1
+without it.
+
+**0.4.1 What a Google Cloud project actually is.** A **Google Cloud
+project** is the container everything else in this capstone nests
+inside: it holds the resources you create (an Agent Runtime deployment,
+a BigQuery dataset, a Cloud Storage bucket), the IAM permissions that
+govern who can touch them, and the billing account that pays for them.
+This is a different thing from your **Google account** (the
+email/login you sign in with) — one Google account can own, or have
+access to, many separate projects. Think of the Google account as
+"who you are" and the project as "which sandbox you're working in."
+
+**0.4.2 Do you need a new Google account?** Almost certainly not — an
+existing personal Google account works fine for following this
+capstone. The one reason to consider a dedicated account: it keeps
+every resource this capstone creates in one place, easy to find and
+delete later without hunting through unrelated projects. Not required,
+just a convenience.
+
+**0.4.3 Creating a new GCP project.**
+1. Go to `console.cloud.google.com` and sign in with your Google
+   account.
+2. In the top navigation bar, open the project selector (it shows the
+   current project name, or "Select a project" if you have none yet).
+3. Choose "New Project."
+4. Give it a name — something recognizable, e.g. "PAA Capstone" or
+   "Meridian Tools Demo." The name is just a label; it's not what other
+   commands reference.
+5. Note the **project ID** the console generates (or lets you set) —
+   this is different from the project *name*: it's a globally unique
+   identifier (e.g. `paa-capstone-472901`) that every `gcloud` command
+   and code sample later in this capstone will reference as
+   `YOUR_PROJECT_ID`. Write it down now.
+
+**0.4.4 Enabling billing.** Every project needs a linked **billing
+account** before most of the 28 in-scope tools will actually work —
+find this under the console's "Billing" section, where you'll be
+prompted to create or link a billing account (which requires a payment
+method). Enabling billing does **not** by itself commit you to
+spending anything — it's a prerequisite for provisioning most services,
+not a charge. See §0.5 immediately below before you provision anything
+that could actually cost money.
+
+**0.4.5 Where the project ID shows up later.** Every phase from here on
+that references `YOUR_PROJECT_ID` in a `gcloud` command or a code
+sample means the project ID you just noted in 0.4.3 — set it once as
+your active project (`gcloud config set project YOUR_PROJECT_ID`) so
+later commands don't need to repeat it.
+
+## 0.5 Cost and budget guidance before you touch anything
+
+> This section is about **your own money**, not Meridian Tools' fictional
+> budget from §0.3.4 — that was a design constraint for the story; this
+> is a real warning for your wallet.
+
+**0.5.1 The free-trial credit program.** New Google Cloud accounts have
+historically come with a starting credit for a limited trial period.
+This runbook cannot state a current dollar figure or duration with
+confidence — offers change, and this environment has no way to verify
+today's exact terms (see `00-START-HERE/RUNBOOK.md` §1's access note).
+**Check `cloud.google.com/free` directly** for the current offer before
+you start, and treat any credit you do have as a buffer, not a reason
+to skip §0.5.3's hygiene steps below.
+
+**0.5.2 Which of this capstone's tools are free vs. billable.** Roughly
+three buckets — check the current pricing page for each service before
+relying on this table, since free-tier terms change:
+
+| Bucket | What it means | Services in this capstone likely here |
+|---|---|---|
+| **Has an always-free monthly tier** | Some usage each month costs nothing, you're billed only past that threshold | Cloud Storage, Cloud Run, BigQuery, Firestore, Cloud Functions-adjacent services |
+| **Bills from the first unit of usage** | No meaningful free allowance — configuring it is free, using it starts a meter immediately | Vector Search 1.0, RAG Engine, Agent Runtime, Gemini/Model Garden model calls |
+| **Bills continuously once provisioned — including while idle** | The riskiest bucket for a beginner: you pay whether or not you're actively using it | **GKE clusters** — control-plane and node costs accrue the whole time a cluster exists, whether or not anything is running on it |
+
+**The single costliest mistake a beginner following this capstone could
+make is standing up a GKE cluster in Phase 2 or Phase 5 and forgetting
+about it.** If you provision GKE for the coding-agent sandbox or as a
+deployment target, delete it the same day you're done with that lab
+session — don't leave it running "for next time."
+
+**0.5.3 Basic cost-management hygiene:**
+- Set a **budget alert** (Billing → Budgets & alerts in the console) as
+  your very first action after enabling billing in §0.4.4, before
+  Phase 1 starts — a small monthly threshold with an email alert costs
+  nothing to configure and catches runaway spend early.
+- At the end of each study/lab session, tear down what you provisioned
+  that session rather than leaving it running until next time — this
+  matters most for GKE (0.5.2) but is good habit for everything.
+- If you're ever unsure whether something is still running and billing,
+  the console's Billing → Reports page shows current spend by service —
+  check it periodically rather than assuming.
+
+Phase 5 (§5.1 below) revisits this GKE warning specifically when this
+capstone deploys to a production runtime — worth re-reading this
+section again at that point.
+
 ---
 
 # PHASE 1 — MVP via low-code (Section 1, ~13%)
