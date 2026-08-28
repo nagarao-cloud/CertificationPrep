@@ -445,6 +445,29 @@ artifact layered on top of the per-leaf coverage map in §4 — it does
 not replace any leaf's dedicated Design/Decision-matrix/Tradeoffs
 content, it demonstrates all of them working together end to end.
 
+## 8a. Senior-scope portfolio companion (`lab-08`, added 2026-08-28)
+
+**This does not change the spec above.** §8's capstone design and its
+8-phase (0-7) structure stand as written — `lab-08-senior-scope-and-portfolio-presentation.md`
+is a separate, optional file that layers on top, not a revision to
+lab-07. It exists because the user asked two related but distinct
+questions: what a *real* senior GCP agentic-architect job actually
+expects (answered with sourced, confidence-tiered research — Amazon,
+Google Cloud, PwC, SAP, TTEC, Hover, Kobie postings, plus a staff-level
+AI system-design interview guide), and how to elevate this capstone so
+a candidate could present it in an actual interview.
+
+lab-08 adds exactly the dimensions the exam-scoped capstone was never
+built to cover: quantified (illustrative, explicitly labeled) outcomes,
+a leadership/delegation narrative, cross-functional stakeholder
+negotiation, a Meridian-side budget/cost model, an on-call severity
+framework and postmortem, a mentoring vignette, an explicit
+build-vs-buy decision with a named rejected vendor, and DR/compliance
+extension sketches — then a "how to present this" section (elevator
+pitch, STAR bullets, anticipated follow-up questions). A companion
+published Artifact presents this visually. **Neither is required PAA
+exam content** — see `CLAUDE.md` §3's lab-08 bullet.
+
 ## 9. Checklist status log
 
 **2026-08-28 — RUNBOOK created.** Plan for this folder was originally
@@ -592,3 +615,18 @@ new §0.4-0.5. New total after this pass: **56 files, 24,135 lines**
 remaining "Placeholder folder" hits folder-wide; every new claim beyond
 confirmed exam facts is framed as "verify against the current official
 source," matching this folder's existing honesty conventions.
+
+**2026-08-28 — Senior-scope portfolio pass.** User asked what a real
+GCP senior agentic-architect job actually expects, and to elevate the
+capstone for interview/portfolio presentation. Two research agents
+(capstone job-readiness audit; real-world senior-role research, sourced
+to Amazon/Google Cloud/PwC/SAP/TTEC/Hover/Kobie postings plus a
+staff-level AI system-design interview guide) and one design agent ran
+before any content was written. Added `05-labs/lab-08-senior-scope-and-portfolio-presentation.md`
+(673 lines, optional/not-exam-scope, see §8a above) and published a
+companion presentation Artifact. Every fabricated number/name in
+lab-08 (outcomes dashboard, budget model, vendor name, postmortem) is
+explicitly tagged illustrative-for-rehearsal, distinct from Part A's
+research-grounded, confidence-tiered claims — matching, not
+contradicting, this folder's established honesty convention. New total:
+**57 files, 24,901 lines.**

@@ -81,6 +81,15 @@ plus two PAA-specific overrides:
   file of the folder — it can and should run longer than a standard
   reference file (1,500–2,500+ lines) rather than being compressed to
   fit a normal lab's length.
+- **`lab-08-senior-scope-and-portfolio-presentation.md` is optional,
+  not required exam content — do not confuse it with mandatory PAA
+  scope.** It's a companion to lab-07 for candidates who also want the
+  capstone to double as a job-interview portfolio piece: real-world
+  research on senior-level hiring expectations, plus lab-07 extended
+  with the dimensions a senior interview probes for that exam content
+  alone never covers (leadership, budget ownership, stakeholder
+  negotiation, incident postmortems, mentoring, build-vs-buy). See
+  RUNBOOK.md §8a for its relationship to lab-07's spec.
 
 ## 4. The just-in-time generation rule ⚠️
 
@@ -91,12 +100,14 @@ placeholders unprompted — doing so produces shallow filler.
 ## 5. Files written in full
 
 Full bulk-generation pass completed 2026-08-28 (§12 playbook, 3 waves
-of parallel background agents), followed by a **gap-remediation pass
-the same day** after a self-review identified real gaps (a broken
-cross-reference, 9 stale placeholder READMEs, and 6 content gaps —
-GCP-account/cost onboarding, registration logistics, an exam-day
-checklist, and a consolidated glossary). Per-folder summary (content
-files only, excluding per-folder `README.md` stubs and this file):
+of parallel background agents), followed by a **gap-remediation pass**
+(a broken cross-reference, 9 stale placeholder READMEs, and 6 content
+gaps — GCP-account/cost onboarding, registration logistics, an
+exam-day checklist, and a consolidated glossary) and a **senior-scope
+portfolio pass** (lab-08, an optional companion elevating the capstone
+to job-interview scope, plus a published presentation Artifact), all
+the same day. Per-folder summary (content files only, excluding
+per-folder `README.md` stubs and this file):
 
 | Folder | Files | Lines | Contents |
 |---|---|---|---|
@@ -105,12 +116,12 @@ files only, excluding per-folder `README.md` stubs and this file):
 | `02-services/` | 7 | 2,429 | All 28 in-scope tools, grouped by function |
 | `03-comparisons/` | 6 | 1,253 | Head-to-head decision matrices for the exam's recurring architectural choices |
 | `04-architectures/` | 6 | 2,124 | Generic production patterns (no published case-study pool for this exam, unlike GCPPCA) |
-| `05-labs/` | 7 | 4,874 | 6 per-section labs + the flagship capstone (`lab-07-capstone-realtime-agentic-project.md`, 2,160 lines incl. the remediation pass's GCP-setup/cost-guidance sections) |
+| `05-labs/` | 8 | 5,547 | 6 per-section labs + the flagship capstone (`lab-07`, 2,160 lines) + the optional senior-scope/portfolio companion (`lab-08`, 673 lines, not exam-scope) |
 | `06-practice/` | 7 | 3,896 | 5 per-section question banks + 2 mock exams (80Q + 40Q), every answer inline |
 | `07-revision/` | 7 | 626 | 5 per-section cheatsheets + master flashcards + exam-day-checklist.md (added in remediation pass), compressed by design |
 | `08-interview/` | 2 | 1,445 | Architect-level scenario questions + behavioral/tradeoff questions |
 | `09-assets/` | 3 | 1,004 | Consolidated diagrams, mind maps, decision-flowchart index |
-| **Total** | **56** | **24,135** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
+| **Total** | **57** | **24,901** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
 
 **Mid-pass correction:** the exam guide's verbatim in-scope tool list
 has **28 items, not 23** as first transcribed into this file and

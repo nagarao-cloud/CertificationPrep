@@ -1,7 +1,8 @@
 # 05-labs — Hands-On Walkthroughs + Capstone
 
-Seven files (~4,770 lines): 6 per-section labs plus the folder's
-flagship file, a full ground-zero-to-complete capstone project.
+Eight files (~5,550 lines): 6 per-section labs, the folder's flagship
+capstone, and an optional companion that elevates the capstone to
+job-interview/portfolio scope.
 
 | File | Covers |
 |---|---|
@@ -11,7 +12,8 @@ flagship file, a full ground-zero-to-complete capstone project.
 | `lab-04-a2a-mcp-multi-agent-integration.md` | Multi-agent orchestration via A2A/MCP (Section 3.3) |
 | `lab-05-agent-evaluation-deployment.md` | Evalset → evaluation service → Agent Runtime deployment (Section 4) |
 | `lab-06-secure-agent-governance-setup.md` | OAuth2, PAB, Agent Gateway, Model Armor, HITL (Section 5) |
-| `lab-07-capstone-realtime-agentic-project.md` | **Flagship, 2,100+ lines.** One continuous project — the "Internal Knowledge & Support Agent Platform" — spanning all 5 sections, ground-zero through GCP-account setup, cost/budget guidance, requirements, build, evaluate, deploy, secure, and retrospective. |
+| `lab-07-capstone-realtime-agentic-project.md` | **Flagship, 2,160+ lines.** One continuous project — the "Internal Knowledge & Support Agent Platform" — spanning all 5 sections, ground-zero through GCP-account setup, cost/budget guidance, requirements, build, evaluate, deploy, secure, and retrospective. |
+| `lab-08-senior-scope-and-portfolio-presentation.md` | **Optional, not exam-scope.** Real-world research on what senior GCP agentic-architect hiring actually expects, plus lab-07's project elevated with the dimensions a senior interview probes for (leadership, budget, stakeholder negotiation, incident postmortems, mentoring, build-vs-buy) and how to present it — pitch, STAR bullets, anticipated follow-ups. |
 
 **Honesty flag, applies to every file here:** this environment has no
 live access to the Google Skills platform or any of the actual
