@@ -1,6 +1,7 @@
 - [🏠 Home](/README.md)
 - **AWS · Data Engineer Associate (DEA-C01)**
   - [Overview](/AWS/AWSDEA/README.md)
+  - [DEA CHEAT SHEET](/AWS/AWSDEA/DEA-CHEAT-SHEET.pdf)
     - [00-START-HERE](/AWS/AWSDEA/00-START-HERE/README.md)
       - [10 DAY PLAN](/AWS/AWSDEA/00-START-HERE/10-DAY-PLAN.md)
       - [50 TIPS](/AWS/AWSDEA/00-START-HERE/50-TIPS.md)
@@ -82,6 +83,7 @@
       - [LAB 06 LakeFormation](/AWS/AWSDEA/05-labs/LAB-06-LakeFormation.md)
       - [LAB 07 EMR](/AWS/AWSDEA/05-labs/LAB-07-EMR.md)
       - [LAB 08 End To End](/AWS/AWSDEA/05-labs/LAB-08-End-to-End.md)
+      - [Terraform](/AWS/AWSDEA/05-labs/Terraform/README.md)
     - [06-practice](/AWS/AWSDEA/06-practice/README.md)
       - [Advanced](/AWS/AWSDEA/06-practice/Advanced.md)
       - [Answer Key](/AWS/AWSDEA/06-practice/Answer-Key.md)
