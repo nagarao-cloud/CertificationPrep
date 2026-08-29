@@ -14,6 +14,8 @@ directory. Nothing crosses between exams.
 |---|---|---|---|---|
 | AWS | **DEA-C01** | Certified Data Engineer – Associate | 🟡 Active | [`AWS/AWSDEA/`](AWS/AWSDEA/) |
 | AWS | **AIF-C01** | Certified AI Practitioner | 🟡 Active | [`AWS/AWSAIF/`](AWS/AWSAIF/) |
+| GCP | **PCA** | Professional Cloud Architect | 🟡 Active | [`GCP/GCPPCA/`](GCP/GCPPCA/) |
+| GCP | **PAA** | Professional Agentic Architect | 🔵 Beta — registration opens 2026-09-03 | [`GCP/PAA/`](GCP/PAA/) |
 
 ---
 
@@ -50,6 +52,12 @@ CertificationPrep/
     │
     └── AWSAIF/                          ← everything AIF-C01 lives here
         └── (same ten-subfolder layout)
+
+GCP/
+├── GCPPCA/                              ← everything PCA lives here
+│   └── (same ten-subfolder layout)
+└── PAA/                                 ← everything PAA (Beta) lives here
+    └── (same ten-subfolder layout)
 ```
 
 Every exam folder gets the same ten numbered subfolders, so once you

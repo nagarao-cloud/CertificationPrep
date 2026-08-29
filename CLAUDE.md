@@ -44,15 +44,21 @@ CertificationPrep/
 ├── _TEMPLATE/           ← scaffold for a new exam (copy, don't edit in place)
 ├── _scripts/            ← new-exam.sh
 │
-└── AWS/
-    ├── AWSDEA/          ← AWS Data Engineer Associate (DEA-C01)
-    │   ├── CLAUDE.md    ← ⭐ the real instructions for this exam
-    │   ├── GEMINI.md
-    │   ├── AGENTS.md
-    │   ├── llms.txt
-    │   ├── README.md
-    │   └── 00-START-HERE/ … 09-assets/
-    └── AWSAIF/          ← AWS Certified AI Practitioner (AIF-C01)
+├── AWS/
+│   ├── AWSDEA/          ← AWS Data Engineer Associate (DEA-C01)
+│   │   ├── CLAUDE.md    ← ⭐ the real instructions for this exam
+│   │   ├── GEMINI.md
+│   │   ├── AGENTS.md
+│   │   ├── llms.txt
+│   │   ├── README.md
+│   │   └── 00-START-HERE/ … 09-assets/
+│   └── AWSAIF/          ← AWS Certified AI Practitioner (AIF-C01)
+│       └── (same layout)
+│
+└── GCP/
+    ├── GCPPCA/          ← GCP Professional Cloud Architect (PCA)
+    │   └── (same layout)
+    └── PAA/             ← GCP Professional Agentic Architect (PAA, Beta)
         └── (same layout)
 ```
 
@@ -64,6 +70,8 @@ CertificationPrep/
 |---|---|---|---|---|
 | AWS | **DEA-C01** | Certified Data Engineer – Associate | 🟡 Active | [`AWS/AWSDEA/`](AWS/AWSDEA/) |
 | AWS | **AIF-C01** | Certified AI Practitioner | 🟡 Active | [`AWS/AWSAIF/`](AWS/AWSAIF/) |
+| GCP | **PCA** | Professional Cloud Architect | 🟡 Active | [`GCP/GCPPCA/`](GCP/GCPPCA/) |
+| GCP | **PAA** | Professional Agentic Architect | 🔵 Beta — registration opens 2026-09-03 | [`GCP/PAA/`](GCP/PAA/) |
 
 Add a row here when a new exam folder is created.
 

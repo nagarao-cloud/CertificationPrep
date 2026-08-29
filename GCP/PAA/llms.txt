@@ -1,0 +1,36 @@
+# Google Cloud Professional Agentic Architect (PAA)
+
+> Self-contained study material for one exam. Dense long-form markdown
+> reference: comparison matrices, decision trees, exam traps, and
+> practice questions with full option-by-option explanations.
+>
+> Scope note: this index covers this folder only. Other exam folders in
+> this repository are independent and have their own llms.txt.
+
+Agents: read CLAUDE.md in this folder (identical to GEMINI.md and
+AGENTS.md) before making changes.
+
+## Index
+
+- [Folder index](README.md): reading order and mental map
+
+## Core reference
+
+- [Start here](00-START-HERE/): core reference material, written in
+  full, including a consolidated A-Z glossary
+
+## Full reference (written in full, 2026-08-28 bulk-generation pass)
+
+- [Domains](01-domains/): one deep-dive per exam section
+- [Services](02-services/): all 28 in-scope tools, grouped by function
+- [Comparisons](03-comparisons/): head-to-head decision matrices
+- [Architectures](04-architectures/): production architecture patterns
+- [Labs](05-labs/): per-section walkthroughs plus a flagship
+  ground-zero-to-complete capstone project
+- [Practice](06-practice/): per-section question banks and mock exams
+- [Revision](07-revision/): compressed cheatsheets, flashcards, and an
+  exam-day checklist
+- [Interview](08-interview/): architect-level scenario and
+  behavioral/tradeoff questions
+- [Assets](09-assets/): consolidated diagrams, mind maps, decision
+  flowcharts
