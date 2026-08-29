@@ -13,8 +13,42 @@ const EXAMS = [
 const NUMBERED = ['00-START-HERE','01-domains','02-services','03-comparisons','04-architectures','05-labs','06-practice','07-revision','08-interview','09-assets'];
 const EXAM_ROOT_SKIP = new Set(['README.md', 'CLAUDE.md', 'GEMINI.md', 'AGENTS.md', 'llms.txt']);
 
+// Acronyms/initialisms used across the exam folders (grounded in actual filenames plus
+// each exam's own required vocabulary, e.g. PAA CLAUDE.md §8) — rendered upper-case
+// regardless of how the source filename cased them.
+const ACRONYMS = new Set([
+  'aws', 'dea', 'aif', 'pca', 'paa', 'gcp',
+  'iam', 'kms', 'dms', 'emr', 'msk', 'mwaa', 'efs', 'cdc', 's3',
+  'ml', 'ai', 'sql', 'api', 'rag',
+  'gke', 'vpc', 'dr', 'ha', 'ehr',
+  'adk', 'mcp', 'a2a', 'cx', 'llm', 'slm', 'hitl', 'pab',
+]);
+// Tokens with a non-simple-uppercase canonical rendering.
+const SPECIAL_CASE = { cicd: 'CI/CD', oauth: 'OAuth' };
+// Small connector words that stay lowercase mid-title (but not as the first word).
+const CONNECTORS = new Set(['and', 'or', 'of', 'to', 'vs', 'on', 'in', 'a', 'the', 'for', 'with']);
+
+function isAllUpper(w) { return /^[A-Z0-9]+$/.test(w) && /[A-Z]/.test(w); }
+function isAllLower(w) { return /^[a-z0-9]+$/.test(w); }
+
+// Cases one hyphen/underscore-delimited word, preserving already-mixed-case tokens
+// (e.g. "LakeFormation", "DynamoDB") untouched, upper-casing known acronyms regardless
+// of how the source filename cased them, and Title-Casing everything else — so an
+// ALL-CAPS-HYPHEN filename (AWSDEA's convention) and a lowercase-hyphen filename
+// (PAA/GCPPCA's convention) render identically instead of one "shouting".
+function caseWord(w, isFirst) {
+  const lw = w.toLowerCase();
+  if (SPECIAL_CASE[lw]) return SPECIAL_CASE[lw];
+  if (ACRONYMS.has(lw)) return lw.toUpperCase();
+  if (/^[0-9]+$/.test(w)) return w;
+  if (CONNECTORS.has(lw) && !isFirst) return lw;
+  if (!isAllUpper(w) && !isAllLower(w)) return w; // already a proper-cased name — leave alone
+  return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+}
+
 function titleFromFilename(f) {
-  return f.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const words = f.replace(/\.[^.]+$/, '').split(/[-_]/);
+  return words.map((w, i) => caseWord(w, i === 0)).join(' ');
 }
 
 // Recursively walks a directory, returning { files: [...linkable files, README excluded...],
@@ -41,7 +75,7 @@ function renderDir(node, urlPrefix, indent) {
   }
   for (const [name, child] of Object.entries(node.dirs)) {
     const link = child.hasReadme ? `${urlPrefix}/${name}/README.md` : '#';
-    s += `${indent}- [${name}](${link})\n`;
+    s += `${indent}- [${titleFromFilename(name)}](${link})\n`;
     s += renderDir(child, `${urlPrefix}/${name}`, indent + '  ');
   }
   return s;
@@ -72,7 +106,7 @@ for (const exam of EXAMS) {
     const hasReadme = fs.existsSync(path.join(subPath, 'README.md'));
     const readmeLink = hasReadme ? `/${exam.vendor}/${exam.folder}/${sub}/README.md` : null;
     if (node.files.length === 0 && Object.keys(node.dirs).length === 0 && !hasReadme) continue;
-    out += `    - [${sub}](${readmeLink || '#'})\n`;
+    out += `    - [${titleFromFilename(sub)}](${readmeLink || '#'})\n`;
     out += renderDir(node, `/${exam.vendor}/${exam.folder}/${sub}`, '      ');
   }
 }
