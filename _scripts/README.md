@@ -5,7 +5,8 @@ Tooling for scaffolding and bulk-populating exam folders in this repo.
 | File | Purpose |
 |---|---|
 | `new-exam.sh` | Creates a new isolated exam folder from `_TEMPLATE/` |
-| This README | How to go from an empty scaffold to a fully-written exam folder using an AI agent, without re-explaining the process each time |
+| `gen-sidebar.js` | Regenerates the root `_sidebar.md` for the GitHub Pages site — run it (`node _scripts/gen-sidebar.js`) after adding/removing files in any exam folder |
+| This README | How to go from an empty scaffold to a fully-written exam folder using an AI agent, without re-explaining the process each time — and how to publish the whole repo as a browsable site |
 
 ---
 
@@ -133,6 +134,40 @@ first exam folder in this repo (AWS DEA-C01):**
   parallel background agents can fail from the same transient
   infrastructure blip at once — restarting all of them from scratch
   would have redone a lot of already-good work for no reason.
+
+## Publishing to GitHub Pages
+
+The whole repo is set up to serve directly as a [Docsify](https://docsify.js.org/)
+site — zero build step, renders every markdown file client-side, with
+full-text search across all exams. The site files (`index.html`,
+`_sidebar.md`, `.nojekyll`) already live at the repo root. **Two manual
+steps only you can do** (neither is possible via git/API access):
+
+1. **Make the repo public.** GitHub Pages requires a public repo on
+   free personal plans — private-repo Pages needs GitHub Pro/Team/
+   Enterprise. Settings → General → Danger Zone → Change visibility.
+2. **Enable Pages.** Settings → Pages → Source: "Deploy from a branch"
+   → pick the branch this content lives on (either `main` after
+   merging, or point Pages directly at your working branch — both are
+   valid, the working branch is faster if you don't want to merge yet)
+   → folder: `/ (root)`.
+
+Once both are done, the site is live at
+`https://<username>.github.io/CertificationPrep/` (or
+`https://<username>.github.io/CertificationPrep/tree-branch-name` —
+GitHub always serves from the repo root regardless of which branch you
+pointed Pages at, so the URL is the same either way). No further steps —
+it's fully static, no GitHub Actions workflow required.
+
+**After adding new exam content:** run `node _scripts/gen-sidebar.js`
+to regenerate `_sidebar.md` before committing, so new files actually
+show up in the site nav. This isn't automatic — there's no CI step
+watching for it (deliberately: this repo has no build pipeline to keep
+maintenance minimal).
+
+**Isolation still holds:** these are tooling files, not exam content —
+same category as `_scripts/` and `_TEMPLATE/` already at the repo
+root. No exam folder's own files were touched to make this work.
 
 ## When *not* to use this
 

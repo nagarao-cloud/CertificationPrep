@@ -1,5 +1,7 @@
 # CertificationPrep
 
+> 📖 **[Browse online](https://nagarao-cloud.github.io/CertificationPrep/)** — searchable site, once GitHub Pages is enabled (see `_scripts/README.md`'s "Publishing to GitHub Pages" section). Until then this link 404s.
+
 Study repositories for cloud certifications.
 
 **Every exam is a self-contained folder.** Markdown, text files,
