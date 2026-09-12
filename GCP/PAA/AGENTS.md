@@ -119,9 +119,16 @@ per-folder `README.md` stubs and this file):
 | `05-labs/` | 8 | 5,547 | 6 per-section labs + the flagship capstone (`lab-07`, 2,160 lines) + the optional senior-scope/portfolio companion (`lab-08`, 673 lines, not exam-scope) |
 | `06-practice/` | 7 | 3,896 | 5 per-section question banks + 2 mock exams (80Q + 40Q), every answer inline |
 | `07-revision/` | 7 | 626 | 5 per-section cheatsheets + master flashcards + exam-day-checklist.md (added in remediation pass), compressed by design |
-| `08-interview/` | 2 | 1,445 | Architect-level scenario questions + behavioral/tradeoff questions |
+| `08-interview/` | 9 | 7,426 | 173-question interview bank: fundamentals + 5 per-section deep-dives + cross-cutting system design (all added 2026-09-12), plus the original scenario + behavioral/tradeoff files |
 | `09-assets/` | 3 | 1,004 | Consolidated diagrams, mind maps, decision-flowchart index |
-| **Total** | **57** | **24,901** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
+| **Total** | **64** | **30,882** | plus this `CLAUDE.md`/`GEMINI.md`/`AGENTS.md` and `README.md`/`llms.txt` |
+
+**Interview-bank expansion (2026-09-12):** `08-interview/` grew from 2
+files (33 questions) to 9 (173 questions) at the user's explicit
+request — a job-interview-prep bank basics-to-advanced, weighted toward
+system design, with every design/diagnostic question carrying a labeled
+ASCII diagram. See `08-interview/README.md` for the full breakdown and
+`00-START-HERE/RUNBOOK.md` §9 for the generation log.
 
 **Mid-pass correction:** the exam guide's verbatim in-scope tool list
 has **28 items, not 23** as first transcribed into this file and

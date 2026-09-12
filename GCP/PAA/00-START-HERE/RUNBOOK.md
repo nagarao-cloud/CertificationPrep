@@ -638,3 +638,57 @@ explicitly tagged illustrative-for-rehearsal, distinct from Part A's
 research-grounded, confidence-tiered claims — matching, not
 contradicting, this folder's established honesty convention. New total:
 **57 files, 24,901 lines.**
+
+**2026-09-12 — Interview-bank expansion (150+ questions, system-design
+focused).** User asked for a comprehensive PAA interview-question bank
+— at least 150 questions, basics through advanced, weighted toward
+system design, every concept explained in detail — for real
+job-interview prep, not certification MC practice. Clarified via
+AskUserQuestion: open-ended job-interview style matching the 2 existing
+`08-interview/` files (not MC); keep those 2 files and add new ones
+alongside; organize by exam section + cross-cutting; depth = model
+answer + reasoning (~30-60 lines/question, matching the existing
+files' convention). User then asked for labeled ASCII diagrams on every
+system-design/diagnostic question.
+
+Before writing, re-checked `cloud.google.com/learn/certification/agentic-architect`
+live (the 2026-08-28 source): format, cost, prerequisites, and section
+names all still match — no drift. One new fact surfaced now that
+registration has opened (2026-09-03): the beta exam window is stated as
+open until September 30 — folded into §2a above.
+
+Added 7 new files (140 new questions) to `08-interview/`, proportioned
+to the real exam-section weights: `00-fundamentals-and-basics-questions.md`
+(20), `section-1-low-code-tools-questions.md` (13), `section-2-coding-agents-questions.md`
+(17), `section-3-custom-agents-questions.md` (33, the heaviest section
+gets its own file and the deepest treatment), `section-4-evaluation-deployment-questions.md`
+(22), `section-5-security-governance-questions.md` (15), and
+`cross-cutting-system-design-questions.md` (20 staff-level synthesis
+questions, every one with a diagram). Folder total: **9 files, 173
+questions, 7,426 new lines** (plus the 2 pre-existing files' 1,445
+lines). Every new file's scenarios were checked against the 2 existing
+files (and, within a batch, against sibling files) to avoid duplicating
+any question or fictional scenario.
+
+Self-verified across all 7 new files: exact question counts per file
+match the target; every question has all 4 structural parts (quoted
+question, framing line, model answer, "why not X" debunk); zero 🕐
+placeholder markers; grep for "Agent Engine"/"Vertex AI Search"/"Vertex
+AI Agent Builder"/"Gemini Code Assist" across all 7 files returns hits
+only inside explicit currency-correction callouts, never asserted as
+current fact; every system-design/diagnostic question carries a
+labeled, plain box-and-arrow ASCII diagram (no Mermaid), confirmed by
+fence-count per file. New total: **64 files, 30,882 lines** (see
+`CLAUDE.md` §5 for the updated per-folder table).
+
+**Process note, worth recording:** several background agents assigned
+to this pass encountered a transient plan-mode restriction and, when a
+peer agent's message asserted the restriction had been lifted, correctly
+refused to act on that unverified assertion alone — a sound safety
+instinct, not a bug to route around. The actual fix was writing the
+content directly in the coordinating session once real, verifiable
+evidence of unblocked write access existed (a committed file), rather
+than persuading the stuck agents to trust a peer's word. One agent
+(Section 3) had already fully drafted its 33 questions into its plan
+file before hitting this issue; that content was extracted verbatim
+into the real target file rather than being rewritten from scratch.
