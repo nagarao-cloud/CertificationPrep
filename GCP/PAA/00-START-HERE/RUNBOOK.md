@@ -104,6 +104,14 @@ practical logistics question. Here's the honest split:
   file, since this environment could not independently verify a
   deeper registration flow beyond that top-level page (see §1's access
   note).
+- **Re-checked 2026-09-12** (live fetch of the same certification page):
+  format, cost, prerequisites, and the 5 section names are all still
+  consistent with the 2026-08-28 read. One new fact surfaced that
+  wasn't visible before registration opened: **the beta exam window is
+  stated as open until September 30** — confirm the exact year and any
+  extension directly on the certification page before your own
+  registration, since this environment cannot verify beyond what that
+  page states at fetch time.
 - Both components are required: the proctored multiple-choice exam
   (Pearson, ~80 questions, 3 hours) and the hands-on labs (**Google
   Skills platform** — a distinct Google-operated platform for
