@@ -3335,3 +3335,560 @@ one, and saying that out loud is part of the design.
   the references in step (f).
 
 ---
+
+### D2-Q12 — "Users upload photos and video from phones, all day, everywhere. Design the upload and the processing."
+
+| | |
+|---|---|
+| **Band** | Staff |
+| **Primary domain leaves** | 1.3, 6.2 |
+| **Axis** | scale |
+| **Whiteboard time** | 35–45 min |
+| **Reads well after** | `D2-Q04` |
+
+**What the interviewer is actually testing**
+
+Whether bytes go through your compute. The single decision that
+determines whether this design scales is whether the application tier
+ever touches the payload, and a candidate who draws an upload endpoint
+on the app tier has already lost. After that, the test is whether you
+know most uploads are never viewed, which changes the processing
+strategy completely.
+
+**Clarifying questions to ask before drawing anything**
+
+- **What proportion of uploads are ever viewed by anyone?** For most
+  consumer products it's a small fraction, and that single fact decides
+  whether processing is eager or lazy.
+- **How bad are the networks?** Mobile uploads fail partway constantly,
+  so resumability isn't a nice-to-have — it's the difference between a
+  working product and one that loses a wedding video at ninety percent.
+- **Is there a moderation or safety obligation before content is
+  visible?** If yes, there's a mandatory gate between upload and
+  serving, and it's on the critical path for publication.
+- **How many output variants does the product actually need?** Each
+  variant is real compute per upload, and the list grows by habit
+  rather than by need.
+- **How long must originals be kept?** Originals dominate storage over
+  time, and their retention policy is worth more than any compute
+  optimisation.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| Consumer-scale upload volume, mobile clients | Stated | — | Rules out proxying bytes through compute; forces resumable uploads |
+| Most uploads are rarely or never viewed | Assumed | "If that's wrong, I'd shift more work to eager processing" | Makes lazy derivative generation the default for the long tail |
+| Content must be validated before it is served | Assumed | "I'll assume there's a safety gate — it changes where the boundary is" | Two-bucket quarantine/validated split |
+| Originals retained long-term | Assumed | "I'll assume we keep originals and tier them down by age" | Lifecycle policy is a first-class cost lever |
+| Processing can tolerate interruption | Assumed | "Derivative generation is retryable, so it can run on interruptible capacity" | Enables much cheaper compute for the heavy tier |
+| Duplicate events will occur | Assumed | "I'll design processing to be idempotent rather than chase exactly-once delivery" | Keyed on object name and generation |
+
+**The answer, out loud**
+
+The first decision is that bytes never pass through our application
+tier. The client asks our API for permission to upload, gets back a
+signed, time-limited, resumable upload URL, and writes directly to
+Cloud Storage. Our compute handles a small authorisation request and
+nothing else. If instead the app tier proxies the payload, every
+concurrent upload holds a connection and memory in something we pay to
+scale, and the cost curve is set by bandwidth rather than by requests.
+Resumability is the second half of that: mobile uploads fail partway
+constantly, and a resumable upload turns a dropped connection into a
+continuation instead of a restart.
+
+Uploads land in a quarantine bucket, not the serving one. That boundary
+is doing real work: nothing that hasn't been validated is reachable by
+a serving path, so a malformed or malicious object can't be served by
+accident. Object finalisation publishes an event to Pub/Sub, and that
+event is the trigger for everything downstream.
+
+Validation runs first: is it the type it claims, is it within limits,
+does it pass whatever safety scanning the product requires. Passing
+objects move to the validated bucket; failing ones stay quarantined with
+a reason, and a small number of objects will fail in ways nobody
+anticipated, so there's a dead-letter path rather than an infinite
+retry loop. A poison object that retries forever is the classic way
+this pipeline burns capacity silently.
+
+Then derivative generation, and here's the choice I'd make explicitly.
+Most uploads are never viewed, so eagerly producing every variant for
+every upload means paying for work nobody consumes. My commitment is
+split: eagerly produce the small set that's almost certainly needed —
+a thumbnail, and the one playback rendition the uploader will
+immediately watch — and generate the rest of the ladder lazily, on
+first request, then cache the result. The long tail costs nothing until
+someone asks. For the small proportion of content that becomes popular,
+the first viewer pays a one-off generation delay and everyone after
+them hits cache.
+
+The processing tier itself is the elastic part of the system and it's
+interruption-tolerant, because any job can be retried from the
+original. That makes it a good fit for Spot capacity — either Spot node
+pools under GKE or a managed batch layer over Compute Engine for the
+heavy parallel work. I'd keep the latency-sensitive sliver, the
+uploader's own immediate playback rendition, on ordinary capacity so a
+reclaim doesn't show up as a bad first experience, and put everything
+else on the cheap interruptible tier. Naming which slice is which is
+the design; putting it all on one tier wastes either money or
+experience.
+
+Idempotency is keyed on the object's name and its generation, not on
+the message identifier, because the duplicate I actually care about is
+a redelivered notification for the same object. Every derivative is
+written to a deterministic path derived from that key, so a duplicate
+job overwrites identical output rather than producing a second copy.
+
+Serving is object storage behind Cloud CDN on the same global frontend
+as everything else, with the same URL-identity discipline as `D2-Q04`:
+derivative URLs are content-derived and identical for identical
+content, so the cache hit rate stays high and the origin stays quiet.
+
+Finally, lifecycle. Originals are the dominant storage cost over a
+product's life, and they're rarely accessed after the first weeks. A
+lifecycle policy tiering them down by age does more for the cost
+picture than any compute tuning, and it's a few lines of configuration.
+I'd set it on day one, because retrofitting a retention policy onto
+years of accumulated objects is a project rather than a setting.
+
+**Architecture**
+
+```
+   phone                                             our compute
+     │  1. "may I upload?"  ──────────────────────►  API (tiny)
+     │  2. signed, time-limited RESUMABLE URL  ◄───     ◄── (1)
+     │
+     │  3. bytes go DIRECTLY to storage, never through us
+     ▼
+  ┌──────────────────────────────────────────────────────┐
+  │ QUARANTINE bucket — not reachable by any serving path │ ◄── (2)
+  └──────────────────────────┬───────────────────────────┘
+                             │ object finalize event
+                             ▼
+  ┌──────────────────────────────────────────────────────┐
+  │ Pub/Sub  ── idempotency key = object name + generation│ ◄── (3)
+  └──────────────────────────┬───────────────────────────┘
+                             ▼
+  ┌──────────────────────────────────────────────────────┐
+  │ VALIDATE: type, limits, safety scan                   │ ◄── (4)
+  │   pass → move to validated bucket                     │
+  │   fail → stays quarantined, reason recorded           │
+  │   unparseable → DEAD LETTER, never an infinite retry  │ ◄── (5)
+  └──────────────────────────┬───────────────────────────┘
+                             ▼
+  ┌─────────────────────────┴────────────────────────────┐
+  ▼                                                      ▼
+ EAGER (small, certain)                    LAZY (the long tail)
+ thumbnail + the ONE rendition             remaining ladder rungs
+ the uploader will watch now               generated on FIRST
+ ordinary capacity          ◄── (6)        request, then cached  ◄── (7)
+                                           heavy work on SPOT    ◄── (8)
+                             │
+                             ▼
+  ┌──────────────────────────────────────────────────────┐
+  │ SERVING bucket → Cloud CDN → global external App LB   │ ◄── (9)
+  │ derivative URLs are content-derived and identical     │
+  └──────────────────────────────────────────────────────┘
+
+  Cross-cutting: originals are the dominant long-run storage cost, so
+  a lifecycle policy tiers them down by age from day one (10); every
+  derivative path is deterministic, so a duplicate job overwrites
+  identical output instead of creating a second copy (11).
+```
+
+**Every arrow explained:**
+
+1. **Signed resumable upload URL** — our compute handles a small
+   authorisation request, never the payload, and a dropped connection
+   continues rather than restarts. Don't proxy uploads through the app
+   tier; concurrency then costs memory and connections in the tier you
+   pay to scale.
+2. **Quarantine bucket as a real boundary** — unvalidated content is
+   unreachable from any serving path. Don't upload straight into the
+   serving bucket and validate afterwards; there's a window where a bad
+   object is servable.
+3. **Idempotency on object name plus generation** — the duplicate that
+   matters is a redelivered notification for the same object. Don't key
+   on the message identifier; a redelivery has a new one.
+4. **Validation before anything expensive** — cheapest possible
+   rejection point. Don't transcode first and validate later; you've
+   paid for content you're about to discard.
+5. **Dead-letter path for unparseable objects** — a poison object that
+   retries forever burns capacity silently. Don't retry indefinitely;
+   bound it and route the remainder somewhere a human will look.
+6. **Eager generation for the small certain set, on ordinary
+   capacity** — the uploader's immediate experience shouldn't be
+   subject to a reclaim. Don't put this slice on interruptible capacity
+   to save a little.
+7. **Lazy generation for the long tail** — most uploads are never
+   viewed, so the tail costs nothing until asked for. Don't generate
+   every variant eagerly unless viewing rates are genuinely high.
+8. **Heavy work on Spot capacity** — every job is retryable from the
+   original, which is exactly the interruption-tolerant profile Spot is
+   for. Don't use Spot for anything a user is waiting on.
+9. **Serve from storage through the CDN with content-derived URLs** —
+   identical content, identical URL, high hit rate. Don't add
+   per-viewer parameters to derivative URLs; that collapses the cache.
+10. **Lifecycle tiering on originals from day one** — the dominant
+    long-run cost and the cheapest lever available. Don't retrofit
+    retention later; it becomes a project instead of a setting.
+11. **Deterministic derivative paths** — makes duplicate processing
+    harmless. Don't generate unique output names per job; you'd
+    accumulate duplicate derivatives that nobody ever cleans up.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| Upload path | Direct to storage via signed resumable URL | Proxy bytes through the app tier | Compute cost scales with requests, not with bandwidth | When every upload needs synchronous inline inspection before it can be stored at all — a strict regulatory gate — then proxy, and size for it |
+| Derivative generation | Eager for a small certain set, lazy for the tail | Eager for everything | Most uploads are never viewed, so eager work on the tail is unconsumed | When nearly all content is viewed quickly — a live-adjacent product — then eager everything and take the predictable latency |
+| Heavy processing capacity | Spot / interruptible | Ordinary dedicated capacity | Jobs are retryable from the original, which is the ideal interruption-tolerant profile | When a user is waiting on the result — then ordinary capacity, because a reclaim is a visible failure |
+| Validation boundary | Two buckets, quarantine and validated | One bucket with a status flag | Unvalidated content is structurally unreachable, not just marked | When the object count makes moves expensive and the serving path is provably flag-aware — then one bucket, carefully |
+| Storage cost control | Lifecycle tiering set at day one | Revisit retention once storage becomes noticeable | Retrofitting retention across years of objects is a project, not a setting | When retention is legally fixed and tiering is forbidden — then it isn't a lever and the cost is simply owned |
+
+**What a weak answer sounds like**
+
+- "The API accepts the upload and writes it to storage." — the whole
+  design fails here; compute now scales with bandwidth.
+- "We'd transcode everything on upload." — pays for variants of content
+  nobody will ever watch, which at consumer scale is most of it.
+- "Cloud Functions triggered on upload, and that's the pipeline." — a
+  trigger is not a pipeline; it says nothing about validation, poison
+  objects, idempotency or the eager/lazy split.
+- "We'd retry failures until they succeed." — a poison object then
+  consumes capacity forever, and nobody notices because it isn't an
+  error spike, it's a steady hum.
+
+**Common wrong turns**
+
+- **Proxying the bytes.** It's the intuitive shape because that's how a
+  form post works. Recover immediately by moving to signed URLs; it's
+  cheap to fix mid-answer and defining afterwards.
+- **Forgetting resumability.** Works in the office, fails on a train.
+  Recover by naming the mobile network reality as the reason.
+- **One bucket for everything.** The quarantine boundary is the cheapest
+  safety property available. Recover by splitting it and saying what it
+  guarantees.
+- **Ignoring originals.** All the attention goes to compute while
+  storage quietly becomes the dominant line. Recover by adding the
+  lifecycle policy while you're still drawing.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"A single video goes viral. What happens?"** — the first viewer
+   triggers lazy generation of the rungs they need and waits a moment;
+   everyone after them is served from the CDN. The system's exposure is
+   a brief burst of concurrent generation requests for the same object,
+   which is why derivative generation needs the same single-flight
+   discipline as a cache miss (`D2-Q05`).
+2. **"Escalate: ten times the upload volume for a day."** — uploads
+   themselves are fine, because they go straight to storage and don't
+   touch anything we scale. The processing backlog grows, which is a
+   freshness degradation rather than an outage, and the Spot tier
+   absorbs it at whatever rate capacity allows. That decoupling is the
+   main reason the design is shaped this way.
+3. **"Who owns this in two years?"** — a media platform team owning the
+   variant list and the retention policy. The variant list is the thing
+   that decays: variants get added for a feature and never removed when
+   the feature goes, and each one is permanent per-upload compute.
+4. **"How do you add a new output format to years of content?"** — I
+   don't, for the tail. New formats generate lazily on request like
+   every other rung, and only the demonstrably popular subset gets a
+   backfill. A blanket backfill over the full archive is the most
+   expensive thing this system can be asked to do.
+5. **"What if safety scanning must happen before anything is
+   stored?"** — then the quarantine boundary moves in front of storage
+   and uploads do have to pass through an inspection tier, with all the
+   cost that implies. I'd push hard on whether "before stored" or
+   "before served" is the actual requirement, because they differ by an
+   order of magnitude in cost and only one of them is usually meant.
+
+**Cross-references**
+
+- `03-comparisons/01-compute-options.md` — the Spot and Cloud Batch
+  positioning behind callout (8), and why a user-facing path stays off
+  interruptible capacity.
+- `D2-Q04` for the live-video sibling of this pipeline and the URL
+  identity rule, `D2-Q05` for the single-flight discipline behind probe
+  one, `D2-Q17` for sharing capacity with latency-sensitive work.
+
+---
+
+### D2-Q13 — "Our contract says 99.99%. Three services we depend on publish 99.9%, and two of them are third parties. Explain how that's possible."
+
+| | |
+|---|---|
+| **Band** | Principal |
+| **Primary domain leaves** | 1.2, 6.2 |
+| **Axis** | scale |
+| **Whiteboard time** | 35–45 min |
+| **Reads well after** | `D2-Q10` |
+
+**What the interviewer is actually testing**
+
+Whether you'll say the honest thing: as described, it isn't possible,
+because dependencies in series compose downward rather than upward. The
+test is what you do next. A Principal candidate doesn't stop at "we
+can't" — they change the shape of the dependency graph, change what
+counts as an outage, or change the contract, and they know which of
+those is cheapest.
+
+**Clarifying questions to ask before drawing anything**
+
+- **What exactly does the contract define as unavailable?** Measured
+  where, over what window, with what exclusions? Most availability
+  contracts are won or lost on the definition rather than on the
+  engineering.
+- **Are all three dependencies on the critical path for every
+  request?** Usually at least one isn't, and it's only there because
+  someone made a synchronous call out of convenience.
+- **What does the service actually promise the customer?** If the
+  promise is "orders are accepted," a degraded read experience isn't an
+  outage, and that distinction is worth more than any redundancy.
+- **What's our own change-failure rate?** Most outages come from our
+  deploys, not our dependencies, so an availability conversation that
+  ignores the release process is aimed at the wrong risk.
+- **Is there a second provider for any of the third parties?** Not
+  always, but where there is, it changes the composition from serial to
+  parallel for that hop.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| Contractual target above what the chain supports | Stated | — | Something must change: the graph, the definition, or the contract |
+| Three dependencies at a lower published target | Stated | — | Serial composition is the core problem to attack |
+| Two are third parties | Stated | — | Their reliability isn't ours to improve; only our coupling to it is |
+| The customer promise is narrower than "everything works" | Assumed | "I'll assume the contract's intent is the core transaction, not every feature" | Lets non-core paths degrade without counting as downtime |
+| Our own releases cause outages too | Assumed | "I'll assume our change-failure rate is part of the budget, because it usually dominates" | Puts the release process in the availability design |
+| Alternatives exist for at least one dependency | Assumed | "If not, that hop's reliability is a hard ceiling and I'd say so" | Determines whether parallel composition is available |
+
+**The answer, out loud**
+
+I'd open with the honest version, because a Principal panel is
+listening for whether I'll say it: if all three dependencies sit in
+series on the critical path, the composed availability is worse than
+any one of them, and no amount of redundancy on *our* side fixes that.
+Serial dependencies compose downward. So the first thing I'd tell
+whoever signed the contract is that the current shape cannot deliver
+it, and then I'd bring three ways to change the shape rather than
+stopping at the bad news.
+
+The first and best move is to get dependencies off the critical path
+entirely. In practice at least one of the three is there because
+somebody made a synchronous call where an asynchronous one would do —
+a fraud check, an enrichment, a notification. If the result isn't
+needed in the response, it goes behind Pub/Sub and stops being an
+availability dependency at all. That's the highest-leverage change
+available and it usually costs less than any redundancy work.
+
+The second move is for dependencies that genuinely must be consulted
+but don't have to be *live*. If I can cache their answers, or hold a
+recent snapshot, or fall back to a conservative default, then their
+outage becomes a degradation rather than a failure. A pricing service
+that's down can be served from the last known good prices for a bounded
+window. A recommendation service that's down returns a generic list.
+The design rule is that every synchronous dependency needs a defined
+behaviour when it's unavailable, and "the request fails" should be the
+answer for as few of them as possible. Where a second provider exists,
+that's the strongest version of the same idea: two providers in
+parallel compose upward instead of downward, at the cost of running an
+integration you use rarely and must therefore exercise deliberately.
+
+The third move is the definition, and this is where most of these
+contracts are actually settled. "Available" needs to mean something
+specific: which operations, measured from where, over what window, with
+which exclusions. If the contract means "customers can place orders,"
+then a degraded browse experience isn't an outage and the three
+dependencies may not all be in scope. If it means "every feature works
+perfectly," nobody can hit four nines and the contract was written
+without an engineer in the room. I'd bring proposed wording rather than
+an objection — that's the difference between blocking and helping.
+
+Then I'd widen it, because there's a risk in this conversation that
+everyone is looking at the wrong thing. Most outages are caused by our
+own changes, not by our dependencies. If the deploy process can take
+the service down, the release pipeline is part of the availability
+design: progressive rollout, one region at a time, automated rollback
+on error-rate signal, and a change freeze around anything high-stakes.
+Improving that usually buys more availability than hardening a
+dependency, and it's entirely within our control.
+
+Finally, whatever budget remains has to be visible. I'd define the SLO
+below the contractual number so there's margin, track burn rate with
+fast and slow alerting, and make it clear who is allowed to spend the
+remaining budget on shipping features. An availability target with no
+error budget and no named owner is a number in a document, and it will
+be discovered to be untrue during the first bad quarter.
+
+If after all of that the target still isn't reachable — a single
+irreplaceable third party sitting synchronously on the core
+transaction with a lower published target — then I'd say so plainly and
+early, in writing, with the specific hop named. That's not a failure of
+the architecture; it's the architecture telling the business something
+it needs to hear before the penalty clause does.
+
+**Architecture**
+
+```
+  THE PROBLEM
+  request ──► [dep A] ──► [dep B] ──► [dep C] ──► response
+              all SERIAL, all on the critical path.
+              Serial dependencies compose DOWNWARD: the chain is
+              worse than its weakest link, never better.     ◄── (1)
+
+  MOVE 1 — REMOVE IT FROM THE PATH                            ◄── (2)
+  request ──► [dep A] ──► response
+                  │
+                  └──► Pub/Sub ──► dep B (async)
+        if the caller doesn't need the answer in the response,
+        B stops being an availability dependency at all
+
+  MOVE 2 — MAKE IT SURVIVABLE                                 ◄── (3)
+  request ──► cache / last-known-good / conservative default
+                  │  miss or stale-beyond-limit
+                  ▼
+              [dep C]   ── outage becomes DEGRADATION          ◄── (4)
+  or, where a second provider exists:
+  request ──► [dep C1] ∥ [dep C2]  ── parallel composes UPWARD ◄── (5)
+
+  MOVE 3 — CHANGE THE DEFINITION                              ◄── (6)
+  "available" = WHICH operations, measured WHERE, over WHAT
+  window, with WHICH exclusions. Most of these contracts are
+  settled here, not in engineering. Bring wording, not an objection.
+
+  THE THING EVERYONE IS LOOKING AWAY FROM                     ◄── (7)
+  our own releases cause more outages than our dependencies do:
+  progressive rollout, one region at a time, automated rollback
+  on error-rate signal, freeze around high-stakes windows
+
+  WHAT'S LEFT — make it visible                               ◄── (8)
+  SLO set BELOW the contractual number for margin; fast and slow
+  burn-rate alerting; a named owner allowed to spend the budget  ◄── (9)
+
+  Cross-cutting: every synchronous dependency needs a DEFINED
+  behaviour when unavailable, and "the request fails" should be the
+  answer for as few as possible (10); if one irreplaceable synchronous
+  third party still caps the chain, say so early and in writing (11).
+```
+
+**Every arrow explained:**
+
+1. **Serial composition goes the wrong way** — the chain is worse than
+   its weakest member. Don't answer this question by adding redundancy
+   on your own side; it doesn't touch the composition.
+2. **Remove the dependency from the critical path** — the cheapest and
+   most effective move available. Don't leave a call synchronous
+   because it's already written that way; ask whether the response
+   needs its answer.
+3. **Cache, last-known-good, or a conservative default** — converts an
+   outage into a degradation. Don't serve stale data past a bounded
+   limit; beyond it, fail honestly rather than quietly serve something
+   wrong.
+4. **Degradation as a designed state** — named, tested and visible.
+   Don't leave the unavailable behaviour undefined; undefined means
+   whatever the timeout does, which is usually the worst option.
+5. **Parallel providers compose upward** — two independent paths for
+   one hop. Don't add a second provider you never exercise; an
+   untested failover path is a decoration.
+6. **Change the definition** — measured where, over what window, with
+   what exclusions. Don't go into that conversation with an objection;
+   go with proposed wording.
+7. **Our own releases** — usually the dominant cause, and entirely
+   within our control. Don't run an availability programme that only
+   examines dependencies.
+8. **SLO set below the contract** — margin between the number you
+   manage to and the number you owe. Don't manage directly to the
+   contractual figure; you'd have no room to absorb a bad week.
+9. **Named owner for the error budget** — someone decides when to stop
+   shipping. Don't leave the budget unowned; it will be spent by
+   default and discovered when it's gone.
+10. **Defined behaviour for every synchronous dependency** — the
+    complete list is a design artefact. Don't accept "it returns an
+    error" as a design for a dependency the customer's transaction
+    needs.
+11. **Say it early and in writing if the target is unreachable** — the
+    architecture telling the business something true. Don't absorb an
+    impossible commitment silently and hope.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| First move | Remove dependencies from the critical path | Add redundancy behind each dependency | Changes the composition itself, which redundancy on our side cannot | When every dependency genuinely must be live and synchronous — a real-time authorisation — then redundancy per hop is the only lever |
+| Unavailable behaviour | Cached or conservative default with a bounded staleness limit | Fail the request | Turns an outage into a degradation for most dependency classes | When a stale or default answer would be wrong in a way that harms the customer — pricing on a binding offer, entitlement checks — then fail honestly |
+| Second provider | Only where the integration will be exercised regularly | Add a fallback provider for every third party | An unexercised failover path is decoration that fails when used | When the dependency is critical enough to justify the cost of routinely running both — then dual-run and keep both warm |
+| Contract | Renegotiate the definition, bringing wording | Accept the number and engineer toward it | Most of these targets are unachievable as written and achievable as intended | When the definition is already precise and narrow — then the engineering work is the real work and the wording won't help |
+| Where to spend effort | Our own release process first | Dependency hardening first | Our changes usually cause more downtime, and we control them completely | When the change-failure rate is already low and measured — then the dependencies are genuinely the binding constraint |
+
+**What a weak answer sounds like**
+
+- "We'd add redundancy and monitoring." — neither changes serial
+  composition, and the panel is specifically testing whether you know
+  that.
+- "We'd get the vendors to commit to a higher target." — occasionally
+  possible, usually not, and it makes their reliability your plan.
+- "Four nines is achievable with good engineering." — said without
+  touching the dependency graph or the definition, which is where the
+  achievability actually lives.
+- "We'd exclude third-party outages from the SLA." — a reasonable
+  clause stated as a trick rather than as a negotiated definition, and
+  a customer will read it as evasion unless the degradation story is
+  real.
+
+**Common wrong turns**
+
+- **Arguing the arithmetic and stopping.** Being right about
+  composition is table stakes; the value is in what you change.
+  Recover by moving straight to the three moves.
+- **Treating the contract as immutable.** It was written by people who
+  would generally rather have a precise achievable number than an
+  impressive unachievable one. Recover by bringing wording.
+- **Ignoring your own deploys.** The conversation is about vendors, so
+  everyone looks outward. Recover by putting change-failure rate on the
+  board next to the dependency chain.
+- **Leaving degradation undefined.** Every dependency needs a named
+  unavailable-behaviour. Recover by producing the list, because the
+  gaps in it are the actual work.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"Escalate: the one irreplaceable third party has a four-hour
+   outage."** — the core transaction is unavailable for that window and
+   I would have said so in advance, in writing, with that hop named.
+   What I'd have built is the honest degradation: accept and queue the
+   customer's intent where the business allows it, tell them clearly,
+   and complete when the dependency returns — which converts a hard
+   failure into a delay for at least some of the traffic.
+2. **"You're at three dependencies now. What happens at thirty?"** — the
+   composition gets much worse and the per-dependency approach stops
+   scaling, so the design has to change shape: a small synchronous core
+   with a defined, short dependency list, and everything else
+   asynchronous behind it. At thirty, the discipline is a hard cap on
+   how many hops the core transaction is allowed to make, enforced in
+   review.
+3. **"Who owns this in two years?"** — the service team owns the SLO and
+   the error budget, and someone in the commercial function owns the
+   contractual number. The failure mode is those two numbers drifting
+   apart without anyone noticing until a penalty is claimed, so they
+   belong in the same review.
+4. **"How would you prove the degradation paths work?"** — by disabling
+   each dependency deliberately in a rehearsal and confirming the
+   defined behaviour actually occurs. A degradation path that has never
+   been exercised is an assumption with a code path attached.
+5. **"Sales wants to offer this target to a bigger customer."** — then
+   the conversation happens before the signature, with the dependency
+   list and the definition attached. I'd rather spend an hour on
+   wording pre-sale than a quarter on penalties post-sale, and offering
+   that hour is the most useful thing an architect does here.
+
+**Cross-references**
+
+- `03-comparisons/05-ha-dr-strategies.md` — burn-rate alerting and the
+  distinction between tier selection and noticing degradation, behind
+  callouts (8) and (9).
+- `D2-Q10` for the tier decision this budget depends on, `D2-Q01` for
+  the async spine that implements move one, `D2-Q15` for the same
+  argument aimed at a leader who's already decided.
+
+---

@@ -3190,3 +3190,873 @@ Evidence is artifacts, not assertions.
   retention and audit-logging patterns this builds on.
 
 ---
+
+### D7-Q12 — "This AI feature is going into a regulated decision process. What has to exist before it ships?"
+
+| | |
+|---|---|
+| **Band** | Principal |
+| **Primary domain leaves** | 3.2, 4.2 |
+| **Axis** | intelligence |
+| **Whiteboard time** | 40–50 min |
+| **Reads well after** | `D7-Q11` |
+
+**What the interviewer is actually testing**
+
+Whether you can turn a compliance obligation into architecture rather
+than into a document, and whether you'll be honest about what you
+don't know. The specific regimes governing AI systems differ by
+jurisdiction and are changing; the durable skill is knowing which
+*shape* of obligation recurs and building the evidence surface that
+satisfies any of them.
+
+**A currency note I'd say out loud in the room**
+
+Specific risk classifications, thresholds and compliance deadlines are
+jurisdiction-specific and have been moving. I'd tell a panel plainly
+that I'd work from current counsel advice on the classification rather
+than quote a tier from memory, and design to the obligations that
+recur across regimes. Inventing a confident-sounding citation is the
+worst available answer here; the pattern below is what's durable.
+
+**Clarifying questions to ask before drawing anything**
+
+- **Does the model decide, or does it inform a person who decides?**
+  This is the classification-driving question in essentially every
+  regime, and the architectural difference is enormous.
+- **Does the decision materially affect a person's rights, money,
+  employment, health or access to a service?** That's the property
+  that usually triggers the strictest obligations, and it should be
+  assessed per use case, not per model.
+- **Who is the accountable person, by name?** Regulated processes need
+  an accountable human, and "the model" is never an acceptable
+  answer to a regulator.
+- **What must we be able to tell an affected individual?** Notice that
+  AI was involved, an explanation of the decision, a route to
+  contest it — each is a separate product surface, not a policy line.
+- **How long must evidence be retained, and who can produce it?** If
+  it takes a week and an engineer to answer an audit question, the
+  evidence surface isn't built yet.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| The output affects a person materially | Stated | — | Places the use case in the strictest obligation shape available |
+| A human is accountable for each decision | Assumed | "There must be a named person, and the design must let them actually intervene" | Forces meaningful oversight, not a rubber-stamp gate |
+| Affected individuals can contest | Assumed | "Assume yes, because retrofitting a contest path is a product change" | Requires per-decision record with inputs, version and rationale |
+| Evidence may be requested years later | Assumed | "Retention outlives the model" | Evidence pack is an artifact store, not a dashboard |
+| Classification may change | Assumed | "Regimes are moving; the design should survive a reclassification" | Controls attach per use case, so a change tightens one path |
+
+**The answer, out loud**
+
+I'd say up front that the classification decision is legal's and the
+evidence architecture is mine, and then I'd build to the obligations
+that recur across every regime I've seen, because that set is stable
+even when the statutes aren't.
+
+First, a use-case register rather than a model register. The unit of
+regulation is what the system is used for, not which model is loaded —
+the same model can be trivial in one feature and high-stakes in
+another. So every AI use case is registered with its purpose, the
+population it affects, its risk classification, its accountable owner,
+and the controls attached to it. That register is the thing an auditor
+is actually shown first, and having one is most of the difference
+between a two-day audit response and a two-month one.
+
+Second, documented purpose and limits. For each use case: what it's
+for, what it's explicitly not for, known limitations, the populations
+it was evaluated on, and the evaluation results by slice. Slice
+results matter enormously here, because a regime asking about
+discriminatory outcomes is asking a per-group question and an
+aggregate number doesn't answer it. That documentation is generated
+from the pipeline artifacts in `D7-Q07` rather than written by hand,
+because hand-written documentation is stale the day after it's
+approved.
+
+Third, meaningful human oversight, and I'd be precise about
+"meaningful" because this is where most designs fail. The reviewer
+must see the inputs, the model's output, the confidence or supporting
+evidence, and have a genuine ability to disagree — plus enough time
+and a low enough volume to exercise it. I'd instrument the override
+rate as a first-class metric, because a reviewer who never overrides
+is either redundant or rubber-stamping, and both are findings. That
+metric is uncomfortable and it's the single most useful signal that
+oversight is real.
+
+Fourth, per-decision traceability. Every decision produces a record:
+the inputs used, the model and prompt versions, the retrieved evidence
+if any, the output, the human's action, and the timestamp. This is the
+artifact that answers "why was this person declined," and it must be
+queryable by the affected individual's identifier, because that's how
+the request will arrive. It's also the record that makes a contest
+path possible at all.
+
+Fifth, the transparency surface: telling the affected person that AI
+was involved, giving an explanation at the right level, and providing
+a route to contest that reaches a human with authority to change the
+outcome. These are product surfaces that need building, and they're
+routinely discovered late because they read like policy.
+
+Sixth, post-deployment monitoring with a regulatory frame: the
+`D7-Q08` signals, plus outcome distributions by protected
+characteristic where lawful to measure, plus an incident process that
+can reach a regulator within whatever window applies. A serious
+malfunction usually carries a reporting duty, and a process that
+discovers that duty during the incident is already failing.
+
+And an off switch tied to the accountable owner's authority, because
+the answer to "what do you do if it's harming people" cannot be "file
+a ticket." That's the `D7-Q04` kill switch with a named human able to
+pull it.
+
+The architectural pattern that makes all of this affordable is that
+controls attach per use case, not per platform. One shared platform,
+one gateway, one evaluation harness, and a register that binds a use
+case to the specific controls its classification demands. Otherwise
+every regulated feature builds its own compliance stack, and the
+company ends up with as many interpretations of the regime as it has
+teams — which is the failure mode that shows up in the audit as
+inconsistency rather than as absence.
+
+**Architecture**
+
+```
+   new AI use case proposed
+        ▼
+   USE-CASE REGISTER entry: purpose, affected population,
+   accountable owner (a person), data classes        ◄── (1)
+        ▼
+   RISK CLASSIFICATION — legal's decision, engineering's
+   input; per use case, never per model              ◄── (2)
+        │
+        ├── low ──► standard platform controls only   ◄── (3)
+        │
+        └── high ─► additional obligations attach:
+             │
+             ├─ documented purpose, limits, and slice-level
+             │  evaluation, GENERATED from pipeline artifacts ◄── (4)
+             ├─ meaningful human oversight: reviewer sees
+             │  inputs + evidence, can disagree, override
+             │  rate instrumented                            ◄── (5)
+             ├─ per-decision record queryable by the affected
+             │  individual's identifier                      ◄── (6)
+             ├─ transparency + contest path reaching a human
+             │  with authority to change the outcome         ◄── (7)
+             ├─ post-deployment monitoring with outcome
+             │  distributions and a regulator-reporting path ◄── (8)
+             └─ off switch bound to the accountable owner    ◄── (9)
+        ▼
+   EVIDENCE STORE — immutable, retained beyond the model's
+   life, queryable by use case and by individual     ◄── (10)
+
+  Cross-cutting: controls attach per use case on ONE shared platform,
+  so a reclassification tightens one path instead of rebuilding a
+  compliance stack per team (11); classification thresholds and
+  deadlines are jurisdiction-specific and moving — take them from
+  current counsel advice, not from memory (12).
+```
+
+**Every arrow explained:**
+
+1. **Use-case register, not a model register** — the unit of
+   regulation is the purpose, and the same model can be trivial in one
+   feature and high-stakes in another. This register is what an
+   auditor is shown first.
+2. **Classification is legal's call with engineering input** — and it
+   attaches per use case. Claiming to know the current thresholds from
+   memory is the failure mode this whole question probes.
+3. **Low-risk path uses platform controls only** — most use cases land
+   here, and saying so prevents the design from taxing everything.
+4. **Documentation generated from pipeline artifacts** — lineage,
+   evaluation and slice results come from `D7-Q07`, because
+   hand-written documentation is stale the day after approval.
+5. **Meaningful oversight with instrumented override rate** — the
+   reviewer must see the evidence, have authority to disagree, and
+   face a volume that permits it. A zero override rate is a finding,
+   not a success.
+6. **Per-decision record queryable by individual** — the artifact that
+   answers "why was this person declined," indexed the way the request
+   will actually arrive.
+7. **Transparency and contest path** — product surfaces, not policy
+   statements, and the contest must reach a human who can change the
+   outcome.
+8. **Regulatory-framed monitoring** — `D7-Q08`'s signals plus outcome
+   distributions and a reporting path with a known clock. Discovering
+   a reporting duty during an incident is already a failure.
+9. **Off switch bound to the accountable owner** — the answer to "it's
+   harming people" cannot be a ticket. Mechanically this is `D7-Q04`'s
+   kill switch with a named human attached.
+10. **Immutable evidence store outliving the model** — retention
+    beyond decommissioning, queryable two ways: by use case for an
+    audit, by individual for a subject request.
+11. **Per-use-case controls on one platform** — the alternative is a
+    compliance stack per team and as many interpretations of the
+    regime as there are teams, which reads in an audit as
+    inconsistency rather than absence.
+12. **Explicit currency caveat** — say it out loud. The pattern is
+    durable; the thresholds are not, and pretending otherwise is worse
+    than admitting it.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| Unit of governance | Use case | Model | The same model is trivial in one feature and high-stakes in another | When one model serves exactly one purpose and always will — then they're the same object and the distinction is ceremony |
+| Documentation | Generated from pipeline artifacts | Written and reviewed by hand | Hand-written docs are stale the day after approval and diverge silently | When the system genuinely never changes — a frozen model under change control, where a written record is stable |
+| Human oversight | Reviewer with evidence, authority and instrumented override rate | An approval step in the workflow | An approval step with no override rate is documented rubber-stamping, which is worse than no gate | When the human is the decision-maker and the model only suggests — then the "override rate" is just the acceptance rate of a suggestion |
+| Platform shape | One platform, per-use-case controls | A separate compliant stack per regulated product | Consistency, one audit surface, one set of controls to verify | When a product is in a jurisdiction demanding full isolation — that's the CANON T4 sovereign case, priced accordingly |
+| Evidence | Immutable store, queryable by use case and individual | Logs plus a documented process | Regulators ask for records of specific decisions, and logs aren't organised that way | When exposure is low enough that reconstruction from logs is acceptable — say so explicitly rather than assume it |
+
+**What a weak answer sounds like**
+
+- "We'd document the model and have a human review the outputs." —
+  both necessary, both hollow without the override rate, the
+  per-decision record and the contest path.
+- "The regulation says systems like this are high-risk, so we'd..." —
+  stated with false confidence about a moving target. Say you'd
+  confirm the classification with counsel.
+- "We'd add an audit log." — of what, queryable how? An audit log that
+  can't be queried by an affected individual's identifier doesn't
+  answer the question that will be asked.
+- "Compliance will tell us what to build." — at principal band you're
+  expected to propose the architecture and let compliance react to it.
+
+**Common wrong turns**
+
+- **Governing models instead of use cases.** It produces controls in
+  the wrong place and misses the risky feature entirely. Recover by
+  re-framing the register.
+- **Treating oversight as a checkbox.** Recover by proposing the
+  override rate as a monitored metric — it's the fastest way to show
+  you understand what "meaningful" means.
+- **Quoting specific legal thresholds.** Recover immediately: say the
+  classification is counsel's and design to the recurring obligation
+  shape.
+- **Building a parallel compliant platform.** It's expensive and it
+  fragments the audit surface. Recover by attaching controls per use
+  case on the shared platform.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"The reviewer's override rate is zero. What does that tell
+   you?"** — either the model is genuinely excellent, or oversight
+   isn't real. I'd assume the second until evidence says otherwise:
+   check review time per case, sample decisions for ones that should
+   have been overridden, and check whether the reviewer has the
+   information needed to disagree. This is the most diagnostic single
+   metric in the whole design.
+2. **"How do you handle a use case that was low-risk and gets
+   reclassified?"** — the controls attach to the register entry, so
+   reclassification turns on additional obligations for that path
+   rather than rebuilding anything. That's the entire argument for
+   per-use-case controls, and I'd say so.
+3. **"Escalate: the system made systematically unfair decisions for a
+   protected group over six months. Walk me through the blast
+   radius."** — every affected decision, identifiable from the
+   per-decision records, which is what makes remediation possible
+   rather than theoretical. Then notification, a reporting duty with a
+   clock, a contest path that will now receive volume it wasn't sized
+   for, and the harder structural question: why didn't slice
+   monitoring catch it? Usually because the slice wasn't measured, and
+   measuring it requires lawful access to the characteristic — which
+   is a governance decision that has to be made before launch, not
+   during the incident.
+4. **"Who owns this across the company?"** — a named accountable owner
+   per use case, a central function owning the register and the
+   classification process, and the platform team owning the evidence
+   surface. Three owners, clearly split, or it becomes nobody's.
+5. **"Product says these controls will kill the launch date."** — then
+   the choice is a narrower launch scope, not fewer controls: ship to
+   a smaller population, or ship the human-decides variant where the
+   model only suggests. Both reduce the obligation legitimately, which
+   is a much better conversation than negotiating the controls.
+6. **"What if we use a third-party model we can't inspect?"** — the
+   obligations don't transfer. I'd need contractual commitments about
+   the model, and I'd carry more of the evidence burden myself at the
+   use-case level: my evaluation, my slice results, my per-decision
+   records. Access and egress governance for that path is `D4-Q09`.
+
+**Cross-references**
+
+- `D7-Q11` for lineage and consent evidence; `D7-Q08` for the
+  monitoring this frames regulatorily; `D7-Q09` for the slice-level
+  evaluation that documentation is generated from.
+- `D1-Q16` for the governance forum that would own the register;
+  `D1-Q10` for residency when classification is jurisdictional.
+- `01-domains/DOMAIN-3-security-compliance.md` §3.2 — audit logging,
+  Access Transparency and retention patterns the evidence store uses.
+
+---
+
+### D7-Q13 — "Our AI spend has tripled in a quarter and nobody can explain it. Fix it architecturally."
+
+| | |
+|---|---|
+| **Band** | Staff+ |
+| **Primary domain leaves** | 4.2, 4.3 |
+| **Axis** | intelligence |
+| **Whiteboard time** | 35–45 min |
+| **Reads well after** | `D7-Q04` |
+
+**What the interviewer is actually testing**
+
+Whether you understand what actually drives cost in a generative
+system — which is not the same as what drives cost in a normal service
+— and whether you'll build attribution before optimisation. The give
+away of experience is starting with "nobody can explain it" as the
+real problem rather than the symptom.
+
+**Clarifying questions to ask before drawing anything**
+
+- **Can we attribute spend to a team, a feature and a tenant today?**
+  If not, that's the first work, because every optimisation without
+  attribution is guessing and every saving is unprovable.
+- **What's the mix of interactive and non-interactive work?** Anything
+  a human isn't waiting for can move to a fundamentally cheaper
+  execution mode, and that's usually the largest single lever
+  available.
+- **Has the traffic tripled, or has the cost per request tripled?**
+  Completely different problems. Growth is a capacity conversation;
+  cost per request is a design regression, usually context growth.
+- **Are we paying for provisioned capacity or per-use?** Idle
+  provisioned accelerators and per-use overage are opposite failure
+  modes with opposite fixes.
+- **Does anyone own this number?** If cost has no owner, it grows.
+  That's an organisational answer and it's usually the real one.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| Spend must be explainable per feature | Stated | — | Attribution tags are mandatory at the gateway before anything else |
+| Some workload is non-interactive | Assumed | "Usually a large share; it's the biggest lever and the easiest" | Justifies a batch execution path |
+| Quality must not regress | Assumed | "Otherwise I can cut cost to zero by answering badly" | Every cost change goes through `D7-Q09`'s gate |
+| Growth will continue | Assumed | "So the target is cost per unit of value, not total spend" | Unit economics rather than a spending cap |
+| Someone must own the number | Assumed | "An unowned cost grows by default" | FinOps ownership per feature, tied to the attribution tag |
+
+**The answer, out loud**
+
+The first thing I'd fix is that nobody can explain it, because until
+that's fixed every other action is a guess.
+
+Attribution comes from the gateway in `D7-Q04`: every model call
+carries a team, a feature and a tenant tag, requests without them are
+rejected, and usage is recorded per call with the model, the input
+size, the output size and whether it was a cache hit or a fallback.
+That gives a per-feature breakdown, and in my experience the first
+view of that breakdown answers the question on its own — the tripling
+is almost always one feature nobody was watching.
+
+Then the cost drivers, and I'd name them in the order they usually
+matter. The dominant one is context size per call, because in a
+retrieval system the input dwarfs the output and it grows silently:
+someone raises the number of retrieved chunks to improve quality,
+nobody measures the cost, and every request gets more expensive
+forever. The second is call count per task, which is where agents are
+dangerous — a multi-step loop multiplies cost by the step count, and
+the context typically grows at every step, so cost grows faster than
+linearly in steps. The third is model class: the same work routed to a
+larger model costs materially more, and a lot of traffic is routed to
+the largest model out of caution rather than requirement. The fourth
+is execution mode: interactive serving on provisioned capacity is the
+most expensive way to run anything, and idle provisioned accelerators
+cost the same as busy ones. The fifth is everything around the model —
+the vector index, the logging, the evaluation runs, and the judge
+calls from `D7-Q09`, which are real and get forgotten.
+
+The levers map onto those drivers directly. Trim context: retrieve
+fewer, better chunks by reranking rather than sending more, cap
+retrieved context explicitly, and treat any increase as a change with
+a cost review and an evaluation run. Cut call count: put step budgets
+on agents, and replace an agent with a fixed workflow wherever the
+steps are actually known. Route by task class: the `D7-Q04` routing
+table sends classification and extraction to a small model and
+reserves the large one for synthesis, which is both a cost and a
+latency win. Move execution mode: anything not interactive goes to the
+batch path, which is the single largest structural saving available in
+most systems. Cache: exact-match caching on repeated prompts is
+undramatic and effective, particularly for high-volume classification
+where the system prompt dominates; where the platform supports reusing
+a shared context prefix across calls, that's a further saving, and I'd
+verify the current mechanics rather than assume them. Cap outputs:
+maximum output tokens per request, which bounds both cost and the p99
+tail from `D7-Q03`.
+
+Then the guardrails, because optimisation decays without them.
+Budgets and alerts per attribution tag, so a feature's spend has an
+owner and a threshold. Quota at the gateway per caller, which converts
+a runaway loop from a financial incident into a rejected request. A
+cap on maximum replicas so autoscaling can't scale into an unbounded
+bill. And the kill switch.
+
+The framing I'd insist on is unit economics rather than total spend.
+The right metric is cost per unit of value — per resolved ticket, per
+document processed, per completed session — because total spend
+growing while unit cost falls is a business succeeding, and a spending
+cap on a successful feature is a bad outcome dressed as discipline.
+Every optimisation is reported against the unit metric, and every one
+goes through the evaluation gate, because cutting cost by degrading
+quality is trivially easy and shows up as a saving.
+
+**Architecture**
+
+```
+   every model call ──► GATEWAY: mandatory team + feature +
+   (no exceptions)      tenant tags; usage recorded with model,
+                        input size, output size, cache hit,
+                        fallback                           ◄── (1)
+        ▼
+   ┌───────── COST DRIVERS, in the order they matter ─────────┐
+   │ context size per call (input dwarfs output in RAG,       │
+   │   and it grows silently)                        ◄── (2)  │
+   │ calls per task (agents multiply; context grows            │
+   │   each step, so cost grows faster than steps)   ◄── (3)  │
+   │ model class routed to                           ◄── (4)  │
+   │ execution mode: interactive vs batch            ◄── (5)  │
+   │ surrounding costs: index, logging, evaluation,           │
+   │   judge calls                                   ◄── (6)  │
+   └──────────────────────────┬───────────────────────────────┘
+                              ▼
+   ┌───────── LEVERS ─────────────────────────────────────────┐
+   │ rerank to fewer chunks, cap retrieved context   ◄── (7)  │
+   │ step budgets; workflow instead of agent where the        │
+   │   steps are known                                        │
+   │ task-class routing to a smaller model                    │
+   │ move non-interactive work to the batch path     ◄── (8)  │
+   │ exact-match cache; shared-prefix reuse where the         │
+   │   platform supports it (verify current mechanics)        │
+   │ maximum output tokens per request                        │
+   └──────────────────────────┬───────────────────────────────┘
+                              ▼
+   GUARDRAILS: budget + alert per attribution tag, gateway
+   quota per caller, max-replica cap, kill switch     ◄── (9)
+                              ▼
+   REPORT IN UNIT ECONOMICS: cost per resolved ticket, per
+   document, per session — not total spend            ◄── (10)
+
+  Cross-cutting: every cost change runs through `D7-Q09`'s evaluation
+  gate, because degrading quality is the easiest way to show a saving
+  (11); a raised retrieval count or a longer prompt is a cost change
+  and needs the same review as an infrastructure change (12).
+```
+
+**Every arrow explained:**
+
+1. **Mandatory attribution at the gateway** — no tag, no service. The
+   first view of a per-feature breakdown usually identifies the
+   tripling on its own, which is why this precedes any optimisation.
+2. **Context size as the dominant driver** — in a retrieval system the
+   input dwarfs the output, and it grows silently when someone raises
+   the retrieved-chunk count for quality without measuring cost.
+3. **Calls per task** — agent loops multiply, and because context
+   accumulates across steps, cost grows faster than the step count.
+   This is why `D7-Q05`'s step budget is a cost control too.
+4. **Model class** — a large share of traffic is routed to the largest
+   model out of caution rather than requirement.
+5. **Execution mode** — interactive serving on provisioned capacity is
+   the most expensive way to run anything, and idle provisioned
+   accelerators cost what busy ones do.
+6. **Surrounding costs** — index storage, request logging, evaluation
+   runs and judge calls. Real, and routinely omitted from the model.
+7. **Rerank rather than send more** — the highest-value quality lever
+   and a cost lever simultaneously; retrieving twenty and sending five
+   beats sending twenty.
+8. **Batch path** — the largest structural saving in most systems,
+   because it converts provisioned interactive capacity into
+   scheduled work. The Dataflow and general batch tuning around it is
+   `D6-Q11`'s.
+9. **Guardrails per attribution tag** — budgets with owners, gateway
+   quota that converts a runaway loop into rejected requests, a
+   max-replica cap so autoscaling can't scale into an unbounded bill.
+10. **Unit economics** — total spend rising while unit cost falls is a
+    business succeeding; a cap on a successful feature is a bad
+    outcome dressed as discipline.
+11. **Evaluation gate on cost changes** — a smaller model, less
+    context or a tighter output cap can each move quality, so they're
+    treated as model changes.
+12. **Prompt and retrieval changes are cost changes** — reviewed like
+    infrastructure changes, because they're permanent per-request
+    multipliers applied by a one-line edit.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| First action | Attribution before optimisation | Start cutting the obvious things | Without attribution, savings are unprovable and the real driver stays hidden | When spend is dominated by one known workload and everyone agrees which — then act, but instrument as you go |
+| Biggest structural lever | Move non-interactive work to batch | Optimise the interactive path harder | Changes the execution mode rather than shaving a percentage off it | When essentially everything is genuinely interactive — then the levers are routing, context and caching |
+| Model selection | Task-class routing to the smallest sufficient model | One capable model for everything | Most traffic doesn't need the largest model, and routing is a config change | When the evaluation shows the smaller model regressing on a class — then pay for the larger one and say why |
+| Caching | Exact match by default | Semantic caching for a bigger hit rate | A wrong semantic hit is a wrong answer sold as a saving | When the use case is repetitive and tolerant, and evaluation covers the cached path |
+| Target metric | Cost per unit of value | Total spend cap | A cap punishes success and pushes teams to hide usage | When the budget is genuinely fixed and external — then the cap is the constraint and the conversation is about scope |
+
+**Making it concrete**
+
+```hcl
+# The guardrail that matters is per attribution tag, so a feature's
+# spend has an owner and a threshold. Amount is a placeholder: the
+# architecture is the label filter and the alert path, not the number.
+resource "google_billing_budget" "ai_feature" {
+  billing_account = "BILLING_ACCOUNT_ID"
+  display_name    = "ai-feature-FEATURE_TAG"
+  budget_filter {
+    projects = ["projects/PROJECT_ID"]
+    labels   = { feature = "FEATURE_TAG", team = "TEAM_TAG" }
+  }
+  amount { specified_amount { units = "BUDGET_AMOUNT" } }
+}
+```
+
+The label filter is the whole point: a budget scoped to a project
+tells you the platform costs something, and a budget scoped to a
+feature tag tells you which team to talk to — which is the difference
+between a finance report and an operable control.
+
+**What a weak answer sounds like**
+
+- "We'd use a cheaper model." — for which traffic, with what quality
+  evidence? Applied uniformly, this is a quality cut reported as a
+  saving.
+- "We'd cache responses." — helpful, and second-order compared with
+  moving non-interactive work off the interactive path.
+- "We'd set a budget alert." — an alert is a notification, not a
+  control; the control is quota and a replica cap.
+- "Costs scale with usage, that's expected." — true and evasive. The
+  question is cost per unit of value, and that number should fall.
+
+**Common wrong turns**
+
+- **Optimising before attributing.** You save on the wrong thing and
+  can't prove it. Recover by making attribution the first step out
+  loud.
+- **Ignoring context growth.** It's the largest and most invisible
+  driver, changed by a one-line edit. Recover by naming retrieval
+  count as a reviewable cost parameter.
+- **Cutting quality silently.** Recover by routing every cost change
+  through the evaluation gate.
+- **Treating agents as one call.** A step budget is a cost control
+  before it's a safety control. Recover by pricing per session rather
+  than per call.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"Which single change would you make first?"** — move everything
+   non-interactive off the interactive path. It's the largest
+   structural change, it doesn't touch quality, and it usually needs
+   no model change at all.
+2. **"A team says the quality drop from a smaller model is
+   unacceptable."** — then show the evaluation. If the regression is
+   real on their task class, they keep the large model and own the
+   cost against their budget; the routing table makes that an explicit
+   choice with a name attached rather than a default.
+3. **"Escalate: a bug puts an agent in a loop overnight. How much
+   damage?"** — bounded by the step budget, the gateway quota and the
+   max-replica cap, which is exactly what those three exist for. If
+   they don't exist, the bound is the billing account, and the
+   remediation is a conversation with finance rather than an
+   engineering fix. I'd also want a spend-rate anomaly alert, because
+   budget alerts are evaluated too slowly to catch an overnight loop.
+4. **"Who owns AI cost?"** — each feature's owner owns its unit
+   economics; the platform team owns attribution, guardrails and the
+   efficiency of the shared path. Central FinOps reports, it doesn't
+   own.
+5. **"Can we commit to capacity for a discount?"** — only where the
+   load is genuinely steady. Committing to capacity for spiky
+   generative traffic converts a variable cost into a fixed one you
+   underuse, and that's `D7-Q16`'s decision rather than a pure
+   accounting one.
+6. **"What would you measure weekly?"** — cost per unit of value by
+   feature, cache hit rate, the interactive-to-batch ratio, and mean
+   context size per call. That last one moves silently and predicts
+   next quarter's bill better than anything else on the list.
+
+**Cross-references**
+
+- `D7-Q04` for the attribution and quota this depends on; `D7-Q03` for
+  the serving-side levers; `D7-Q16` for capacity commitments;
+  `D7-Q09` for the gate every cost change passes.
+- `D6-Q11` owns Dataflow and general batch cost tuning — the batch
+  path here defers to it for pipeline-side optimisation.
+- `01-domains/DOMAIN-4-analyzing-optimizing.md` §4.2/§4.3 — showback,
+  budgets and the cost-optimization mechanisms this applies to AI
+  workloads specifically.
+
+---
+
+### D7-Q14 — "We're a SaaS platform. Every customer wants AI features over their own data. How do you isolate them?"
+
+| | |
+|---|---|
+| **Band** | Staff+ |
+| **Primary domain leaves** | 1.2, 3.1 |
+| **Axis** | intelligence |
+| **Whiteboard time** | 40–50 min |
+| **Reads well after** | `D1-Q03`, `D7-Q01` |
+
+**What the interviewer is actually testing**
+
+Whether you apply the company's existing tenancy model to AI rather
+than inventing a new one, and whether you know where the genuinely
+AI-specific leak paths are — context assembly, caches, evaluation
+sets and logs — as opposed to the ones that are just ordinary
+multi-tenancy.
+
+**Clarifying questions to ask before drawing anything**
+
+- **Does the company already have a tenancy model?** If yes, AI
+  inherits it, and proposing a separate one is how you get two
+  isolation stories that disagree. Ours is the four-tier model in
+  `D1-Q03`, and I'd use those tiers by name.
+- **Is any tenant asking for a dedicated model, or for their data not
+  to be shared?** Almost always the second, and it's satisfiable
+  without dedicated serving — which is a much better conversation than
+  quoting a dedicated price.
+- **Is any tenant-specific tuning in scope?** Per-tenant fine-tunes
+  change the architecture completely: the model itself becomes tenant
+  data, with its own lifecycle and deletion obligation.
+- **What's the tenant size distribution?** A few large and many small
+  is the normal shape, and it decides whether noisy-neighbour control
+  is a quota problem or a capacity problem.
+- **Do tenants need their own evaluation of quality?** A large
+  enterprise customer often does, and that's a real design
+  requirement, not a report.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| Existing tenancy tiers apply | Stated | — | AI inherits T1–T4; no parallel isolation model |
+| No tenant's data may appear in another's context | Stated | — | Retrieval, caches and prompts are all tenant-scoped |
+| Most tenants are satisfied by pooled serving | Assumed | "Pooled is the default and dedicated is the priced exception" | Keeps the platform economics viable |
+| Some tenants want their own key | Assumed | "That's T2, and it's usually what 'isolation' means in the contract" | Per-tenant datastore and CMEK, shared runtime |
+| Noisy neighbours will happen | Assumed | "One tenant's bulk job shouldn't slow everyone" | Per-tenant quota at the gateway |
+
+**The answer, out loud**
+
+I'd start by refusing to invent a new model: we have four tenancy
+tiers, pooled is the default, promotion is one-directional, and AI
+features sit inside that taxonomy rather than beside it.
+
+T1 pooled is where the overwhelming majority of tenants live and where
+the AI platform's economics come from — shared serving, shared
+runtime, shared index, with tenant scoping enforced in software. What
+makes that safe for AI specifically is context isolation, and that's
+the part worth drawing carefully, because it's where the genuinely
+new leak paths are.
+
+Four of them. Retrieval must be tenant-scoped at the query, not
+filtered afterwards — the same argument as entitlement filtering in
+`D7-Q01`, with the same reasoning: once another tenant's text is in
+the context, it can appear in the output. Caches must be keyed by
+tenant, because an unkeyed response cache is a direct cross-tenant
+leak and it's invisible in testing, since tests rarely run two tenants
+against the same prompt. Logs and evaluation sets built from
+production traffic carry tenant data, so they inherit tenant
+boundaries; an evaluation set assembled from everyone's traffic is a
+quiet aggregation of all tenants' content into one place. And any
+per-tenant state — conversation history, preferences — is tenant data
+with the tenant's retention and deletion rules.
+
+The enforcement point is the gateway from `D7-Q04`. Tenant context is
+attached there from the authenticated request, it's not a parameter
+callers pass, and it propagates into retrieval scoping, cache keys,
+logging and quota. That last one matters: per-tenant quota is what
+stops one tenant's bulk job becoming everyone's latency incident,
+which in a pooled AI platform is the most likely failure long before
+any data leak.
+
+T2 partitioned is where most "we need isolation" contracts actually
+land, exactly as in `D1-Q03`. The tenant gets their own index or their
+own datastore instance and their own CMEK key, while the model serving
+stays pooled. That satisfies key control and provable deletion —
+delete the key, delete the index, the retrieval corpus is gone — which
+is usually the real contractual requirement. It's dramatically cheaper
+than dedicated because there's no per-tenant serving capacity, and I'd
+work hard to land enterprise asks here.
+
+T3 dedicated is a per-tenant project under `fldr-tenants` with its own
+endpoint and its own capacity. For AI this is expensive in a way it
+isn't for ordinary compute, because a dedicated endpoint means
+dedicated accelerator capacity that's idle most of the time — a
+pooled endpoint amortises idle time across tenants and a dedicated one
+can't. So I'd treat dedicated serving as a priced SKU with the
+capacity cost visible to sales, not as an isolation checkbox, and I'd
+say plainly that it's the exception. It's also where a per-tenant
+fine-tuned model would live, and I'd note that a tenant-specific model
+is tenant data with its own deletion obligation under `D7-Q11`.
+
+T4 sovereign adds region pinning, an in-region key ring and a pipeline
+that doesn't leave the jurisdiction, which for AI has a specific extra
+constraint worth naming: the model itself has to be servable in that
+region. That's a real availability question about regional coverage,
+it changes, and I'd verify it per region rather than assume.
+
+The thing I'd flag unprompted is that the tenancy tier and the AI
+feature's quality are coupled in a way that surprises people. A pooled
+index across tenants can offer better retrieval for small tenants if
+any content is genuinely shared — product documentation, for example —
+while a strictly partitioned tenant only ever sees their own. So I'd
+design the corpus as two layers: shared platform content that every
+tenant may retrieve, plus tenant-private content scoped to them. That
+keeps quality high for small tenants without weakening isolation,
+because the shared layer is content we own and publish deliberately.
+
+**Architecture**
+
+```
+   tenant request (authenticated)
+        ▼
+   GATEWAY: tenant context derived from the authenticated
+   identity — never a caller-supplied parameter      ◄── (1)
+        │  attaches: tenant scope, quota, cache key prefix
+        ▼
+   ┌──── CONTEXT ISOLATION — the AI-specific leak paths ─────┐
+   │ retrieval scoped at the query, not filtered after ◄──(2)│
+   │ cache keyed by tenant (unkeyed cache = direct leak)◄─(3)│
+   │ logs + evaluation sets inherit tenant boundaries  ◄──(4)│
+   │ per-tenant conversation state = tenant data       ◄──(5)│
+   └──────────────────────┬──────────────────────────────────┘
+                          ▼
+   corpus = SHARED platform layer + TENANT-PRIVATE layer ◄── (6)
+                          ▼
+   ┌──────────────── tiers (CANON, one-directional) ─────────┐
+   │ T1 Pooled     shared serving + shared index, software   │
+   │  (DEFAULT)    scoping                            ◄──(7) │
+   │ T2 Partitioned shared serving, per-tenant index +       │
+   │                per-tenant CMEK                   ◄──(8) │
+   │ T3 Dedicated  prj under fldr-tenants, own endpoint,     │
+   │                own accelerator capacity — PRICED ◄──(9) │
+   │ T4 Sovereign  T3 + region pin + in-region keys;         │
+   │                model must be servable in-region ◄──(10) │
+   └─────────────────────────────────────────────────────────┘
+
+  Cross-cutting: per-tenant quota at the gateway is the control for
+  noisy neighbours, which is a far more likely failure than a data leak
+  in a pooled platform (11); a per-tenant fine-tuned model is tenant
+  data with its own deletion obligation under `D7-Q11` (12).
+```
+
+**Every arrow explained:**
+
+1. **Tenant context from the authenticated identity** — derived at the
+   gateway, never passed by the caller. A caller-supplied tenant
+   parameter is an authorisation bypass waiting to be found.
+2. **Retrieval scoped at the query** — same argument as entitlement
+   filtering in `D7-Q01` callout (7): once another tenant's text is in
+   the context, it can reach the output.
+3. **Tenant-keyed cache** — an unkeyed response cache is a direct
+   cross-tenant leak, and it's invisible in testing because tests
+   rarely run two tenants against the same prompt.
+4. **Logs and evaluation sets inherit tenant boundaries** — an
+   evaluation set built from all production traffic quietly aggregates
+   every tenant's content into one place with different access rules.
+5. **Conversation state is tenant data** — with the tenant's retention
+   and deletion rules, not the platform's defaults.
+6. **Two-layer corpus** — shared platform content plus tenant-private
+   content. Keeps retrieval quality high for small tenants without
+   weakening isolation, because the shared layer is content we publish
+   deliberately.
+7. **T1 pooled is the default** — the tier the platform's economics
+   depend on; isolation is a software guarantee and saying so plainly
+   in a contract negotiation builds credibility.
+8. **T2 partitioned** — per-tenant index and CMEK with pooled serving.
+   Satisfies key control and provable deletion, which is what most
+   "isolation" clauses actually require, at a fraction of dedicated
+   cost.
+9. **T3 dedicated, priced** — dedicated serving means dedicated
+   accelerator capacity idle most of the time, because pooling is what
+   amortises idle. Visible as a priced SKU, not an isolation checkbox.
+10. **T4 sovereign** — plus the AI-specific constraint that the model
+    must be servable in the pinned region. Regional coverage changes;
+    verify per region rather than assume.
+11. **Per-tenant quota** — noisy neighbours are the likely failure in
+    a pooled AI platform, well before any leak, because one bulk job
+    can saturate shared accelerator capacity.
+12. **Per-tenant tuned models are tenant data** — own lifecycle, own
+    deletion obligation, and a reason to prefer per-tenant retrieval
+    over per-tenant tuning wherever it works.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| Isolation model | Inherit the existing T1–T4 tiers | A separate AI isolation model | Two isolation stories that disagree is worse than either alone | When there is no existing tenancy model at all — then define one, and define it for the whole platform, not for AI |
+| Default tier | T1 pooled with context isolation | Dedicated endpoint per tenant | Pooling amortises idle accelerator capacity, which is what makes the platform affordable | When tenants are few and each is large enough that a dedicated endpoint runs at real utilisation |
+| Where "isolation" asks land | T2 partitioned | T3 dedicated | Satisfies key control and provable deletion without per-tenant serving capacity | When the contract genuinely requires separate compute or a separate audit boundary — then T3, and charge for it |
+| Corpus design | Shared layer plus tenant-private layer | Strictly per-tenant corpora | Small tenants get useful retrieval from content we publish deliberately | When any shared content is itself sensitive or competitive — then strict partition, and accept weaker retrieval for small tenants |
+| Tenant-specific behaviour | Retrieval and prompt configuration per tenant | A fine-tuned model per tenant | Avoids a per-tenant artifact with its own lifecycle and deletion obligation | When a tenant's domain is genuinely unlike the others and the volume justifies it — a T3 conversation with a price |
+
+**What a weak answer sounds like**
+
+- "Each tenant gets their own model endpoint." — pooling is what makes
+  accelerator economics work; this proposal is a per-tenant idle
+  accelerator bill nobody priced.
+- "We filter results by tenant ID." — where, and before or after the
+  model sees them? Post-filtering is the leak.
+- "We'd pass the tenant ID in the request." — from the caller? That's
+  an authorisation bypass; it has to be derived from the authenticated
+  identity.
+- "Caching is fine, prompts are unique per tenant." — until they
+  aren't, and the first identical prompt across two tenants is a leak
+  nobody tested for.
+
+**Common wrong turns**
+
+- **Inventing an AI-specific tenancy model.** Recover by naming the
+  existing tiers and mapping AI onto them.
+- **Forgetting the cache.** It's the most commonly missed leak path in
+  this whole design. Recover by putting the tenant in the cache key
+  while drawing.
+- **Building evaluation sets from pooled traffic.** It aggregates every
+  tenant's content into one artifact with different access rules.
+  Recover by scoping evaluation sets per tenant or using only shared
+  content.
+- **Promising dedicated serving in a deal.** It's the expensive tier
+  and it's usually not what the clause requires. Recover by reading
+  the clause and offering T2.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"A tenant demands their data never touches shared
+   infrastructure."** — read the clause. If it means key control and
+   deletion, that's T2 today. If it genuinely means separate compute,
+   that's T3 with a price, and the price should reflect idle
+   accelerator capacity rather than a marketing margin.
+2. **"How do you prove isolation to a customer's auditor?"** — the
+   tenant-scoped retrieval query, the tenant-keyed cache, per-tenant
+   audit logs, and a test in CI that runs two tenants through the same
+   prompt and asserts no cross-contamination. The last one is the
+   evidence auditors find most convincing because it's executable.
+3. **"Escalate: one tenant's document appeared in another tenant's
+   answer. What's the blast radius?"** — potentially every request in
+   the window, and the first question is which path leaked: retrieval
+   scope, cache key, or shared conversation state. The request log
+   answers it, because tenant is recorded per call. Structurally this
+   forces a tier conversation — affected customers will ask for
+   dedicated serving — so the incident's cost includes a permanent
+   shift in platform economics, which is worth saying out loud.
+4. **"Who owns tenant isolation?"** — the platform team owns the
+   mechanism, the product owner owns which tier each customer is on,
+   and sales must quote tiers rather than promise architecture. That
+   third one is the organisational control that keeps this working.
+5. **"A tenant wants their own evaluation of quality."** — reasonable,
+   and it's a real requirement: their evaluation set from their
+   traffic, their slice metrics, reported to them. It's also a
+   preview of T3, because per-tenant quality management has real
+   operational cost.
+6. **"What breaks at ten times the tenants?"** — not the isolation
+   model. What breaks is per-tenant index overhead if everyone is T2,
+   and per-tenant quota management. I'd expect to push harder on
+   pooled with strong scoping and make T2 a genuinely priced tier
+   rather than a default concession.
+
+**Cross-references**
+
+- `D1-Q03` for the T1–T4 tenancy taxonomy this inherits — it is not
+  restated here; `D1-Q15` for tenant offboarding and provable
+  deletion, which T2's per-tenant key and index make tractable.
+- `D7-Q04` for the gateway where tenant context is attached; `D7-Q06`
+  for the disclosure threat model; `D7-Q11` for a per-tenant tuned
+  model's deletion obligation; `D7-Q13` for why pooling is the
+  economic default.
+
+---

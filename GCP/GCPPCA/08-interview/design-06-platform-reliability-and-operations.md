@@ -3224,3 +3224,871 @@ nobody can attribute, and an unattributable cost is one nobody owns.
   deliberately does not cover.
 
 ---
+
+### D6-Q12 — "Leadership wants platform spend down without slowing anyone down. Design the technical program — commitments, rightsizing, and what actually makes someone act."
+
+| | |
+|---|---|
+| **Band** | Staff+ |
+| **Primary domain leaves** | 4.3, 4.2 |
+| **Axis** | operations |
+| **Whiteboard time** | 40–50 min |
+| **Reads well after** | `D1-Q09`, `D6-Q11` |
+
+**What the interviewer is actually testing**
+
+Whether you can build a cost program that keeps working after the
+initial push. Any competent engineer can find savings once. The
+question is what mechanism makes the second year's savings happen
+without a second campaign — and whether you know that the hardest part
+is not finding the recommendation but getting someone to act on it.
+
+**Clarifying questions to ask before drawing anything**
+
+- **Is there already cost visibility per team, or am I building
+  that?** If showback doesn't exist, that's the prerequisite and it's
+  `D1-Q09`'s operating model, not this program. I'd say so rather than
+  rebuild it.
+- **What's the shape of the spend?** A few large steady workloads, a
+  long tail of small ones, and idle waste are three different
+  programs. Commitments help the first, rightsizing the second,
+  deletion the third.
+- **How stable is the fleet composition over a year?** That single
+  answer decides between resource-based and spend-based commitments,
+  and getting it wrong strands capacity or forfeits discount.
+- **Who can actually delete a resource?** If nobody has authority to
+  turn something off, the largest category of waste is untouchable and
+  the program's ceiling is low.
+- **What's the appetite for a hard mechanism?** Budget-driven
+  enforcement in non-production is available and unpopular; knowing
+  whether it's on the table changes what I design.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| Per-team cost visibility already exists | Assumed | "I'll assume the labeling and showback structure is in place — if not, that's first and it's a different project" | Lets this program focus on action, not attribution |
+| Savings must not require a campaign each year | Stated | — | Every lever must be wired to a recurring signal with an owner |
+| Some spend is genuinely irreducible | Assumed | "Otherwise the program sets targets it can't meet and loses credibility" | Separates waste from cost of doing business |
+| Recommendations exist but nobody acts on them | Assumed | "This is the usual state — the data is there and the loop isn't" | Makes routing and accountability the design's core |
+| Non-production is a large share of waste | Assumed | "Dev and sandbox environments are where idle resources accumulate" | Justifies scheduled shutdown and expiry mechanisms |
+
+**The answer, out loud**
+
+I'd frame this as three categories of spend with three different
+mechanisms, and then spend the rest of the time on the part everyone
+underinvests in, which is what makes someone act.
+
+Category one is waste: resources that produce no value at all. Idle
+VMs, unattached disks, orphaned addresses, snapshots from a migration
+two years ago, dev environments nobody has logged into since a
+project ended. Recommender surfaces most of this automatically, and
+it's the cheapest category to act on because acting has no performance
+tradeoff. The mechanism here should be as close to automatic as the
+environment allows — in sandbox and dev, I'd expire resources on a
+schedule by default and require a declared exemption to keep
+something alive. That converts the default from "everything persists
+forever" to "everything expires unless someone says otherwise," which
+is the single highest-leverage change available in non-production.
+
+Category two is inefficiency: resources doing real work with the wrong
+shape. Over-provisioned machine types, node pools sized for a peak
+that moved, databases at a tier they outgrew in the other direction.
+Recommender's rightsizing signals cover much of this, and unlike
+category one, acting has a risk — undersizing something is an
+availability event. So the mechanism is different: I'd route
+rightsizing recommendations to the owning team as work items with
+their own supporting data, and I'd pair them with the progressive
+delivery discipline in `D6-Q06`, because a machine-type change is a
+production change and deserves the same rollout treatment.
+
+Category three is rate: paying more per unit than necessary for
+capacity we genuinely need. This is where commitments live. The
+strategy I'd use is to commit to the *floor* of the estate, not the
+average and definitely not the peak. Aggregate the steady baseline
+across the whole organization rather than per-team, because a
+commitment sized per team gets stranded every time a team shrinks,
+while an organization-wide floor is much more stable. The choice
+between a resource-based commitment and a spend-based one comes down
+to how confident I am in the fleet's composition over the term: a
+stable, known machine family favours the resource-based form; an
+estate actively changing shape favours the spend-based form, which
+survives composition changes. I'd also stagger commitment terms rather
+than renewing everything on one date, so that a single decision point
+doesn't carry the whole estate's rate risk.
+
+Now the part that actually determines whether this works. Every
+recommendation needs four things attached to it: an owner derived from
+the resource's labels, a routing path into that owner's normal work
+queue, a stated expiry, and a visible aggregate. The owner comes from
+the mandatory label set, which is why labeling enforcement in the
+pipeline matters more than any dashboard. The routing means the
+recommendation arrives as a ticket in the team's backlog rather than
+sitting in a console nobody opens. The expiry means an unactioned
+recommendation escalates rather than accumulating silently. And the
+aggregate — a leaderboard of unactioned savings by team, visible to
+everyone — does more work than any of the others, because engineers
+respond to their team's position relative to peers far more reliably
+than to a request from a central function.
+
+What I would not do is centralise the acting. A cost team that goes
+and rightsizes other teams' resources will eventually cause an
+availability incident, and after that incident it will never be
+allowed near production again. The central function's job is to
+produce the signal, route it, track it, and make non-action visible.
+The acting belongs to the owner, because the owner is the only one who
+knows whether that over-provisioned node pool is waiting for a launch
+next month.
+
+The last mechanism is the one with teeth, and I'd propose it
+carefully: budget-based enforcement in non-production only. A dev or
+sandbox project that exceeds its budget gets its spend capped
+automatically. I'd never do this in production, because a cost control
+that can take down a customer-facing service is a worse problem than
+the cost. Scoping it to non-prod makes it safe enough to actually
+enable, and non-prod is where the uncontrolled growth usually is
+anyway.
+
+**Architecture**
+
+```
+  THREE CATEGORIES, THREE MECHANISMS — not one cost program
+  ┌──────────────────────────────────────────────────────────────┐
+  │ C1 WASTE        idle VMs · unattached disks · orphaned IPs · │◄(1)
+  │    no value     stale snapshots · abandoned dev projects     │
+  │    MECHANISM: default expiry in dev/sandbox; keeping a       │
+  │    resource requires a DECLARED exemption            ◄─(2)   │
+  ├──────────────────────────────────────────────────────────────┤
+  │ C2 INEFFICIENCY over-provisioned shapes · node pools sized   │◄(3)
+  │    real work,   for a peak that moved · wrong DB tier        │
+  │    wrong shape  MECHANISM: Recommender → work item → treated │
+  │                 as a production change (canary, D6-Q06) ◄(4) │
+  ├──────────────────────────────────────────────────────────────┤
+  │ C3 RATE         paying more per unit for capacity we need    │◄(5)
+  │    MECHANISM: commit to the ORG-WIDE FLOOR, not per team,    │
+  │    not the average, never the peak                    ◄(6)   │
+  │      stable fleet composition → resource-based form          │
+  │      composition changing     → spend-based form      ◄(7)   │
+  │      stagger terms so one date doesn't carry all rate risk   │
+  └───────────────────────────┬──────────────────────────────────┘
+                              ▼
+  WHAT MAKES SOMEONE ACT — four things on every recommendation
+  ┌──────────────────────────────────────────────────────────────┐
+  │ a. OWNER      derived from mandatory labels (pipeline-       │◄(8)
+  │               stamped, D1-Q08 — not a spreadsheet)           │
+  │ b. ROUTING    into the team's normal backlog, not a console  │
+  │ c. EXPIRY     unactioned → escalates, never accumulates      │
+  │ d. AGGREGATE  unactioned savings by team, visible to all ◄(9)│
+  └───────────────────────────┬──────────────────────────────────┘
+                              ▼
+  THE ONE MECHANISM WITH TEETH — scoped deliberately
+  ┌──────────────────────────────────────────────────────────────┐
+  │ budget-based spend enforcement in NON-PRODUCTION ONLY  ◄(10) │
+  │ never in prod: a cost control that can drop customer traffic │
+  │ is a worse problem than the cost it was solving              │
+  └──────────────────────────────────────────────────────────────┘
+
+  NOT THIS PROGRAM: who sees cost, showback/chargeback structure and
+  the FinOps operating model — that's D1-Q09. This is the technical
+  half that feeds it.
+```
+
+**Every arrow explained:**
+
+1. **Waste as its own category** — acting has no performance tradeoff,
+   which makes it the only category safe to automate aggressively.
+2. **Default expiry with declared exemption in non-prod** — flips the
+   default from persist-forever to expire-unless-claimed. Highest
+   leverage single change in most estates.
+3. **Inefficiency separated from waste** — acting here carries
+   availability risk, so it can't use the same mechanism.
+4. **Rightsizing as a production change** — a machine-type change gets
+   the same canary and rollback treatment as any release. Wrong
+   alternative: a central team applying recommendations directly.
+5. **Rate as a separate category** — it's a procurement decision, not
+   an engineering one, and mixing it with the other two confuses both.
+6. **Commit to the org-wide floor** — aggregating across teams makes
+   the committed baseline far more stable than any per-team figure.
+7. **Resource-based versus spend-based by composition stability** —
+   the honest deciding question, and staggered terms keep one renewal
+   date from carrying the whole estate's exposure.
+8. **Owner from pipeline-stamped labels** — this is why label
+   enforcement in CI (`D6-Q02`) matters more than any cost dashboard.
+9. **Visible aggregate of unactioned savings** — peer comparison
+   outperforms central requests, consistently and cheaply.
+10. **Enforcement scoped to non-production** — safe enough to actually
+    enable, and aimed at where uncontrolled growth actually happens.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| Who acts on recommendations | The resource owner | A central cost team applying changes directly | The owner knows whether that capacity is reserved for next month's launch | When the resource is provably orphaned with no owner at all — then central deletion, after a notice period |
+| Commitment sizing | Organization-wide floor | Per-team commitments | A per-team commitment strands every time a team shrinks or re-platforms | When one team's workload is enormous, stable and isolated — then its own commitment is cleaner to reason about |
+| Commitment form | Resource-based for stable composition, spend-based when the estate is changing shape | One form for everything | Matching form to composition stability is the whole decision | When procurement complexity is the binding constraint — then pick one form for simplicity and accept some inefficiency |
+| Non-prod waste | Default expiry, exemption declared | Periodic cleanup campaigns | Campaigns work once; defaults work continuously | When the environment hosts long-lived shared fixtures teams depend on — then exempt that project explicitly rather than weakening the default |
+| Enforcement | Budget caps in non-production only | Caps everywhere, or nowhere | Safe to enable, aimed where the growth is | When a production workload genuinely has a hard spend ceiling from a contract — then a cap with a very loud alerting path, accepted deliberately |
+
+**Making it concrete**
+
+```bash
+# Recommendations are only useful once they carry an owner. The label
+# set stamped by the pipeline is what makes that join possible.
+gcloud recommender recommendations list \
+  --project=PROJECT_ID \
+  --location=REGION \
+  --recommender=google.compute.instance.MachineTypeRecommender \
+  --format='table(name, primaryImpact.costProjection.cost, stateInfo.state)'
+
+# Same signal for idle resources — category one, safe to act on.
+gcloud recommender recommendations list \
+  --project=PROJECT_ID \
+  --location=REGION \
+  --recommender=google.compute.instance.IdleResourceRecommender
+```
+
+Running these by hand is a demo. The program is the job that runs them
+across every project on a schedule, joins each recommendation to an
+owning group via the resource's labels, files it into that team's
+backlog, and publishes the unactioned aggregate. The commands are the
+easy part; the join and the routing are the program.
+
+**What a weak answer sounds like**
+
+- "We'd turn on Recommender and review the suggestions." — the
+  suggestions already exist and nobody is reviewing them; that's the
+  problem, not the solution.
+- "We'd buy committed use discounts for everything." — commits to
+  capacity that isn't stable, and strands it the first time the estate
+  changes shape.
+- "The cost team would rightsize the over-provisioned instances." —
+  one availability incident away from never being allowed to do it
+  again.
+- "We'd set budget alerts." — an alert with no owner and no routing is
+  an email; the panel is asking what makes someone act.
+
+**Common wrong turns**
+
+- **Building the dashboard before the labels.** The dashboard shows
+  unattributable spend and nobody can be asked to act. Recover by
+  fixing label enforcement in the pipeline first.
+- **Treating all three categories with one mechanism.** Automating
+  rightsizing like waste deletion causes incidents; reviewing waste
+  like rightsizing wastes months. Recover by separating them out loud.
+- **Committing to the average.** It looks prudent and it strands
+  capacity during every trough. Recover by committing to the floor and
+  buying the rest on demand.
+- **Running a campaign instead of building a loop.** Year one looks
+  great and year two regresses. Recover by wiring each lever to a
+  recurring signal with an owner and an expiry.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"A team ignores every recommendation for six months. What
+   happens?"** — the unactioned aggregate makes it visible, which
+   handles most cases. Beyond that, it's a conversation with their
+   leadership using the showback data rather than an enforcement
+   action from me — the cost is already attributed to them, so the
+   incentive exists; what's missing is attention, and visibility is
+   the tool for attention.
+2. **"Escalate: your automated non-prod expiry deletes something a
+   team needed. How bad is that, and how do you prevent it?"** — bad
+   enough that it would end the mechanism if it happened twice. So
+   expiry is announced well in advance, the exemption is one
+   declaration in the project's config, and deletion is preceded by a
+   stop rather than an immediate delete, with a recovery window. The
+   mechanism has to be survivable-wrong, because it will occasionally
+   be wrong.
+3. **"How do you avoid over-committing?"** — size to the floor
+   observed over a full seasonal cycle, not a quarter, and stagger
+   terms so each decision covers only part of the estate. I'd also
+   rather under-commit and pay on-demand for the remainder than
+   strand a commitment, because the downside is asymmetric.
+4. **"Who owns this program in two years?"** — a small FinOps function
+   owning the signal and the routing, with teams owning the action.
+   `D1-Q09` defines that operating model; this program is the
+   technical supply into it.
+5. **"What's the relative saving profile across your three
+   categories?"** — waste is the fastest and usually the smallest;
+   rate is the largest single lever and the slowest to realise because
+   it needs a stable baseline first; inefficiency is the most durable
+   because it keeps paying as the estate grows. I'd sequence waste
+   first for credibility, rate second, inefficiency continuously.
+6. **"What would you refuse to do?"** — enforce spend caps in
+   production, and let a central team change production resource
+   shapes directly. Both trade an availability risk for a cost saving,
+   and that trade is almost never worth it.
+
+**Cross-references**
+
+- `D1-Q09` — the FinOps operating model, showback structure and who
+  sees cost. This question is the technical supply into it and
+  deliberately doesn't rebuild it.
+- `02-services/06-management-operations.md` — Recommender API and
+  billing tooling depth.
+- `03-comparisons/01-compute-options.md` — the discount-lever table
+  behind the commitment strategy; `D6-Q09` for the baseline being
+  committed to.
+
+---
+
+### D6-Q13 — "We've committed to an emissions target. How does that change where and how you run workloads?"
+
+| | |
+|---|---|
+| **Band** | Staff |
+| **Primary domain leaves** | 4.2, 1.3 |
+| **Axis** | operations |
+| **Whiteboard time** | 30–40 min |
+| **Reads well after** | `D6-Q12` |
+
+**What the interviewer is actually testing**
+
+Whether you can treat sustainability as an actual design constraint
+with tradeoffs, rather than as a slide. The signal is whether you know
+it interacts with latency, residency and cost — sometimes agreeing
+with cost, sometimes not — and whether you'd measure it rather than
+assert it.
+
+**Clarifying questions to ask before drawing anything**
+
+- **Is the target a reporting obligation or a reduction commitment?**
+  Reporting means I need attributable emissions data by team and
+  workload. Reduction means I need to change placement and efficiency,
+  which is a much larger piece of work.
+- **Are there residency constraints that fix region choice already?**
+  If a workload is pinned by a resource-location policy, its region is
+  decided and the lever moves entirely to efficiency.
+- **What's the latency budget?** Region selection for lower emissions
+  often means moving further from users. If the latency budget has
+  room, that's cheap; if it doesn't, this workload isn't a candidate.
+- **Is the workload latency-sensitive at all?** Batch and asynchronous
+  work is where almost all the available movement is, because nobody
+  notices where it ran.
+- **Who is accountable for the target?** If nobody owns the number,
+  this is a reporting exercise and I'd design for reporting rather
+  than pretending otherwise.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| Emissions must be attributable per team | Assumed | "Same label set as cost — otherwise the target has no owner" | Reuses the mandatory labels rather than a new taxonomy |
+| Latency-sensitive workloads stay where they are | Assumed | "I'd rather move batch than degrade user experience for a marginal gain" | Scopes the placement lever to asynchronous work |
+| Residency constraints override placement preference | Assumed | "A resource-location policy is a hard constraint; emissions preference is a soft one" | Establishes the precedence order |
+| Efficiency counts as much as placement | Assumed | "An idle VM in a low-carbon region is worse than a busy one in a high-carbon region" | Ties this program to `D6-Q12` |
+| The target has a named owner | Assumed | "Otherwise this is reporting, and I'd design for reporting honestly" | Determines whether placement rules get enforced |
+
+**The answer, out loud**
+
+I'd say first that the largest sustainability lever available to most
+platforms isn't placement — it's not running things that do no work.
+Every idle VM, every over-provisioned node pool, every dev environment
+alive since a project ended has an emissions cost as well as a
+financial one. So the cost-efficiency program in `D6-Q12` is also the
+emissions program for its first year, and I'd say that explicitly
+because it means the two initiatives reinforce rather than compete for
+attention. Deleting waste improves both numbers with no tradeoff
+against anything.
+
+The second lever is placement, and this is where it gets specific.
+Google publishes per-region carbon characteristics, and Carbon
+Footprint reports actual emissions attributable to our usage, broken
+down by project and service. That gives me two things: a
+forward-looking input for choosing where new workloads land, and a
+backward-looking measurement for whether the program is working. I'd
+use both, and I'd make the forward-looking one a default rather than a
+recommendation — a new project's default region comes from a
+platform-maintained preference list that already accounts for
+emissions, so the low-carbon choice is what you get by not thinking
+about it.
+
+But placement has a strict precedence order and I'd state it, because
+getting this wrong produces a compliance incident in the name of
+sustainability. Residency constraints come first and are absolute — if
+`constraints/gcp.resourceLocations` pins a workload, the conversation
+is over. Latency requirements come second: if the workload is
+user-facing with a tight budget, it goes where the users are. Data
+gravity comes third — moving compute away from a large dataset it
+processes usually costs more emissions in network transfer than it
+saves in placement, and it certainly costs more money. Emissions
+preference is fourth, which sounds like a demotion and is actually
+what makes it credible: it's the tiebreaker among otherwise acceptable
+options, which is a lever that gets used, unlike one that overrides
+real constraints and therefore gets overridden itself.
+
+Where emissions genuinely gets to lead is batch and asynchronous
+workloads with no user waiting and no residency constraint. Those can
+run in a lower-carbon region, and often at a time of day when the grid
+serving that region is cleaner. Time-shifting flexible batch is a real
+lever and it composes neatly with the scheduling spread in `D6-Q11` —
+the same jobs I wanted to move off the top of the hour for cost
+reasons are the ones with the flexibility to move for emissions
+reasons.
+
+On measurement: Carbon Footprint data goes to the same billing export
+dataset as cost, joined on the same labels. That's a deliberate
+choice — I want emissions per team next to cost per team, in one
+place, so the tradeoff conversation happens with both numbers visible.
+A separate sustainability dashboard maintained by a separate function
+is how this becomes a reporting exercise nobody acts on.
+
+And I'd be honest about where the tradeoff is real, because a
+candidate who claims sustainability is always free is not credible.
+Choosing a lower-carbon region can mean a region with fewer services
+available, higher pricing, or fewer zones. Moving a workload further
+from users costs latency. Time-shifting batch costs freshness. Each of
+those is a decision someone should make deliberately with the numbers
+in front of them, and my job is to make the numbers available at the
+moment of decision rather than to pretend the decision is obvious.
+
+**Architecture**
+
+```
+  LEVER 0 — DON'T RUN WHAT DOES NO WORK                    ◄── (1)
+  ┌──────────────────────────────────────────────────────────────┐
+  │ the D6-Q12 waste category IS the first-year emissions        │
+  │ program: idle VMs, stale environments, over-provisioning     │
+  │ improves BOTH numbers with no tradeoff against either        │
+  └───────────────────────────┬──────────────────────────────────┘
+                              ▼
+  LEVER 1 — PLACEMENT, WITH A STRICT PRECEDENCE ORDER      ◄── (2)
+  ┌──────────────────────────────────────────────────────────────┐
+  │ 1. RESIDENCY   constraints/gcp.resourceLocations — ABSOLUTE  │◄(3)
+  │ 2. LATENCY     user-facing with a tight budget → near users  │◄(4)
+  │ 3. DATA GRAVITY moving compute from its data usually costs   │◄(5)
+  │                more in transfer than placement saves         │
+  │ 4. EMISSIONS   the TIEBREAKER among acceptable options ◄(6)  │
+  │                                                               │
+  │ fourth place is what makes it credible: a preference that     │
+  │ overrides real constraints gets overridden itself             │
+  └───────────────────────────┬──────────────────────────────────┘
+                              ▼
+  LEVER 2 — WHERE EMISSIONS GETS TO LEAD                   ◄── (7)
+  ┌──────────────────────────────────────────────────────────────┐
+  │ batch / asynchronous · no user waiting · no residency pin    │
+  │ → lower-carbon region, and time-shifted where the grid is    │
+  │   cleaner — composes with the D6-Q11 scheduling spread       │
+  └───────────────────────────┬──────────────────────────────────┘
+                              ▼
+  MEASUREMENT — one dataset, not a separate dashboard      ◄── (8)
+  ┌──────────────────────────────────────────────────────────────┐
+  │ Carbon Footprint → prj-common-billing export, joined on the  │
+  │ SAME mandatory labels as cost                                │
+  │ emissions per team sits NEXT TO cost per team          ◄(9)  │
+  └──────────────────────────────────────────────────────────────┘
+
+  DEFAULT, NOT RECOMMENDATION: a new project's default region comes
+  from a platform preference list that already accounts for emissions
+  — the low-carbon choice is what you get by not thinking (10).
+```
+
+**Every arrow explained:**
+
+1. **Waste elimination as lever zero** — the largest available
+   reduction with no tradeoff, and it's already funded as a cost
+   program. Wrong alternative: launching a separate sustainability
+   initiative that competes with it for attention.
+2. **Placement with stated precedence** — without the order, someone
+   eventually moves a regulated workload for emissions reasons.
+3. **Residency is absolute** — a resource-location constraint ends the
+   conversation, and `D1-Q10` owns that mechanism.
+4. **Latency second** — user-facing workloads aren't candidates, and
+   saying so keeps the program from being resented.
+5. **Data gravity third** — network transfer of a large dataset
+   usually costs more than the placement saves, in both currencies.
+6. **Emissions as the fourth-place tiebreaker** — the position that
+   makes it actually get applied rather than argued with.
+7. **Batch and asynchronous is where it leads** — no user waiting, so
+   region and time are both genuinely flexible.
+8. **Carbon Footprint into the billing export** — same dataset, same
+   labels, same project (`prj-common-billing`).
+9. **Emissions next to cost per team** — one table, so the tradeoff
+   conversation has both numbers present.
+10. **Default region from a platform preference list** — defaults move
+    far more behaviour than recommendations do.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| Primary lever | Eliminate waste first | Region migration first | Waste reduction improves emissions and cost with no tradeoff | When the estate is already lean and placement is the only remaining lever — then migration, with the latency and service-availability costs priced |
+| Emissions in placement | Fourth-place tiebreaker after residency, latency, data gravity | Emissions as a primary placement criterion | A tiebreaker gets applied; an override gets overridden | When the organization has a binding external emissions commitment with penalties — then it rises, and the latency budget is renegotiated explicitly |
+| Where placement leads | Batch and asynchronous workloads | All workloads uniformly | Nobody notices where a nightly job ran; everybody notices added user latency | When a user-facing workload has generous latency headroom and a large footprint — then move it, measured, not assumed |
+| Measurement home | Same billing export dataset and labels as cost | A dedicated sustainability dashboard | Puts both numbers in front of the same person at the same moment | When emissions reporting has a regulatory format requirement — then a derived report from the same dataset, not a separate collection path |
+| Region preference | A platform-maintained default list | Per-team choice with guidance | Defaults move behaviour; guidance documents do not | When teams have genuinely specialised region requirements — then their declared override, visible like any other divergence (`D6-Q02`) |
+
+**Making it concrete**
+
+```hcl
+# Residency stays absolute; the emissions preference expresses itself
+# as the DEFAULT region inside whatever the constraint already allows.
+resource "google_folder_organization_policy" "residency" {
+  folder     = "folders/FOLDER_ID"
+  constraint = "constraints/gcp.resourceLocations"
+  list_policy {
+    allow { values = ["in:eu-locations"] }
+  }
+}
+
+# Platform default, consumed by project vending (D1-Q05). Teams may
+# declare an override; the declaration is visible, like any divergence.
+variable "default_region_preference" {
+  type    = list(string)
+  default = ["REGION_LOW_CARBON_A", "REGION_LOW_CARBON_B"]
+}
+```
+
+The two blocks encode the precedence order directly: the constraint
+narrows the legal set, and the preference orders what remains. That
+ordering is the entire design, and expressing it in code is what stops
+it from being renegotiated per project.
+
+**What a weak answer sounds like**
+
+- "We'd move everything to the greenest region." — ignores residency,
+  latency and data gravity, and the first regulated workload move
+  becomes a compliance incident.
+- "Sustainability is just a reporting requirement." — sometimes true,
+  and saying it without asking removes your ability to act if it
+  isn't.
+- "It's free — the green regions are cheaper anyway." — sometimes
+  they're not, and claiming there's no tradeoff is what makes the rest
+  of the answer untrustworthy.
+- "We'd add a sustainability dashboard." — a separate artifact for a
+  separate function, consulted by nobody making placement decisions.
+
+**Common wrong turns**
+
+- **Putting emissions above residency in the precedence order.** It
+  reads as commitment and produces a policy violation. Recover by
+  stating the order explicitly before discussing any move.
+- **Ignoring waste because placement is more interesting.** The bigger
+  number is in the boring category. Recover by pointing at the
+  cost-efficiency program as lever zero.
+- **Separating emissions data from cost data.** Two dashboards, two
+  owners, no joint decisions. Recover by putting both in the billing
+  export on the same labels.
+- **Making the low-carbon choice a recommendation.** Recommendations
+  lose to defaults every time. Recover by moving it into the vending
+  default.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"A team wants to move a user-facing service to a lower-carbon
+   region and it adds latency. Who decides?"** — the service's owner,
+   with the latency SLO as the constraint. If the move fits inside the
+   SLO, it's their call; if it breaches it, the answer is no, because
+   the SLO is a commitment to customers and the emissions preference
+   is a tiebreaker.
+2. **"Escalate this: what if the emissions commitment and a growth
+   plan conflict at the organization level?"** — that's an executive
+   tradeoff and my job is to make it explicit with numbers rather than
+   resolve it architecturally. What I'd bring is the marginal
+   emissions per unit of growth under a few placement strategies, so
+   the decision is informed. Absorbing the conflict quietly into
+   architecture is how a platform ends up serving a target nobody
+   actually agreed to fund.
+3. **"How do you verify the program is working?"** — Carbon Footprint
+   trend per team, normalised by a workload volume measure, exactly
+   like cost per unit in `D6-Q11`. Absolute emissions falling while
+   the business grows is the claim worth making; absolute emissions
+   alone is not.
+4. **"Who owns the target in two years?"** — whoever owns the external
+   commitment, with the platform team owning the defaults and the
+   measurement. If the platform team owns the target itself, it will
+   quietly deprioritise it against availability work, and it should.
+5. **"What's the one change you'd make first?"** — the default region
+   in project vending. It costs nothing, applies to everything created
+   from that point, and requires no team to do anything.
+6. **"Does this change your compute selection?"** — indirectly.
+   Anything that improves utilisation improves emissions, so the same
+   arguments that favour higher-utilisation runtimes apply here. I'd
+   use the existing compute matrix rather than inventing a
+   sustainability-specific selection rule.
+
+**Cross-references**
+
+- `02-services/06-management-operations.md` — Carbon Footprint and
+  billing export configuration.
+- `D1-Q10` for the residency mechanism that sits above emissions in
+  the precedence order; `D1-Q05` for the vending default this changes.
+- `D6-Q12` for lever zero; `D6-Q11` for the scheduling flexibility
+  that time-shifting reuses.
+
+---
+
+### D6-Q14 — "Three hundred deploys a day across the platform, and one of those services is regulated with a mandatory change-approval process. Design release management."
+
+| | |
+|---|---|
+| **Band** | Staff+ |
+| **Primary domain leaves** | 4.3, 6.2, 5.1 |
+| **Axis** | operations |
+| **Whiteboard time** | 40–50 min |
+| **Reads well after** | `D6-Q06` |
+
+**What the interviewer is actually testing**
+
+Whether you can hold two incompatible-looking requirements without
+compromising both. The failure mode is designing for the regulated
+service and slowing the other 299 deploys, or designing for velocity
+and handling the regulated one with an exception nobody can audit. The
+strong answer keeps one pipeline and makes the difference declarative.
+
+**Clarifying questions to ask before drawing anything**
+
+- **What does the regulation actually require?** Usually a named
+  accountable approver, evidence of testing, segregation of duties,
+  and a retained record. Each of those is a specific mechanism, and
+  three of the four are automatable. "It requires a change board" is
+  usually an internal interpretation, not the regulation.
+- **Is the regulated scope the whole service or part of it?** Often
+  only the component touching regulated data is in scope, and
+  splitting the service means only a fraction of its changes need the
+  heavier path.
+- **Who is the accountable approver, and are they available?** If
+  approval takes three days because one person approves everything,
+  that's the actual constraint and no pipeline design fixes it.
+- **What evidence does the auditor want to see?** A record they can
+  query beats a document someone assembles quarterly, and knowing the
+  format changes what the pipeline emits.
+- **Does segregation of duties mean the author can't deploy?** If so,
+  the pipeline identity being separate from the author already
+  satisfies it, and I'd want to establish that early.
+
+**Requirements — stated, and what you'd assume out loud**
+
+| Requirement | Stated or assumed | If assumed, say this out loud | Why it drives the design |
+|---|---|---|---|
+| 299 services must not slow down | Stated | — | The regulated path must be additive, never a shared gate |
+| Named accountable approver for the regulated service | Assumed | "I'll assume the regulation names a person, not a committee" | One human gate on one pipeline stage |
+| Evidence must be queryable, not assembled | Assumed | "Auditors accept a record; teams hate assembling documents" | Pipeline emits the record continuously |
+| Author cannot be the deployer | Assumed | "Segregation of duties is nearly always in scope for regulated change" | Separate deploy identity, already true in the golden path |
+| The regulated service uses the same platform | Assumed | "A separate pipeline for one service is how it gets stale and insecure" | One pipeline, declarative difference |
+
+**The answer, out loud**
+
+The principle I'd start from is that there is one pipeline, and the
+regulated service's difference is declared in its manifest rather than
+implemented as a separate system. A forked pipeline for one service
+rots: it misses the security gate added next quarter, its base images
+lag, and the one service with the strictest requirements ends up with
+the least maintained delivery path. That's the outcome I'm designing
+against.
+
+So, structurally: the golden path from `D6-Q01` runs for all three
+hundred services. The regulated service's manifest declares three
+additional properties, and the pipeline reads them like any other
+declared difference.
+
+The first is a human approval gate before the production stage.
+Cloud Deploy supports this natively per target, so it's configuration
+rather than custom work. The gate names an approver group, not an
+individual, so availability doesn't become the constraint, and the
+approval is recorded with identity and timestamp as part of the
+release record. This is the only human gate in the entire platform and
+it exists for exactly one service.
+
+The second is evidence emission. Every release of the regulated
+service produces a record containing the commit, the image digest, the
+test results, the scan and attestation status, the approver identity,
+the deployment time, the rollout outcome, and any rollback. That
+record goes to the same logging destination as everything else with a
+retention policy that satisfies the regulation, in
+`prj-common-logging`. The key property is that the evidence is a
+byproduct of deploying rather than a document someone writes
+afterwards — which means it's complete, contemporaneous, and
+impossible to forget. Auditors generally prefer this to a quarterly
+binder, and it's cheaper for us.
+
+The third is segregation of duties, and this one is mostly already
+satisfied. The author pushes code; a pipeline identity builds and
+deploys; a different human approves. Nobody with commit access to the
+service has deploy access to its production target. I'd verify that
+rather than assume it, because the common gap is a break-glass role
+that quietly grants both.
+
+Now the thing I'd push on, gently but clearly: I'd try to shrink the
+regulated scope. If the service has components that don't touch
+regulated data, splitting them means only the in-scope component needs
+the approval gate, and the rest of the team's changes flow at the
+platform's normal speed. That's usually the single largest improvement
+available to a regulated team's throughput, and it's an architecture
+change rather than a process change, which is exactly the kind of
+thing an architect should be proposing in this conversation.
+
+For the other 299 services, nothing changes and I'd say that
+explicitly. No change board, no release calendar, no freeze windows.
+Three hundred deploys a day means an average service ships several
+times a week, and the mechanisms that make that safe are the ones in
+`D6-Q06` — small changes, progressive rollout, automated rollback,
+comparison-based decision signals. Safety at that volume comes from
+small batch size and fast reversal, not from review.
+
+The one cross-cutting mechanism I would add at this volume is a
+platform-wide change-rate signal. When three hundred deploys a day are
+normal, an incident's first question is "what changed," and the answer
+needs to be a query rather than a broadcast to forty channels. The
+deploy annotations from `D6-Q01` make that a filter over a time
+window, scoped to the affected service's dependency graph.
+
+And I'd name the thing that most organizations get wrong here: the
+instinct to apply the regulated service's process to everything "to be
+safe." It doubles as a compliance story and it destroys throughput for
+299 services to protect one. The right answer is to make the
+difference declarative and narrow, and to be able to demonstrate that
+the regulated path is genuinely stricter — which is a much stronger
+audit position than everything being uniformly slow.
+
+**Architecture**
+
+```
+  ONE PIPELINE — the difference is DECLARED, never forked      ◄─(1)
+
+  ALL 300 SERVICES ──► golden path (D6-Q01), unchanged
+  ┌──────────────────────────────────────────────────────────────┐
+  │ build → scan → attest → dev → staging → POLICY GATE → prod   │
+  │ progressive rollout · automated rollback · no change board   │◄(2)
+  │ safety at 300/day comes from SMALL BATCHES + FAST REVERSAL,  │
+  │ not from review                                       ◄─(3)  │
+  └───────────────────────────┬──────────────────────────────────┘
+                              │
+              manifest declares regulated: true
+                              ▼
+  THE ONE REGULATED SERVICE — three additive properties
+  ┌──────────────────────────────────────────────────────────────┐
+  │ + HUMAN APPROVAL GATE before the prod target          ◄─(4)  │
+  │     approver GROUP, not an individual (availability)   ◄─(5) │
+  │     identity + timestamp recorded in the release              │
+  │ + EVIDENCE EMISSION as a byproduct of deploying       ◄─(6)  │
+  │     commit · digest · tests · scan · attestation · approver  │
+  │     · deploy time · rollout outcome · any rollback           │
+  │     → prj-common-logging, retention per the regulation ◄(7)  │
+  │ + SEGREGATION OF DUTIES verified, not assumed         ◄─(8)  │
+  │     author ≠ pipeline identity ≠ approver                     │
+  │     check the break-glass role doesn't grant both             │
+  └───────────────────────────┬──────────────────────────────────┘
+                              ▼
+  THE ARCHITECT'S MOVE — shrink the regulated scope         ◄── (9)
+  ┌──────────────────────────────────────────────────────────────┐
+  │ split components that don't touch regulated data out; only   │
+  │ the in-scope component carries the gate. Usually the largest │
+  │ single throughput win available to that team.                │
+  └──────────────────────────────────────────────────────────────┘
+
+  AT THIS VOLUME, ADD ONE THING: a platform-wide change-rate signal,
+  so "what changed?" is a query over deploy annotations scoped to the
+  dependency graph — not a broadcast to forty channels (10).
+```
+
+**Every arrow explained:**
+
+1. **One pipeline, declared difference** — a forked pipeline for the
+   strictest service means the strictest service gets the least
+   maintained delivery path.
+2. **No change board for the 299** — at this volume, review is a
+   throughput tax with weak safety returns.
+3. **Small batches and fast reversal as the safety mechanism** — the
+   actual source of safety at three hundred deploys a day, and the
+   reason the volume is achievable at all.
+4. **Human approval gate on one target** — native pipeline
+   configuration, not custom workflow. The only human gate on the
+   platform.
+5. **Approver group, not an individual** — otherwise one person's
+   calendar becomes the release constraint.
+6. **Evidence as a deployment byproduct** — complete and
+   contemporaneous because it's emitted, not assembled.
+7. **Evidence lands in the shared logging project with regulated
+   retention** — the same sink structure as everything else
+   (`D1-Q13`), with a policy that satisfies the obligation.
+8. **Segregation verified, not assumed** — the common gap is a
+   break-glass role granting both commit and deploy.
+9. **Shrinking the regulated scope** — an architecture change that
+   beats any process optimisation, and the move a panel most wants to
+   hear proposed.
+10. **Change-rate signal** — at this volume the incident question
+    "what changed" must be answerable by query.
+
+**Tradeoff table**
+
+| Decision point | What I chose | Alternative | Why it wins here | When the alternative wins instead |
+|---|---|---|---|---|
+| Pipeline structure | One pipeline, regulated difference declared | A separate pipeline for the regulated service | The forked pipeline misses every subsequent platform improvement | When the regulation requires physically separated tooling and identities — rare, and then it's a second maintained path with a named owner, not a fork |
+| Approval | Named approver group, one gate, one service | Change advisory board for all releases | Protects the 299 while satisfying the obligation for the one | When the whole estate is in regulatory scope — then the gate is universal and throughput expectations change accordingly |
+| Evidence | Emitted by the pipeline continuously | Assembled periodically for audit | Complete, contemporaneous, and cheaper than assembling | When the auditor requires a specific narrative document — then generate it from the emitted record, don't replace the record |
+| Regulated scope | Split the service, gate only the in-scope component | Treat the whole service as in scope | Usually the biggest throughput win available and it's an architecture change | When the split would create a data-flow the regulator would object to — then keep it whole and accept the gate |
+| Safety at volume | Small batches, progressive rollout, automated rollback | Release windows and freeze periods | Batching changes into windows makes each release larger and riskier | When a downstream system genuinely cannot absorb continuous change — a partner integration with fixed cutover dates — then windows for that interface only |
+
+**What a weak answer sounds like**
+
+- "We'd put a change advisory board in front of production." — solves
+  one service's problem by taxing 299, and the board becomes a queue
+  within a month.
+- "The regulated service gets its own pipeline." — and within a year
+  it's the least patched, least monitored path in the platform.
+- "We'd freeze releases during audit periods." — freezes batch up
+  change, and the post-freeze release is the largest and riskiest of
+  the quarter.
+- "Compliance is handled by documentation." — documents assembled
+  after the fact are exactly what auditors trust least and teams hate
+  most.
+
+**Common wrong turns**
+
+- **Generalising the strict path.** It feels prudent and it costs the
+  organization most of its delivery capacity. Recover by narrowing the
+  difference to the declared properties.
+- **Naming an individual approver.** Their holiday becomes a release
+  freeze. Recover by naming a group with an availability expectation.
+- **Treating evidence as a reporting task.** It gets forgotten and
+  then reconstructed badly. Recover by emitting it from the pipeline.
+- **Not challenging the scope.** Accepting "the whole service is
+  regulated" without asking is the most expensive silent assumption in
+  this question. Recover by asking which component touches the
+  regulated data.
+
+**Follow-up probes the interviewer asks next**
+
+1. **"The regulated service needs an emergency fix at 2am. What
+   happens?"** — the approval gate still runs, with an on-call
+   approver in the group, and the record shows an emergency approval
+   with its justification. I'd resist a bypass path entirely, because
+   a bypass that exists gets used routinely within a quarter and then
+   the control is fiction.
+2. **"Escalate: how do you prove to an auditor that the other 299
+   services aren't touching regulated data?"** — through the data-class
+   label and the perimeter that enforces it, not through the release
+   process. That's a `D1-Q10`-shaped control, and conflating it with
+   release approval is how organizations end up gating everything.
+3. **"What's your change-failure rate at 300 deploys a day, and how do
+   you know?"** — measured from automated rollbacks and incidents
+   correlated to deploy annotations. At this volume the rate matters
+   far more than the count, and it's the number I'd put next to lead
+   time in front of leadership.
+4. **"Who owns release policy in two years?"** — the platform team
+   owns the mechanism, the compliance function owns the regulated
+   service's specific requirements, and neither owns the other's part.
+   When compliance owns the mechanism, the strict path generalises;
+   when the platform owns the requirements, they drift from the
+   regulation.
+5. **"What if a second service becomes regulated?"** — it declares the
+   same property in its manifest and gets the same gate. That's the
+   whole payoff of the declarative approach: the second regulated
+   service costs a line of configuration rather than a project.
+6. **"Would you ever add a freeze window?"** — for a downstream
+   partner interface with fixed cutover dates, for that interface
+   only. Never for the platform, because a platform-wide freeze
+   guarantees that the first release afterwards is the largest and
+   riskiest one of the period.
+
+**Cross-references**
+
+- `D6-Q01` for the single pipeline this extends; `D6-Q06` for the
+  progressive-delivery mechanisms that make the volume safe.
+- `02-services/07-devops-cicd.md` — Cloud Deploy approval gates and
+  Binary Authorization integration behind the regulated properties.
+- `D1-Q10` and `D1-Q13` for the data-class perimeter and the logging
+  project the evidence lands in.
+
+---
